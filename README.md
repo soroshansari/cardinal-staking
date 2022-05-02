@@ -191,7 +191,7 @@ If you are developing using Cardinal staking contracts and libraries, feel free 
 
 For issues please, file a GitHub issue.
 
-> https://discord.gg/bz2SxDQ8
+> https://discord.gg/byq6uNTugq
 
 ## License
 
