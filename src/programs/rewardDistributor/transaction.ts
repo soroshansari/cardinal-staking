@@ -184,10 +184,26 @@ export const withUpdateRewardEntry = async (
   wallet: Wallet,
   params: {
     stakePoolId: PublicKey;
+    rewardDistributorId: PublicKey;
     mintId: PublicKey;
     multiplier: BN;
   }
 ): Promise<Transaction> => {
+  const [rewardEntryId] = await findRewardEntryId(
+    params.rewardDistributorId,
+    params.mintId
+  );
+  const rewardEntry = await tryGetAccount(() =>
+    getRewardEntry(connection, rewardEntryId)
+  );
+  if (!rewardEntry) {
+    transaction.add(
+      await initRewardEntry(connection, wallet, {
+        mint: params.mintId,
+        rewardDistributor: params.rewardDistributorId,
+      })
+    );
+  }
   return transaction.add(
     await updateRewardEntry(connection, wallet, {
       stakePoolId: params.stakePoolId,
