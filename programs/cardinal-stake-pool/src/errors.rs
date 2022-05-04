@@ -36,4 +36,6 @@ pub enum ErrorCode {
     InvalidReceiptMint,
     #[msg("Stake entry already has tokens staked")]
     StakeEntryAlreadyStaked,
+    #[msg("Invalid authority")]
+    InvalidAuthority,
 }

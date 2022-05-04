@@ -53,4 +53,12 @@ pub mod cardinal_stake_pool {
     pub fn return_receipt_mint<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts, 'remaining, 'info, ReturnReceiptMintCtx<'info>>) -> Result<()> {
         return_receipt_mint::handler(ctx)
     }
+
+    pub fn close_stake_pool(ctx: Context<CloseStakePoolCtx>) -> Result<()> {
+        close_stake_pool::handler(ctx)
+    }
+
+    pub fn close_stake_entry(ctx: Context<CloseStakeEntryCtx>) -> Result<()> {
+        close_stake_entry::handler(ctx)
+    }
 }

@@ -1,5 +1,7 @@
 pub mod authorize_mint;
 pub mod claim_receipt_mint;
+pub mod close_stake_entry;
+pub mod close_stake_pool;
 pub mod init_entry;
 pub mod init_identifier;
 pub mod init_pool;
@@ -12,6 +14,8 @@ pub mod update_total_stake_seconds;
 
 pub use authorize_mint::*;
 pub use claim_receipt_mint::*;
+pub use close_stake_entry::*;
+pub use close_stake_pool::*;
 pub use init_entry::*;
 pub use init_identifier::*;
 pub use init_pool::*;
