@@ -452,3 +452,49 @@ export const returnReceiptMint = async (
     ],
   });
 };
+
+export const closeStakePool = (
+  connection: Connection,
+  wallet: Wallet,
+  params: {
+    stakePoolId: PublicKey;
+    authority: PublicKey;
+  }
+) => {
+  const provider = new AnchorProvider(connection, wallet, {});
+  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
+    STAKE_POOL_IDL,
+    STAKE_POOL_ADDRESS,
+    provider
+  );
+  return stakePoolProgram.instruction.closeStakePool({
+    accounts: {
+      stakePool: params.stakePoolId,
+      authority: params.authority,
+    },
+  });
+};
+
+export const closeStakeEntry = (
+  connection: Connection,
+  wallet: Wallet,
+  params: {
+    stakePoolId: PublicKey;
+    stakeEntryId: PublicKey;
+    authority: PublicKey;
+  }
+) => {
+  const provider = new AnchorProvider(connection, wallet, {});
+  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
+    STAKE_POOL_IDL,
+    STAKE_POOL_ADDRESS,
+    provider
+  );
+  return stakePoolProgram.instruction.closeStakeEntry({
+    accounts: {
+      stakePool: params.stakePoolId,
+      stakeEntry: params.stakeEntryId,
+      authority: params.authority,
+    },
+  });
+};

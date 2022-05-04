@@ -1,5 +1,5 @@
 export type CardinalStakePool = {
-  version: "1.2.3";
+  version: "1.2.5";
   name: "cardinal_stake_pool";
   instructions: [
     {
@@ -473,6 +473,43 @@ export type CardinalStakePool = {
         }
       ];
       args: [];
+    },
+    {
+      name: "closeStakePool";
+      accounts: [
+        {
+          name: "stakePool";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        }
+      ];
+      args: [];
+    },
+    {
+      name: "closeStakeEntry";
+      accounts: [
+        {
+          name: "stakePool";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "stakeEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        }
+      ];
+      args: [];
     }
   ];
   accounts: [
@@ -812,12 +849,17 @@ export type CardinalStakePool = {
       code: 6016;
       name: "StakeEntryAlreadyStaked";
       msg: "Stake entry already has tokens staked";
+    },
+    {
+      code: 6017;
+      name: "InvalidAuthority";
+      msg: "Invalid authority";
     }
   ];
 };
 
 export const IDL: CardinalStakePool = {
-  version: "1.2.3",
+  version: "1.2.5",
   name: "cardinal_stake_pool",
   instructions: [
     {
@@ -1292,6 +1334,43 @@ export const IDL: CardinalStakePool = {
       ],
       args: [],
     },
+    {
+      name: "closeStakePool",
+      accounts: [
+        {
+          name: "stakePool",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "closeStakeEntry",
+      accounts: [
+        {
+          name: "stakePool",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "stakeEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+      ],
+      args: [],
+    },
   ],
   accounts: [
     {
@@ -1630,6 +1709,11 @@ export const IDL: CardinalStakePool = {
       code: 6016,
       name: "StakeEntryAlreadyStaked",
       msg: "Stake entry already has tokens staked",
+    },
+    {
+      code: 6017,
+      name: "InvalidAuthority",
+      msg: "Invalid authority",
     },
   ],
 };
