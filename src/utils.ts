@@ -180,6 +180,7 @@ export const getRewardMap = (
   const rewardMap: {
     [mintId: string]: { claimableRewards: BN; nextRewardsIn: BN };
   } = {};
+
   for (let i = 0; i < mintIds.length; i++) {
     const mintId = mintIds[i]!;
     const stakeEntry = stakeEntries.find((stakeEntry) =>
@@ -256,10 +257,11 @@ export const calculatePendingRewards = (
 
   let rewardAmountToReceive = new BN(UTCNow)
     .sub(stakeEntry.parsed.lastStakedAt)
+    .mul(stakeEntry.parsed.amount)
     .add(stakeEntry.parsed.totalStakeSeconds)
     .sub(rewardSecondsReceived)
-    .div(rewardDistributor.parsed.rewardDurationSeconds)
     .mul(rewardDistributor.parsed.rewardAmount)
+    .div(rewardDistributor.parsed.rewardDurationSeconds)
     .mul(multiplier);
 
   if (
