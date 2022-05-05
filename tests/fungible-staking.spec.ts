@@ -10,6 +10,7 @@ import { assert } from "console";
 import {
   createStakeEntryAndStakeMint,
   createStakePool,
+  initializeRewardEntry,
   rewardDistributor,
   stake,
   unstake,
@@ -116,15 +117,13 @@ describe("Create stake pool", () => {
 
   it("Init Reward Entry", async () => {
     const provider = getProvider();
-    const transaction = new Transaction();
     const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
-    await rewardDistributor.transaction.withInitRewardEntry(
-      transaction,
+    const transaction = await initializeRewardEntry(
       provider.connection,
       provider.wallet,
       {
-        mintId: originalMint.publicKey,
-        rewardDistributorId: rewardDistributorId,
+        originalMintId: originalMint.publicKey,
+        stakePoolId: stakePoolId,
       }
     );
 

@@ -117,9 +117,9 @@ export const getPendingRewardsForPool = async (
     rewardDistributorTokenAccount
   );
 
-  const entryTuples: [PublicKey, PublicKey][] = await Promise.all(
-    mintIds.map(async (mintId) => {
-      return [
+  const stakeEntryIds: PublicKey[] = await Promise.all(
+    mintIds.map(
+      async (mintId) =>
         (
           await findStakeEntryIdFromMint(
             connection,
@@ -127,23 +127,22 @@ export const getPendingRewardsForPool = async (
             rewardDistributor.parsed.stakePool,
             mintId
           )
-        )[0],
-        (await findRewardEntryId(rewardDistributor.pubkey, mintId))[0],
-      ];
-    })
+        )[0]
+    )
   );
 
-  const entryIds: [PublicKey[], PublicKey[]] = entryTuples.reduce(
-    (acc, [stakeEntryID, rewardEntryId]) => [
-      [...acc[0], stakeEntryID],
-      [...acc[1], rewardEntryId],
-    ],
-    [[], []] as [PublicKey[], PublicKey[]]
+  const rewardEntryIds = await Promise.all(
+    stakeEntryIds.map(
+      async (stakeEntryId) =>
+        (
+          await findRewardEntryId(rewardDistributor.pubkey, stakeEntryId)
+        )[0]
+    )
   );
 
   const [stakeEntries, rewardEntries] = await Promise.all([
-    getStakeEntries(connection, entryIds[0]),
-    getRewardEntries(connection, entryIds[1]),
+    getStakeEntries(connection, stakeEntryIds),
+    getRewardEntries(connection, rewardEntryIds),
   ]);
 
   return getRewardMap(
@@ -187,7 +186,7 @@ export const getRewardMap = (
       stakeEntry.parsed.originalMint.equals(mintId)
     );
     const rewardEntry = rewardEntries.find((rewardEntry) =>
-      rewardEntry?.parsed?.mint.equals(mintId)
+      rewardEntry?.parsed?.stakeEntry.equals(mintId)
     );
 
     if (mintId && stakeEntry) {

@@ -365,3 +365,43 @@ export const getStakePoolsByAuthority = async (
     a.pubkey.toBase58().localeCompare(b.pubkey.toBase58())
   );
 };
+
+export const getAllStakeEntries = async (
+  connection: Connection
+): Promise<AccountData<StakeEntryData>[]> => {
+  const programAccounts = await connection.getProgramAccounts(
+    STAKE_POOL_ADDRESS,
+    {
+      filters: [
+        {
+          memcmp: {
+            offset: 0,
+            bytes: utils.bytes.bs58.encode(
+              BorshAccountsCoder.accountDiscriminator("stakeEntry")
+            ),
+          },
+        },
+      ],
+    }
+  );
+  const stakeEntryDatas: AccountData<StakeEntryData>[] = [];
+  const coder = new BorshAccountsCoder(STAKE_POOL_IDL);
+  programAccounts.forEach((account) => {
+    try {
+      const stakeEntryData: StakeEntryData = coder.decode(
+        "stakeEntry",
+        account.account.data
+      );
+      if (stakeEntryData) {
+        stakeEntryDatas.push({
+          ...account,
+          parsed: stakeEntryData,
+        });
+      }
+      // eslint-disable-next-line no-empty
+    } catch (e) {}
+  });
+  return stakeEntryDatas.sort((a, b) =>
+    a.pubkey.toBase58().localeCompare(b.pubkey.toBase58())
+  );
+};

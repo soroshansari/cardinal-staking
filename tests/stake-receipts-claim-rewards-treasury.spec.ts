@@ -13,6 +13,7 @@ import { expect } from "chai";
 import {
   createStakeEntryAndStakeMint,
   createStakePool,
+  initializeRewardEntry,
   stake,
   unstake,
 } from "../src";
@@ -25,10 +26,7 @@ import {
   findRewardDistributorId,
   findRewardEntryId,
 } from "../src/programs/rewardDistributor/pda";
-import {
-  withInitRewardDistributor,
-  withInitRewardEntry,
-} from "../src/programs/rewardDistributor/transaction";
+import { withInitRewardDistributor } from "../src/programs/rewardDistributor/transaction";
 import { ReceiptType } from "../src/programs/stakePool";
 import { getStakeEntry } from "../src/programs/stakePool/accounts";
 import { findStakeEntryIdFromMint } from "../src/programs/stakePool/utils";
@@ -148,17 +146,21 @@ describe("Stake and claim rewards from treasury", () => {
 
   it("Create Reward Entry", async () => {
     const provider = getProvider();
-    const transaction = new web3.Transaction();
 
     const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
+    const [stakeEntryId] = await findStakeEntryIdFromMint(
+      provider.connection,
+      provider.wallet.publicKey,
+      stakePoolId,
+      originalMint.publicKey
+    );
 
-    await withInitRewardEntry(
-      transaction,
+    const transaction = await initializeRewardEntry(
       provider.connection,
       provider.wallet,
       {
-        mintId: originalMint.publicKey,
-        rewardDistributorId: rewardDistributorId,
+        originalMintId: originalMint.publicKey,
+        stakePoolId: stakePoolId,
       }
     );
 
@@ -177,7 +179,7 @@ describe("Stake and claim rewards from treasury", () => {
 
     const [rewardEntryId] = await findRewardEntryId(
       rewardDistributorId,
-      originalMint.publicKey
+      stakeEntryId
     );
 
     const rewardEntryData = await getRewardEntry(
@@ -189,12 +191,12 @@ describe("Stake and claim rewards from treasury", () => {
       rewardDistributorId.toString()
     );
 
-    expect(rewardEntryData.parsed.mint.toString()).to.eq(
-      originalMint.publicKey.toString()
+    expect(rewardEntryData.parsed.stakeEntry.toString()).to.eq(
+      stakeEntryId.toString()
     );
   });
 
-  it("Init stake entry abd mint", async () => {
+  it("Init stake entry and mint", async () => {
     const provider = getProvider();
     let transaction: web3.Transaction;
 

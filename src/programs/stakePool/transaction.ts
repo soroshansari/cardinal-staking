@@ -406,7 +406,7 @@ export const withUnstake = async (
   if (rewardDistributorData) {
     await withClaimRewards(transaction, connection, wallet, {
       stakePoolId: params.stakePoolId,
-      originalMint: params.originalMintId,
+      stakeEntryId: stakeEntryId,
     });
   }
 

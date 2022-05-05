@@ -10,7 +10,6 @@ import type {
 } from "@solana/web3.js";
 import { SystemProgram } from "@solana/web3.js";
 
-import { findStakeEntryIdFromMint } from "../stakePool/utils";
 import type { REWARD_DISTRIBUTOR_PROGRAM } from ".";
 import { REWARD_DISTRIBUTOR_ADDRESS, REWARD_DISTRIBUTOR_IDL } from ".";
 import type { RewardDistributorKind } from "./constants";
@@ -65,7 +64,7 @@ export const initRewardEntry = async (
   connection: Connection,
   wallet: Wallet,
   params: {
-    mint: PublicKey;
+    stakeEntryId: PublicKey;
     rewardDistributor: PublicKey;
   }
 ): Promise<TransactionInstruction> => {
@@ -77,21 +76,17 @@ export const initRewardEntry = async (
   );
   const [rewardEntryId] = await findRewardEntryId(
     params.rewardDistributor,
-    params.mint
+    params.stakeEntryId
   );
-  return rewardDistributorProgram.instruction.initRewardEntry(
-    {
-      mint: params.mint,
+  return rewardDistributorProgram.instruction.initRewardEntry({
+    accounts: {
+      rewardEntry: rewardEntryId,
+      stakeEntry: params.stakeEntryId,
+      rewardDistributor: params.rewardDistributor,
+      payer: wallet.publicKey,
+      systemProgram: SystemProgram.programId,
     },
-    {
-      accounts: {
-        rewardEntry: rewardEntryId,
-        rewardDistributor: params.rewardDistributor,
-        payer: wallet.publicKey,
-        systemProgram: SystemProgram.programId,
-      },
-    }
-  );
+  });
 };
 
 export const claimRewards = async (
@@ -99,7 +94,7 @@ export const claimRewards = async (
   wallet: Wallet,
   params: {
     stakePoolId: PublicKey;
-    originalMintId: PublicKey;
+    stakeEntryId: PublicKey;
     rewardMintId: PublicKey;
     rewardMintTokenAccountId: PublicKey;
     remainingAccountsForKind: AccountMeta[];
@@ -115,21 +110,16 @@ export const claimRewards = async (
   const [rewardDistributorId] = await findRewardDistributorId(
     params.stakePoolId
   );
-  const [[rewardEntryId], [stakeEntryId]] = await Promise.all([
-    findRewardEntryId(rewardDistributorId, params.originalMintId),
-    findStakeEntryIdFromMint(
-      connection,
-      wallet.publicKey,
-      params.stakePoolId,
-      params.originalMintId
-    ),
-  ]);
+  const [rewardEntryId] = await findRewardEntryId(
+    rewardDistributorId,
+    params.stakeEntryId
+  );
 
   return rewardDistributorProgram.instruction.claimRewards({
     accounts: {
       rewardEntry: rewardEntryId,
       rewardDistributor: rewardDistributorId,
-      stakeEntry: stakeEntryId,
+      stakeEntry: params.stakeEntryId,
       stakePool: params.stakePoolId,
       rewardMint: params.rewardMintId,
       userRewardMintTokenAccount: params.rewardMintTokenAccountId,
@@ -178,7 +168,7 @@ export const updateRewardEntry = async (
   wallet: Wallet,
   params: {
     stakePoolId: PublicKey;
-    mintId: PublicKey;
+    stakeEntryId: PublicKey;
     multiplier: BN;
   }
 ): Promise<TransactionInstruction> => {
@@ -195,11 +185,13 @@ export const updateRewardEntry = async (
 
   const [rewardEntryId] = await findRewardEntryId(
     rewardDistributorId,
-    params.mintId
+    params.stakeEntryId
   );
 
   return rewardDistributorProgram.instruction.updateRewardEntry(
-    { multiplier: params.multiplier },
+    {
+      multiplier: params.multiplier,
+    },
     {
       accounts: {
         rewardEntry: rewardEntryId,
@@ -230,6 +222,65 @@ export const closeRewardEntry = (
       rewardDistributor: params.rewardDistributorId,
       rewardEntry: params.rewardEntryId,
       authority: wallet.publicKey,
+    },
+  });
+};
+
+export const migrateRewardEntry = async (
+  connection: Connection,
+  wallet: Wallet,
+  params: {
+    rewardEntryV0Id: PublicKey;
+    stakeEntryId: PublicKey;
+    rewardDistributorId: PublicKey;
+  }
+): Promise<TransactionInstruction> => {
+  const provider = new AnchorProvider(connection, wallet, {});
+  const rewardDistributorProgram = new Program<REWARD_DISTRIBUTOR_PROGRAM>(
+    REWARD_DISTRIBUTOR_IDL,
+    REWARD_DISTRIBUTOR_ADDRESS,
+    provider
+  );
+  const [rewardEntryId] = await findRewardEntryId(
+    params.rewardDistributorId,
+    params.stakeEntryId
+  );
+  return rewardDistributorProgram.instruction.migrateRewardEntry({
+    accounts: {
+      rewardEntryV0: params.rewardEntryV0Id,
+      rewardEntry: rewardEntryId,
+      stakeEntry: params.stakeEntryId,
+      rewardDistributor: params.rewardDistributorId,
+      migrator: wallet.publicKey,
+      systemProgram: SystemProgram.programId,
+    },
+  });
+};
+
+export const fixRewardEntry = async (
+  connection: Connection,
+  wallet: Wallet,
+  params: {
+    stakeEntryId: PublicKey;
+    rewardDistributorId: PublicKey;
+  }
+): Promise<TransactionInstruction> => {
+  const provider = new AnchorProvider(connection, wallet, {});
+  const rewardDistributorProgram = new Program<REWARD_DISTRIBUTOR_PROGRAM>(
+    REWARD_DISTRIBUTOR_IDL,
+    REWARD_DISTRIBUTOR_ADDRESS,
+    provider
+  );
+  const [rewardEntryId] = await findRewardEntryId(
+    params.rewardDistributorId,
+    params.stakeEntryId
+  );
+  return rewardDistributorProgram.instruction.fixRewardEntry({
+    accounts: {
+      rewardEntry: rewardEntryId,
+      stakeEntry: params.stakeEntryId,
+      rewardDistributor: params.rewardDistributorId,
+      migrator: wallet.publicKey,
     },
   });
 };

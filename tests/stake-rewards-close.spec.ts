@@ -10,7 +10,7 @@ import type * as splToken from "@solana/spl-token";
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import { expect } from "chai";
 
-import { createStakeEntry, createStakePool, stake, unstake } from "../src";
+import { createStakePool, initializeRewardEntry, stake, unstake } from "../src";
 import { RewardDistributorKind } from "../src/programs/rewardDistributor";
 import {
   getRewardDistributor,
@@ -24,7 +24,6 @@ import {
   withCloseRewardDistributor,
   withCloseRewardEntry,
   withInitRewardDistributor,
-  withInitRewardEntry,
 } from "../src/programs/rewardDistributor/transaction";
 import { ReceiptType } from "../src/programs/stakePool";
 import { getStakeEntry } from "../src/programs/stakePool/accounts";
@@ -143,17 +142,21 @@ describe("Stake claim rewards and close", () => {
 
   it("Create Reward Entry", async () => {
     const provider = getProvider();
-    const transaction = new Transaction();
 
     const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
+    const [stakeEntryId] = await findStakeEntryIdFromMint(
+      provider.connection,
+      provider.wallet.publicKey,
+      stakePoolId,
+      originalMint.publicKey
+    );
 
-    await withInitRewardEntry(
-      transaction,
+    const transaction = await initializeRewardEntry(
       provider.connection,
       provider.wallet,
       {
-        mintId: originalMint.publicKey,
-        rewardDistributorId: rewardDistributorId,
+        originalMintId: originalMint.publicKey,
+        stakePoolId: stakePoolId,
       }
     );
 
@@ -172,7 +175,7 @@ describe("Stake claim rewards and close", () => {
 
     const [rewardEntryId] = await findRewardEntryId(
       rewardDistributorId,
-      originalMint.publicKey
+      stakeEntryId
     );
 
     const rewardEntryData = await getRewardEntry(
@@ -184,29 +187,9 @@ describe("Stake claim rewards and close", () => {
       rewardDistributorId.toString()
     );
 
-    expect(rewardEntryData.parsed.mint.toString()).to.eq(
-      originalMint.publicKey.toString()
+    expect(rewardEntryData.parsed.stakeEntry.toString()).to.eq(
+      stakeEntryId.toString()
     );
-  });
-
-  it("Init stake entry for pool", async () => {
-    const provider = getProvider();
-
-    const [transaction, _] = await createStakeEntry(
-      provider.connection,
-      provider.wallet,
-      {
-        stakePoolId: stakePoolId,
-        originalMintId: originalMint.publicKey,
-      }
-    );
-
-    await expectTXTable(
-      new TransactionEnvelope(SolanaProvider.init(provider), [
-        ...transaction.instructions,
-      ]),
-      "Init stake entry"
-    ).to.be.fulfilled;
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
@@ -341,13 +324,20 @@ describe("Stake claim rewards and close", () => {
   it("Close reward entry", async () => {
     const provider = getProvider();
     const transaction = new Transaction();
+
+    const [stakeEntryId] = await findStakeEntryIdFromMint(
+      provider.connection,
+      provider.wallet.publicKey,
+      stakePoolId,
+      originalMint.publicKey
+    );
     await withCloseRewardEntry(
       transaction,
       provider.connection,
       provider.wallet,
       {
         stakePoolId: stakePoolId,
-        mintId: originalMint.publicKey,
+        stakeEntryId: stakeEntryId,
       }
     );
     await expectTXTable(

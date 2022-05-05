@@ -243,13 +243,19 @@ describe("Stake and claim rewards from treasury", () => {
   it("Claim Rewards", async () => {
     await delay(6000);
     const provider = getProvider();
+    const [stakeEntryId] = await findStakeEntryIdFromMint(
+      provider.connection,
+      provider.wallet.publicKey,
+      stakePoolId,
+      originalMint.publicKey
+    );
 
     const transaction = await claimRewards(
       provider.connection,
       provider.wallet,
       {
         stakePoolId: stakePoolId,
-        originalMintId: originalMint.publicKey,
+        stakeEntryId: stakeEntryId,
       }
     );
 

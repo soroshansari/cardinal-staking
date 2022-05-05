@@ -1,13 +1,17 @@
 pub mod claim_rewards;
 pub mod close_reward_distributor;
 pub mod close_reward_entry;
+pub mod fix_reward_entry;
 pub mod init_reward_distributor;
 pub mod init_reward_entry;
+pub mod migrate_reward_entry;
 pub mod update_reward_entry;
 
 pub use claim_rewards::*;
 pub use close_reward_distributor::*;
 pub use close_reward_entry::*;
+pub use fix_reward_entry::*;
 pub use init_reward_distributor::*;
 pub use init_reward_entry::*;
+pub use migrate_reward_entry::*;
 pub use update_reward_entry::*;

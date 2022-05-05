@@ -13,13 +13,13 @@ import {
  */
 export const findRewardEntryId = async (
   rewardDistributorId: PublicKey,
-  mintId: PublicKey
+  stakeEntryId: PublicKey
 ): Promise<[PublicKey, number]> => {
   return PublicKey.findProgramAddress(
     [
       utils.bytes.utf8.encode(REWARD_ENTRY_SEED),
       rewardDistributorId.toBuffer(),
-      mintId.toBuffer(),
+      stakeEntryId.toBuffer(),
     ],
     REWARD_DISTRIBUTOR_ADDRESS
   );
