@@ -272,7 +272,7 @@ export const getStakeAuthorizations = async (
   );
 
   const stakeAuthorizations =
-    (await stakePoolProgram.account.stakeEntry.fetchMultiple(
+    (await stakePoolProgram.account.stakeAuthorizationRecord.fetchMultiple(
       stakeAuthorizationIds
     )) as StakeAuthorizationData[];
 
