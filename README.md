@@ -59,7 +59,7 @@ pub struct StakePool {
 }
 ```
 
-Requires_creators, requires_collections and requires_authorization are the 3 different ways that a stake pool can gate which NFTs can be staked in the pool. 
+Requires_creators, requires_collections and requires_authorization are the 3 different ways that a stake pool can gate which NFTs can be staked in the pool.
 
 - requires_creators
   - As it sounds, this is a filter on the NFT "creators" array (as stored in metaplex metadata https://docs.metaplex.com/token-metadata/specification).
@@ -73,7 +73,7 @@ Requires_creators, requires_collections and requires_authorization are the 3 dif
   - This is purely additive, so if you want add more mints in addition to those passing the creators/collections check, you can leverage this feature.
   - Requires authorization can be used when the requires_creators and required_collections arrays are empty to enforce a random mint list.
 
-Overlay text is used when creating receipts. This text will be automatically displayed on top of the NFT to indicate it is currently staked. For example, it could be "STAKED" or "TRAINING" as shown below. 
+Overlay text is used when creating receipts. This text will be automatically displayed on top of the NFT to indicate it is currently staked. For example, it could be "STAKED" or "TRAINING" as shown below.
 
 <div style="text-align: center; width: 100%;">
   <img style="height: 250px" src="./images/example-staked.png" />
@@ -87,7 +87,7 @@ Every time a new NFT is staked, a stake entry must first be created. This can ha
 
 Stake entries also retain ownership of the given mint(s) while it is staked.
 
-There are separate instructions for `stake` and `claim_receipt_mint`. Read below to learn more about receipts. The client will automatically stake the NFT  and then optionally claim a receipt that can either contain the "orginal" mint OR a dynamic/mutable copy receipt mint. 
+There are separate instructions for `stake` and `claim_receipt_mint`. Read below to learn more about receipts. The client will automatically stake the NFT and then optionally claim a receipt that can either contain the "orginal" mint OR a dynamic/mutable copy receipt mint.
 
 Either or both of these mints must be returned to the `stake_entry` before the user can unstake. This will be done automatically when calling the `unstake` API.
 
@@ -132,7 +132,7 @@ Stake pool is designed to support general staking as well as a enable the concep
 
 While just using the `stake_pool` can be sufficient to keep track of total stake duration and lock the NFT in the user's wallet, a reward distributor can be optionally added to distribute rewards to staked NFTs.
 
-Reward distributor is modeled similar to a stake pool, having both a `reward_distributor` and a  `reward_entry`. The reward entry is unique for each mint and keeps track how many reward have been given out to that NFT to ensure that it gets its fair share.
+Reward distributor is modeled similar to a stake pool, having both a `reward_distributor` and a `reward_entry`. The reward entry is unique for each mint and keeps track how many reward have been given out to that NFT to ensure that it gets its fair share.
 
 As mentioned above, reward distibutor is a basic example of a fixed linear payout structure, but modeling this as a separate program allows for arbitrary pluggable reward logic for reward distribution.
 
@@ -155,10 +155,9 @@ pub struct RewardDistributor {
 #[account]
 pub struct RewardEntry {
     pub bump: u8,
-    pub mint: Pubkey,
+    pub stake_entry: Pubkey,
     pub reward_distributor: Pubkey,
     pub reward_seconds_received: u64,
-    pub reward_amount_received: u64,
     pub multiplier: u64,
 }
 ```

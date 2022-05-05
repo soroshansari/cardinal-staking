@@ -23,6 +23,7 @@ export type RewardDistributorTypes = AnchorTypes<REWARD_DISTRIBUTOR_PROGRAM>;
 
 type Accounts = RewardDistributorTypes["Accounts"];
 export type RewardEntryData = Accounts["rewardEntry"];
+export type RewardEntryV0Data = Accounts["rewardEntryV0"];
 export type RewardDistributorData = Accounts["rewardDistributor"];
 
 export enum RewardDistributorKind {

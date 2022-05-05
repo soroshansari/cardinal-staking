@@ -59,6 +59,11 @@ export type CardinalRewardDistributor = {
           isSigner: false;
         },
         {
+          name: "stakeEntry";
+          isMut: false;
+          isSigner: false;
+        },
+        {
           name: "rewardDistributor";
           isMut: false;
           isSigner: false;
@@ -74,14 +79,7 @@ export type CardinalRewardDistributor = {
           isSigner: false;
         }
       ];
-      args: [
-        {
-          name: "ix";
-          type: {
-            defined: "InitRewardEntryIx";
-          };
-        }
-      ];
+      args: [];
     },
     {
       name: "claimRewards";
@@ -218,11 +216,101 @@ export type CardinalRewardDistributor = {
         }
       ];
       args: [];
+    },
+    {
+      name: "migrateRewardEntry";
+      accounts: [
+        {
+          name: "rewardEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "rewardDistributor";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "rewardEntryV0";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "stakeEntry";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "migrator";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [];
+    },
+    {
+      name: "fixRewardEntry";
+      accounts: [
+        {
+          name: "rewardEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "rewardDistributor";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "stakeEntry";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "migrator";
+          isMut: false;
+          isSigner: true;
+        }
+      ];
+      args: [];
     }
   ];
   accounts: [
     {
       name: "rewardEntry";
+      type: {
+        kind: "struct";
+        fields: [
+          {
+            name: "bump";
+            type: "u8";
+          },
+          {
+            name: "stakeEntry";
+            type: "publicKey";
+          },
+          {
+            name: "rewardDistributor";
+            type: "publicKey";
+          },
+          {
+            name: "rewardSecondsReceived";
+            type: "u128";
+          },
+          {
+            name: "multiplier";
+            type: "u64";
+          }
+        ];
+      };
+    },
+    {
+      name: "rewardEntryV0";
       type: {
         kind: "struct";
         fields: [
@@ -334,18 +422,6 @@ export type CardinalRewardDistributor = {
       };
     },
     {
-      name: "InitRewardEntryIx";
-      type: {
-        kind: "struct";
-        fields: [
-          {
-            name: "mint";
-            type: "publicKey";
-          }
-        ];
-      };
-    },
-    {
       name: "UpdateRewardEntryIx";
       type: {
         kind: "struct";
@@ -427,6 +503,16 @@ export type CardinalRewardDistributor = {
       code: 6010;
       name: "DistributorAlreadyClosed";
       msg: "Distributor is already closed";
+    },
+    {
+      code: 6011;
+      name: "InvalidStakeEntry";
+      msg: "Invalid stake entry";
+    },
+    {
+      code: 6012;
+      name: "InvalidRewardEntry";
+      msg: "Invalid reward entry";
     }
   ];
 };
@@ -492,6 +578,11 @@ export const IDL: CardinalRewardDistributor = {
           isSigner: false,
         },
         {
+          name: "stakeEntry",
+          isMut: false,
+          isSigner: false,
+        },
+        {
           name: "rewardDistributor",
           isMut: false,
           isSigner: false,
@@ -507,14 +598,7 @@ export const IDL: CardinalRewardDistributor = {
           isSigner: false,
         },
       ],
-      args: [
-        {
-          name: "ix",
-          type: {
-            defined: "InitRewardEntryIx",
-          },
-        },
-      ],
+      args: [],
     },
     {
       name: "claimRewards",
@@ -652,10 +736,100 @@ export const IDL: CardinalRewardDistributor = {
       ],
       args: [],
     },
+    {
+      name: "migrateRewardEntry",
+      accounts: [
+        {
+          name: "rewardEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "rewardDistributor",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "rewardEntryV0",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "stakeEntry",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "migrator",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "fixRewardEntry",
+      accounts: [
+        {
+          name: "rewardEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "rewardDistributor",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "stakeEntry",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "migrator",
+          isMut: false,
+          isSigner: true,
+        },
+      ],
+      args: [],
+    },
   ],
   accounts: [
     {
       name: "rewardEntry",
+      type: {
+        kind: "struct",
+        fields: [
+          {
+            name: "bump",
+            type: "u8",
+          },
+          {
+            name: "stakeEntry",
+            type: "publicKey",
+          },
+          {
+            name: "rewardDistributor",
+            type: "publicKey",
+          },
+          {
+            name: "rewardSecondsReceived",
+            type: "u128",
+          },
+          {
+            name: "multiplier",
+            type: "u64",
+          },
+        ],
+      },
+    },
+    {
+      name: "rewardEntryV0",
       type: {
         kind: "struct",
         fields: [
@@ -767,18 +941,6 @@ export const IDL: CardinalRewardDistributor = {
       },
     },
     {
-      name: "InitRewardEntryIx",
-      type: {
-        kind: "struct",
-        fields: [
-          {
-            name: "mint",
-            type: "publicKey",
-          },
-        ],
-      },
-    },
-    {
       name: "UpdateRewardEntryIx",
       type: {
         kind: "struct",
@@ -860,6 +1022,16 @@ export const IDL: CardinalRewardDistributor = {
       code: 6010,
       name: "DistributorAlreadyClosed",
       msg: "Distributor is already closed",
+    },
+    {
+      code: 6011,
+      name: "InvalidStakeEntry",
+      msg: "Invalid stake entry",
+    },
+    {
+      code: 6012,
+      name: "InvalidRewardEntry",
+      msg: "Invalid reward entry",
     },
   ],
 };

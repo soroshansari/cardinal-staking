@@ -15,7 +15,7 @@ pub struct ClaimRewardsCtx<'info> {
     #[account(constraint = reward_distributor.stake_pool == stake_pool.key())]
     reward_distributor: Box<Account<'info, RewardDistributor>>,
 
-    #[account(constraint = stake_entry.original_mint == reward_entry.mint)]
+    #[account(constraint = stake_entry.key() == reward_entry.stake_entry @ ErrorCode::InvalidStakeEntry)]
     stake_entry: Box<Account<'info, StakeEntry>>,
     #[account(constraint = stake_pool.key() == stake_entry.pool)]
     stake_pool: Box<Account<'info, StakePool>>,
@@ -56,6 +56,8 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
             .checked_mul(reward_amount as u128)
             .unwrap()
             .checked_mul(reward_entry.multiplier as u128)
+            // .unwrap()
+            // .checked_div(DEFAULT_MULTIPLIER)
             .unwrap();
 
         // if this will go over max supply give rewards up to max supply
@@ -70,6 +72,8 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
                 .checked_mul(reward_duration_seconds)
                 .unwrap()
                 .checked_div(reward_entry.multiplier as u128)
+                // .unwrap()
+                // .checked_div(DEFAULT_MULTIPLIER)
                 .unwrap();
         }
 
@@ -102,6 +106,8 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
                         .checked_mul(reward_duration_seconds)
                         .unwrap()
                         .checked_div(reward_entry.multiplier as u128)
+                        // .unwrap()
+                        // .checked_div(DEFAULT_MULTIPLIER)
                         .unwrap();
                 }
 
@@ -119,7 +125,6 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
         }
         // update values
         reward_distributor.rewards_issued = reward_distributor.rewards_issued.checked_add(reward_amount_to_receive).unwrap();
-        reward_entry.reward_amount_received = reward_entry.reward_amount_received.checked_add(reward_amount_to_receive).unwrap();
         reward_entry.reward_seconds_received = reward_entry.reward_seconds_received.checked_add(reward_time_to_receive).unwrap();
 
         invoke(

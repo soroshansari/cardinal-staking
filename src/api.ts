@@ -5,9 +5,12 @@ import type { Connection } from "@solana/web3.js";
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 
 import type { RewardDistributorKind } from "./programs/rewardDistributor";
+import { findRewardDistributorId } from "./programs/rewardDistributor/pda";
 import {
   withClaimRewards,
   withInitRewardDistributor,
+  withInitRewardEntry,
+  withUpdateRewardEntry,
 } from "./programs/rewardDistributor/transaction";
 import { ReceiptType } from "./programs/stakePool";
 import { getStakeEntry, getStakePool } from "./programs/stakePool/accounts";
@@ -135,6 +138,58 @@ export const createStakeEntry = async (
 };
 
 /**
+ * Convenience call to create a stake entry
+ * @param connection - Connection to use
+ * @param wallet - Wallet to use
+ * @param stakePoolId - Stake pool ID
+ * @param originalMintId - Original mint ID
+ * @returns
+ */
+export const initializeRewardEntry = async (
+  connection: Connection,
+  wallet: Wallet,
+  params: {
+    stakePoolId: PublicKey;
+    originalMintId: PublicKey;
+    multiplier?: BN;
+  }
+): Promise<Transaction> => {
+  const [stakeEntryId] = await findStakeEntryIdFromMint(
+    connection,
+    wallet.publicKey,
+    params.stakePoolId,
+    params.originalMintId
+  );
+  const stakeEntryData = await tryGetAccount(() =>
+    getStakeEntry(connection, stakeEntryId)
+  );
+
+  const transaction = new Transaction();
+  if (!stakeEntryData) {
+    await withInitStakeEntry(transaction, connection, wallet, {
+      stakePoolId: params.stakePoolId,
+      originalMintId: params.originalMintId,
+    });
+  }
+
+  const [rewardDistributorId] = await findRewardDistributorId(
+    params.stakePoolId
+  );
+  await withInitRewardEntry(transaction, connection, wallet, {
+    stakeEntryId: stakeEntryId,
+    rewardDistributorId: rewardDistributorId,
+  });
+
+  await withUpdateRewardEntry(transaction, connection, wallet, {
+    stakePoolId: params.stakePoolId,
+    rewardDistributorId: rewardDistributorId,
+    stakeEntryId: stakeEntryId,
+    multiplier: params.multiplier ?? new BN(1), //TODO default multiplier
+  });
+  return transaction;
+};
+
+/**
  * Convenience call to authorize a stake entry
  * @param connection - Connection to use
  * @param wallet - Wallet to use
@@ -215,7 +270,7 @@ export const createStakeEntryAndStakeMint = async (
  * @param connection - Connection to use
  * @param wallet - Wallet to use
  * @param stakePoolId - Stake pool id
- * @param originalMintId - Original mint id
+ * @param stakeEntryId - Original mint id
  * @returns
  */
 export const claimRewards = async (
@@ -223,25 +278,19 @@ export const claimRewards = async (
   wallet: Wallet,
   params: {
     stakePoolId: PublicKey;
-    originalMintId: PublicKey;
+    stakeEntryId: PublicKey;
   }
 ): Promise<Transaction> => {
   const transaction = new Transaction();
-  const [stakeEntryId] = await findStakeEntryIdFromMint(
-    connection,
-    wallet.publicKey,
-    params.stakePoolId,
-    params.originalMintId
-  );
 
   withUpdateTotalStakeSeconds(transaction, connection, wallet, {
-    stakeEntryId: stakeEntryId,
+    stakeEntryId: params.stakeEntryId,
     lastStaker: wallet.publicKey,
   });
 
   await withClaimRewards(transaction, connection, wallet, {
     stakePoolId: params.stakePoolId,
-    originalMint: params.originalMintId,
+    stakeEntryId: params.stakeEntryId,
   });
 
   return transaction;

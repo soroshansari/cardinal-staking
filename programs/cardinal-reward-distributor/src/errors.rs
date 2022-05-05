@@ -24,4 +24,8 @@ pub enum ErrorCode {
     DistributorNotClosed,
     #[msg("Distributor is already closed")]
     DistributorAlreadyClosed,
+    #[msg("Invalid stake entry")]
+    InvalidStakeEntry,
+    #[msg("Invalid reward entry")]
+    InvalidRewardEntry,
 }

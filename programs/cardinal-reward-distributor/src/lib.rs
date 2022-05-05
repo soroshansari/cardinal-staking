@@ -14,8 +14,8 @@ pub mod cardinal_reward_distributor {
         init_reward_distributor::handler(ctx, ix)
     }
 
-    pub fn init_reward_entry(ctx: Context<InitRewardEntryCtx>, ix: InitRewardEntryIx) -> Result<()> {
-        init_reward_entry::handler(ctx, ix)
+    pub fn init_reward_entry(ctx: Context<InitRewardEntryCtx>) -> Result<()> {
+        init_reward_entry::handler(ctx)
     }
 
     pub fn claim_rewards<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts, 'remaining, 'info, ClaimRewardsCtx<'info>>) -> Result<()> {
@@ -32,5 +32,13 @@ pub mod cardinal_reward_distributor {
 
     pub fn close_reward_entry(ctx: Context<CloseRewardEntryCtx>) -> Result<()> {
         close_reward_entry::handler(ctx)
+    }
+
+    pub fn migrate_reward_entry(ctx: Context<MigrateRewardEntryCtx>) -> Result<()> {
+        migrate_reward_entry::handler(ctx)
+    }
+
+    pub fn fix_reward_entry(ctx: Context<FixRewardEntryCtx>) -> Result<()> {
+        fix_reward_entry::handler(ctx)
     }
 }
