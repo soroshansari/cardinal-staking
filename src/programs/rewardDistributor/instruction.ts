@@ -29,6 +29,8 @@ export const initRewardDistributor = (
     remainingAccountsForKind: AccountMeta[];
     maxSupply?: BN;
     supply?: BN;
+    defaultMultiplier?: BN;
+    multiplierDecimals?: number;
   }
 ): TransactionInstruction => {
   const provider = new AnchorProvider(connection, wallet, {});
@@ -44,6 +46,8 @@ export const initRewardDistributor = (
       maxSupply: params.maxSupply || null,
       supply: params.supply || null,
       kind: params.kind,
+      defaultMultiplier: params.defaultMultiplier || null,
+      multiplierDecimals: params.multiplierDecimals || null,
     },
     {
       accounts: {

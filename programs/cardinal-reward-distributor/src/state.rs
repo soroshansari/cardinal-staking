@@ -7,8 +7,6 @@ pub fn assert_reward_manager(pubkey: &Pubkey) -> bool {
     pubkey.to_string() == Pubkey::from_str("crkdpVWjHWdggGgBuSyAqSmZUmAjYLzD435tcLDRLXr").unwrap().to_string()
 }
 
-// pub const DEFAULT_MULTIPLIER: u128 = 1000;
-
 pub const REWARD_ENTRY_SEED: &str = "reward-entry";
 pub const REWARD_ENTRY_SIZE: usize = 8 + std::mem::size_of::<RewardEntry>() + 64;
 #[account]
@@ -42,6 +40,6 @@ pub struct RewardDistributor {
     pub reward_duration_seconds: u128,
     pub rewards_issued: u128,
     pub max_supply: Option<u64>,
-    // pub default_multiplier: u64,
-    // pub multiplier_scale: u64,
+    pub default_multiplier: u64,
+    pub multiplier_decimals: u8,
 }

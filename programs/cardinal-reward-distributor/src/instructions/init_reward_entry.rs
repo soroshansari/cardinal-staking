@@ -14,6 +14,7 @@ pub struct InitRewardEntryCtx<'info> {
     reward_entry: Box<Account<'info, RewardEntry>>,
     #[account(constraint = reward_distributor.stake_pool == stake_entry.pool)]
     stake_entry: Box<Account<'info, StakeEntry>>,
+    #[account(mut)]
     reward_distributor: Box<Account<'info, RewardDistributor>>,
     #[account(mut)]
     payer: Signer<'info>,
@@ -26,6 +27,9 @@ pub fn handler(ctx: Context<InitRewardEntryCtx>) -> Result<()> {
     reward_entry.reward_distributor = ctx.accounts.reward_distributor.key();
     reward_entry.stake_entry = ctx.accounts.stake_entry.key();
     reward_entry.reward_seconds_received = 0;
-    reward_entry.multiplier = 1; // reward_distributor.default_multiplier;
+    if ctx.accounts.reward_distributor.default_multiplier == 0 {
+        ctx.accounts.reward_distributor.default_multiplier = 1
+    }
+    reward_entry.multiplier = ctx.accounts.reward_distributor.default_multiplier;
     Ok(())
 }

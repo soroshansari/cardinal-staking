@@ -32,6 +32,8 @@ export const withInitRewardDistributor = async (
     kind?: RewardDistributorKind;
     maxSupply?: BN;
     supply?: BN;
+    defaultMultiplier?: BN;
+    multiplierDecimals?: number;
   }
 ): Promise<[Transaction, web3.PublicKey]> => {
   const [rewardDistributorId] = await findRewardDistributorId(
@@ -56,6 +58,8 @@ export const withInitRewardDistributor = async (
       remainingAccountsForKind,
       maxSupply: params.maxSupply,
       supply: params.supply,
+      defaultMultiplier: params.defaultMultiplier,
+      multiplierDecimals: params.multiplierDecimals,
     })
   );
   return [transaction, rewardDistributorId];

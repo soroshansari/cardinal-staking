@@ -58,8 +58,8 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
             .checked_mul(reward_amount as u128)
             .unwrap()
             .checked_mul(reward_entry.multiplier as u128)
-            // .unwrap()
-            // .checked_div(DEFAULT_MULTIPLIER)
+            .unwrap()
+            .checked_div((10 as u128).checked_pow(reward_distributor.multiplier_decimals as u32).unwrap())
             .unwrap();
 
         // if this will go over max supply give rewards up to max supply
