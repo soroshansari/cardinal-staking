@@ -216,68 +216,6 @@ export type CardinalRewardDistributor = {
         }
       ];
       args: [];
-    },
-    {
-      name: "migrateRewardEntry";
-      accounts: [
-        {
-          name: "rewardEntry";
-          isMut: true;
-          isSigner: false;
-        },
-        {
-          name: "rewardDistributor";
-          isMut: false;
-          isSigner: false;
-        },
-        {
-          name: "rewardEntryV0";
-          isMut: true;
-          isSigner: false;
-        },
-        {
-          name: "stakeEntry";
-          isMut: false;
-          isSigner: false;
-        },
-        {
-          name: "migrator";
-          isMut: true;
-          isSigner: true;
-        },
-        {
-          name: "systemProgram";
-          isMut: false;
-          isSigner: false;
-        }
-      ];
-      args: [];
-    },
-    {
-      name: "fixRewardEntry";
-      accounts: [
-        {
-          name: "rewardEntry";
-          isMut: true;
-          isSigner: false;
-        },
-        {
-          name: "rewardDistributor";
-          isMut: false;
-          isSigner: false;
-        },
-        {
-          name: "stakeEntry";
-          isMut: false;
-          isSigner: false;
-        },
-        {
-          name: "migrator";
-          isMut: false;
-          isSigner: true;
-        }
-      ];
-      args: [];
     }
   ];
   accounts: [
@@ -300,38 +238,6 @@ export type CardinalRewardDistributor = {
           },
           {
             name: "rewardSecondsReceived";
-            type: "u128";
-          },
-          {
-            name: "multiplier";
-            type: "u64";
-          }
-        ];
-      };
-    },
-    {
-      name: "rewardEntryV0";
-      type: {
-        kind: "struct";
-        fields: [
-          {
-            name: "bump";
-            type: "u8";
-          },
-          {
-            name: "mint";
-            type: "publicKey";
-          },
-          {
-            name: "rewardDistributor";
-            type: "publicKey";
-          },
-          {
-            name: "rewardSecondsReceived";
-            type: "u128";
-          },
-          {
-            name: "rewardAmountReceived";
             type: "u128";
           },
           {
@@ -736,68 +642,6 @@ export const IDL: CardinalRewardDistributor = {
       ],
       args: [],
     },
-    {
-      name: "migrateRewardEntry",
-      accounts: [
-        {
-          name: "rewardEntry",
-          isMut: true,
-          isSigner: false,
-        },
-        {
-          name: "rewardDistributor",
-          isMut: false,
-          isSigner: false,
-        },
-        {
-          name: "rewardEntryV0",
-          isMut: true,
-          isSigner: false,
-        },
-        {
-          name: "stakeEntry",
-          isMut: false,
-          isSigner: false,
-        },
-        {
-          name: "migrator",
-          isMut: true,
-          isSigner: true,
-        },
-        {
-          name: "systemProgram",
-          isMut: false,
-          isSigner: false,
-        },
-      ],
-      args: [],
-    },
-    {
-      name: "fixRewardEntry",
-      accounts: [
-        {
-          name: "rewardEntry",
-          isMut: true,
-          isSigner: false,
-        },
-        {
-          name: "rewardDistributor",
-          isMut: false,
-          isSigner: false,
-        },
-        {
-          name: "stakeEntry",
-          isMut: false,
-          isSigner: false,
-        },
-        {
-          name: "migrator",
-          isMut: false,
-          isSigner: true,
-        },
-      ],
-      args: [],
-    },
   ],
   accounts: [
     {
@@ -819,38 +663,6 @@ export const IDL: CardinalRewardDistributor = {
           },
           {
             name: "rewardSecondsReceived",
-            type: "u128",
-          },
-          {
-            name: "multiplier",
-            type: "u64",
-          },
-        ],
-      },
-    },
-    {
-      name: "rewardEntryV0",
-      type: {
-        kind: "struct",
-        fields: [
-          {
-            name: "bump",
-            type: "u8",
-          },
-          {
-            name: "mint",
-            type: "publicKey",
-          },
-          {
-            name: "rewardDistributor",
-            type: "publicKey",
-          },
-          {
-            name: "rewardSecondsReceived",
-            type: "u128",
-          },
-          {
-            name: "rewardAmountReceived",
             type: "u128",
           },
           {
