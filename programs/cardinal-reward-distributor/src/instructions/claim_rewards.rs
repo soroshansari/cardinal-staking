@@ -49,8 +49,10 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
 
     let reward_seconds_received = reward_entry.reward_seconds_received;
     if reward_seconds_received <= stake_entry.total_stake_seconds && (reward_distributor.max_supply == None || reward_distributor.rewards_issued < reward_distributor.max_supply.unwrap() as u128) {
-        let mut reward_time_to_receive = stake_entry.total_stake_seconds.checked_sub(reward_seconds_received).unwrap();
-        let mut reward_amount_to_receive = reward_time_to_receive
+        let mut reward_amount_to_receive = stake_entry
+            .total_stake_seconds
+            .checked_sub(reward_seconds_received)
+            .unwrap()
             .checked_div(reward_duration_seconds)
             .unwrap()
             .checked_mul(reward_amount as u128)
@@ -63,18 +65,6 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
         // if this will go over max supply give rewards up to max supply
         if reward_distributor.max_supply != None && reward_distributor.rewards_issued.checked_add(reward_amount_to_receive).unwrap() >= reward_distributor.max_supply.unwrap() as u128 {
             reward_amount_to_receive = (reward_distributor.max_supply.unwrap() as u128).checked_sub(reward_distributor.rewards_issued).unwrap();
-
-            // this is nuanced about if the rewards are closed, should they get the reward time for that time even though they didnt get any rewards?
-            // this only matters if the reward distributor becomes open again and they missed out on some rewards they coudlve gotten
-            reward_time_to_receive = reward_amount_to_receive
-                .checked_div(reward_amount as u128)
-                .unwrap()
-                .checked_mul(reward_duration_seconds)
-                .unwrap()
-                .checked_div(reward_entry.multiplier as u128)
-                // .unwrap()
-                // .checked_div(DEFAULT_MULTIPLIER)
-                .unwrap();
         }
 
         // mint to the user
@@ -97,18 +87,6 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
 
                 if reward_amount_to_receive > reward_distributor_token_account.amount as u128 {
                     reward_amount_to_receive = reward_distributor_token_account.amount as u128;
-
-                    // this is nuanced about if the rewards are closed, should they get the reward time for that time even though they didnt get any rewards?
-                    // this only matters if the reward distributor becomes open again and they missed out on some rewards they coudlve gotten
-                    reward_time_to_receive = reward_amount_to_receive
-                        .checked_div(reward_amount as u128)
-                        .unwrap()
-                        .checked_mul(reward_duration_seconds)
-                        .unwrap()
-                        .checked_div(reward_entry.multiplier as u128)
-                        // .unwrap()
-                        // .checked_div(DEFAULT_MULTIPLIER)
-                        .unwrap();
                 }
 
                 let cpi_accounts = token::Transfer {
@@ -124,6 +102,17 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
             _ => return Err(error!(ErrorCode::InvalidRewardDistributorKind)),
         }
         // update values
+        // this is nuanced about if the rewards are closed, should they get the reward time for that time even though they didnt get any rewards?
+        // this only matters if the reward distributor becomes open again and they missed out on some rewards they coudlve gotten
+        let reward_time_to_receive = reward_amount_to_receive
+            .checked_mul(reward_duration_seconds)
+            .unwrap()
+            .checked_div(reward_amount as u128)
+            .unwrap()
+            .checked_div(reward_entry.multiplier as u128)
+            // .unwrap()
+            // .checked_div(DEFAULT_MULTIPLIER)
+            .unwrap();
         reward_distributor.rewards_issued = reward_distributor.rewards_issued.checked_add(reward_amount_to_receive).unwrap();
         reward_entry.reward_seconds_received = reward_entry.reward_seconds_received.checked_add(reward_time_to_receive).unwrap();
 

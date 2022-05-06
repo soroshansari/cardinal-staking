@@ -20,16 +20,6 @@ pub struct RewardEntry {
     pub multiplier: u64,
 }
 
-#[account]
-pub struct RewardEntryV0 {
-    pub bump: u8,
-    pub mint: Pubkey,
-    pub reward_distributor: Pubkey,
-    pub reward_seconds_received: u128,
-    pub reward_amount_received: u128,
-    pub multiplier: u64,
-}
-
 #[derive(Clone, Debug, PartialEq, AnchorSerialize, AnchorDeserialize)]
 #[repr(u8)]
 pub enum RewardDistributorKind {

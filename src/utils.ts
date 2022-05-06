@@ -146,7 +146,6 @@ export const getPendingRewardsForPool = async (
   ]);
 
   return getRewardMap(
-    mintIds,
     stakeEntries,
     rewardEntries,
     rewardDistributor,
@@ -155,9 +154,8 @@ export const getPendingRewardsForPool = async (
 };
 
 /**
- * Get the map of rewards for mintId to rewards and next reward time
+ * Get the map of rewards for stakeEntry to rewards and next reward time
  * Also return the total claimable rewards from this map
- * @param mintIds
  * @param stakeEntries
  * @param rewardEntries
  * @param rewardDistributor
@@ -165,31 +163,27 @@ export const getPendingRewardsForPool = async (
  * @returns
  */
 export const getRewardMap = (
-  mintIds: PublicKey[],
   stakeEntries: AccountData<StakeEntryData>[],
   rewardEntries: AccountData<RewardEntryData>[],
   rewardDistributor: AccountData<RewardDistributorData>,
   remainingRewardAmount: BN
 ): {
   rewardMap: {
-    [mintId: string]: { claimableRewards: BN; nextRewardsIn: BN };
+    [stakeEntryId: string]: { claimableRewards: BN; nextRewardsIn: BN };
   };
   claimableRewards: BN;
 } => {
   const rewardMap: {
-    [mintId: string]: { claimableRewards: BN; nextRewardsIn: BN };
+    [stakeEntryId: string]: { claimableRewards: BN; nextRewardsIn: BN };
   } = {};
 
-  for (let i = 0; i < mintIds.length; i++) {
-    const mintId = mintIds[i]!;
-    const stakeEntry = stakeEntries.find((stakeEntry) =>
-      stakeEntry.parsed.originalMint.equals(mintId)
-    );
+  for (let i = 0; i < stakeEntries.length; i++) {
+    const stakeEntry = stakeEntries[i]!;
     const rewardEntry = rewardEntries.find((rewardEntry) =>
-      rewardEntry?.parsed?.stakeEntry.equals(mintId)
+      rewardEntry?.parsed?.stakeEntry.equals(stakeEntry?.pubkey)
     );
 
-    if (mintId && stakeEntry) {
+    if (stakeEntry) {
       const [claimableRewards, nextRewardsIn] = calculatePendingRewards(
         rewardDistributor,
         stakeEntry,
@@ -197,7 +191,7 @@ export const getRewardMap = (
         remainingRewardAmount,
         Date.now() / 1000
       );
-      rewardMap[mintId.toString()] = {
+      rewardMap[stakeEntry.pubkey.toString()] = {
         claimableRewards,
         nextRewardsIn,
       };
@@ -259,8 +253,8 @@ export const calculatePendingRewards = (
     .mul(stakeEntry.parsed.amount)
     .add(stakeEntry.parsed.totalStakeSeconds)
     .sub(rewardSecondsReceived)
-    .mul(rewardDistributor.parsed.rewardAmount)
     .div(rewardDistributor.parsed.rewardDurationSeconds)
+    .mul(rewardDistributor.parsed.rewardAmount)
     .mul(multiplier);
 
   if (

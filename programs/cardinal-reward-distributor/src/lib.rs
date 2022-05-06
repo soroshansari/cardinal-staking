@@ -33,12 +33,4 @@ pub mod cardinal_reward_distributor {
     pub fn close_reward_entry(ctx: Context<CloseRewardEntryCtx>) -> Result<()> {
         close_reward_entry::handler(ctx)
     }
-
-    pub fn migrate_reward_entry(ctx: Context<MigrateRewardEntryCtx>) -> Result<()> {
-        migrate_reward_entry::handler(ctx)
-    }
-
-    pub fn fix_reward_entry(ctx: Context<FixRewardEntryCtx>) -> Result<()> {
-        fix_reward_entry::handler(ctx)
-    }
 }
