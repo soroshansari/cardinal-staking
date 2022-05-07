@@ -79,7 +79,7 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
             };
             let cpi_program = ctx.accounts.token_program.to_account_info();
             let cpi_context = CpiContext::new(cpi_program, cpi_accounts);
-            token::transfer(cpi_context, ix.supply.unwrap_or(ix.max_supply.unwrap()))?;
+            token::transfer(cpi_context, ix.supply.unwrap_or_else(|| ix.max_supply.unwrap()))?;
         }
         _ => return Err(error!(ErrorCode::InvalidRewardDistributorKind)),
     }
