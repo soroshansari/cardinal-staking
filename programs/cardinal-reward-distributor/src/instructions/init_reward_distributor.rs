@@ -49,8 +49,8 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
     reward_distributor.reward_amount = ix.reward_amount;
     reward_distributor.reward_duration_seconds = ix.reward_duration_seconds as u128;
     reward_distributor.max_supply = ix.max_supply;
-    reward_distributor.default_multiplier = ix.default_multiplier.unwrap_or_else(|| 1);
-    reward_distributor.multiplier_decimals = ix.multiplier_decimals.unwrap_or_else(|| 0);
+    reward_distributor.default_multiplier = ix.default_multiplier.unwrap_or(1);
+    reward_distributor.multiplier_decimals = ix.multiplier_decimals.unwrap_or(0);
 
     let remaining_accs = &mut ctx.remaining_accounts.iter();
     match ix.kind {
@@ -79,7 +79,7 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
             };
             let cpi_program = ctx.accounts.token_program.to_account_info();
             let cpi_context = CpiContext::new(cpi_program, cpi_accounts);
-            token::transfer(cpi_context, ix.supply.unwrap_or_else(|| ix.max_supply.unwrap()))?;
+            token::transfer(cpi_context, ix.supply.unwrap_or(ix.max_supply.unwrap()))?;
         }
         _ => return Err(error!(ErrorCode::InvalidRewardDistributorKind)),
     }

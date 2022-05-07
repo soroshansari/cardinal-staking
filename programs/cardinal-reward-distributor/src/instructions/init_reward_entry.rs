@@ -22,13 +22,14 @@ pub struct InitRewardEntryCtx<'info> {
 }
 
 pub fn handler(ctx: Context<InitRewardEntryCtx>) -> Result<()> {
+    let reward_distributor = &mut ctx.accounts.reward_distributor;
     let reward_entry = &mut ctx.accounts.reward_entry;
     reward_entry.bump = *ctx.bumps.get("reward_entry").unwrap();
-    reward_entry.reward_distributor = ctx.accounts.reward_distributor.key();
+    reward_entry.reward_distributor = reward_distributor.key();
     reward_entry.stake_entry = ctx.accounts.stake_entry.key();
     reward_entry.reward_seconds_received = 0;
-    if ctx.accounts.reward_distributor.default_multiplier == 0 {
-        ctx.accounts.reward_distributor.default_multiplier = 1
+    if reward_distributor.default_multiplier == 0 {
+        reward_distributor.default_multiplier = 1
     }
     reward_entry.multiplier = ctx.accounts.reward_distributor.default_multiplier;
     Ok(())
