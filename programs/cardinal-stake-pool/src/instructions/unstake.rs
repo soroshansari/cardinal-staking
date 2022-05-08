@@ -35,14 +35,14 @@ pub struct UnstakeCtx<'info> {
 }
 
 pub fn handler(ctx: Context<UnstakeCtx>) -> Result<()> {
+    let stake_pool = &mut ctx.accounts.stake_pool;
     let stake_entry = &mut ctx.accounts.stake_entry;
 
     let original_mint = stake_entry.original_mint;
     let user = ctx.accounts.user.key();
-    let stake_pool = stake_entry.pool;
     let seed = get_stake_seed(ctx.accounts.original_mint.supply, user);
 
-    let stake_entry_seed = [STAKE_ENTRY_PREFIX.as_bytes(), stake_pool.as_ref(), original_mint.as_ref(), seed.as_ref(), &[stake_entry.bump]];
+    let stake_entry_seed = [STAKE_ENTRY_PREFIX.as_bytes(), stake_entry.pool.as_ref(), original_mint.as_ref(), seed.as_ref(), &[stake_entry.bump]];
     let stake_entry_signer = &[&stake_entry_seed[..]];
 
     // If receipt has been minted, ensure it is back in the stake_entry
@@ -77,6 +77,7 @@ pub fn handler(ctx: Context<UnstakeCtx>) -> Result<()> {
     stake_entry.original_mint_claimed = false;
     stake_entry.stake_mint_claimed = false;
     stake_entry.amount = 0;
+    stake_pool.staked_entries_counter -= 1;
 
     Ok(())
 }

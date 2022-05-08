@@ -38,6 +38,7 @@ pub struct StakeCtx<'info> {
 }
 
 pub fn handler(ctx: Context<StakeCtx>, amount: u64) -> Result<()> {
+    let stake_pool = &mut ctx.accounts.stake_pool;
     let stake_entry = &mut ctx.accounts.stake_entry;
     if stake_entry.amount > 0 {
         return Err(error!(ErrorCode::StakeEntryAlreadyStaked));
@@ -57,6 +58,7 @@ pub fn handler(ctx: Context<StakeCtx>, amount: u64) -> Result<()> {
     stake_entry.last_staked_at = Clock::get().unwrap().unix_timestamp;
     stake_entry.last_staker = ctx.accounts.user.key();
     stake_entry.amount = amount;
+    stake_pool.staked_entries_counter += 1;
 
     if ctx.accounts.stake_pool.reset_on_stake {
         stake_entry.total_stake_seconds = 0;

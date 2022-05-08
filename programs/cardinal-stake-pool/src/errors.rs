@@ -38,4 +38,8 @@ pub enum ErrorCode {
     StakeEntryAlreadyStaked,
     #[msg("Invalid authority")]
     InvalidAuthority,
+    #[msg("Cannot close staked entry")]
+    CannotCloseStakedEntry,
+    #[msg("Cannot close staked entry")]
+    CannotClosePoolWithStakedEntries,
 }
