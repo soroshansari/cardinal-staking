@@ -24,7 +24,9 @@ import {
 } from "../src/programs/stakePool/transaction";
 import { connectionFor } from "./connection";
 
-const wallet = Keypair.fromSecretKey(utils.bytes.bs58.decode(""));
+const wallet = Keypair.fromSecretKey(
+  utils.bytes.bs58.decode("ENTER_SECRET_KEY")
+); // your wallet's secret key
 
 const pool_skip_list = [""];
 
@@ -77,7 +79,11 @@ const main = async (cluster = "mainnet") => {
           connection,
           new SignerWallet(wallet),
           transaction,
-          {}
+          {
+            confirmOptions: {
+              maxRetries: 3,
+            },
+          }
         );
       } catch (e) {
         console.log(e);
@@ -114,7 +120,11 @@ const main = async (cluster = "mainnet") => {
           connection,
           new SignerWallet(wallet),
           transaction,
-          {}
+          {
+            confirmOptions: {
+              maxRetries: 3,
+            },
+          }
         );
       } catch (e) {
         console.log(e);
@@ -144,7 +154,11 @@ const main = async (cluster = "mainnet") => {
           connection,
           new SignerWallet(wallet),
           transaction,
-          {}
+          {
+            confirmOptions: {
+              maxRetries: 3,
+            },
+          }
         );
         console.log("Successfully closed reward distributor");
       } catch (e) {
@@ -165,7 +179,11 @@ const main = async (cluster = "mainnet") => {
         connection,
         new SignerWallet(wallet),
         transaction,
-        {}
+        {
+          confirmOptions: {
+            maxRetries: 3,
+          },
+        }
       );
     } catch (e) {
       console.log(e);
