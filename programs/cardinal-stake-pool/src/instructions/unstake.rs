@@ -35,14 +35,15 @@ pub struct UnstakeCtx<'info> {
 }
 
 pub fn handler(ctx: Context<UnstakeCtx>) -> Result<()> {
+    let stake_pool = &mut ctx.accounts.stake_pool;
     let stake_entry = &mut ctx.accounts.stake_entry;
 
     let original_mint = stake_entry.original_mint;
     let user = ctx.accounts.user.key();
-    let stake_pool = stake_entry.pool;
+    let stake_pool_key = stake_entry.pool;
     let seed = get_stake_seed(ctx.accounts.original_mint.supply, user);
 
-    let stake_entry_seed = [STAKE_ENTRY_PREFIX.as_bytes(), stake_pool.as_ref(), original_mint.as_ref(), seed.as_ref(), &[stake_entry.bump]];
+    let stake_entry_seed = [STAKE_ENTRY_PREFIX.as_bytes(), stake_pool_key.as_ref(), original_mint.as_ref(), seed.as_ref(), &[stake_entry.bump]];
     let stake_entry_signer = &[&stake_entry_seed[..]];
 
     // If receipt has been minted, ensure it is back in the stake_entry
@@ -58,25 +59,38 @@ pub fn handler(ctx: Context<UnstakeCtx>) -> Result<()> {
         }
     }
 
-    // give back original mint to user
-    let cpi_accounts = token::Transfer {
-        from: ctx.accounts.stake_entry_original_mint_token_account.to_account_info(),
-        to: ctx.accounts.user_original_mint_token_account.to_account_info(),
-        authority: stake_entry.to_account_info(),
-    };
-    let cpi_program = ctx.accounts.token_program.to_account_info();
-    let cpi_context = CpiContext::new(cpi_program, cpi_accounts).with_signer(stake_entry_signer);
-    token::transfer(cpi_context, stake_entry.amount)?;
+    let mut allow_unstake = true;
+    if !stake_pool.cooldown_period.is_none() {
+        if !stake_entry.cooldown_start.is_none() {
+            stake_entry.cooldown_start = Some(Clock::get().unwrap().unix_timestamp);
+            allow_unstake = false;
+        } else if ((Clock::get().unwrap().unix_timestamp - stake_entry.cooldown_start.unwrap()) as u32) < stake_pool.cooldown_period.unwrap() {
+            allow_unstake = false;
+        }
+    }
 
-    stake_entry.total_stake_seconds = stake_entry.total_stake_seconds.saturating_add(
-        (Clock::get().unwrap().unix_timestamp.checked_sub(stake_entry.last_staked_at).unwrap() as u64)
-            .checked_mul(stake_entry.amount)
-            .unwrap() as u128,
-    );
-    stake_entry.last_staker = Pubkey::default();
-    stake_entry.original_mint_claimed = false;
-    stake_entry.stake_mint_claimed = false;
-    stake_entry.amount = 0;
+    if allow_unstake {
+        // give back original mint to user
+        let cpi_accounts = token::Transfer {
+            from: ctx.accounts.stake_entry_original_mint_token_account.to_account_info(),
+            to: ctx.accounts.user_original_mint_token_account.to_account_info(),
+            authority: stake_entry.to_account_info(),
+        };
+        let cpi_program = ctx.accounts.token_program.to_account_info();
+        let cpi_context = CpiContext::new(cpi_program, cpi_accounts).with_signer(stake_entry_signer);
+        token::transfer(cpi_context, stake_entry.amount)?;
+
+        stake_entry.total_stake_seconds = stake_entry.total_stake_seconds.saturating_add(
+            (Clock::get().unwrap().unix_timestamp.checked_sub(stake_entry.last_staked_at).unwrap() as u64)
+                .checked_mul(stake_entry.amount)
+                .unwrap() as u128,
+        );
+        stake_entry.last_staker = Pubkey::default();
+        stake_entry.original_mint_claimed = false;
+        stake_entry.stake_mint_claimed = false;
+        stake_entry.amount = 0;
+        stake_entry.cooldown_start = None;
+    }
 
     Ok(())
 }

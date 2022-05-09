@@ -9,6 +9,7 @@ pub struct InitPoolIx {
     requires_authorization: bool,
     authority: Pubkey,
     reset_on_stake: bool,
+    cooldown_period: Option<u32>,
 }
 
 #[derive(Accounts)]
@@ -42,6 +43,7 @@ pub fn handler(ctx: Context<InitPoolCtx>, ix: InitPoolIx) -> Result<()> {
     stake_pool.image_uri = ix.image_uri;
     stake_pool.authority = ix.authority;
     stake_pool.reset_on_stake = ix.reset_on_stake;
+    stake_pool.cooldown_period = ix.cooldown_period;
 
     let identifier = &mut ctx.accounts.identifier;
     identifier.count += 1;
