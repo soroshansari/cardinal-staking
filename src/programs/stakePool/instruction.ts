@@ -498,3 +498,28 @@ export const closeStakeEntry = (
     },
   });
 };
+
+export const updateStakedEntriesCounter = (
+  connection: Connection,
+  wallet: Wallet,
+  params: {
+    stakePoolId: PublicKey;
+    counter: BN;
+  }
+) => {
+  const provider = new AnchorProvider(connection, wallet, {});
+  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
+    STAKE_POOL_IDL,
+    STAKE_POOL_ADDRESS,
+    provider
+  );
+  return stakePoolProgram.instruction.updateStakedEntriesCounter(
+    params.counter,
+    {
+      accounts: {
+        stakePool: params.stakePoolId,
+        payer: wallet.publicKey,
+      },
+    }
+  );
+};

@@ -33,6 +33,7 @@ import {
   returnReceiptMint,
   stake,
   unstake,
+  updateStakedEntriesCounter,
   updateStakePool,
   updateTotalStakeSeconds,
 } from "./instruction";
@@ -548,6 +549,24 @@ export const withCloseStakeEntry = async (
       stakePoolId: params.stakePoolId,
       stakeEntryId: stakeEntryId,
       authority: wallet.publicKey,
+    })
+  );
+  return transaction;
+};
+
+export const withUpdateStakedEntriesCounter = (
+  transaction: web3.Transaction,
+  connection: web3.Connection,
+  wallet: Wallet,
+  params: {
+    stakePoolId: web3.PublicKey;
+    counter: BN;
+  }
+): web3.Transaction => {
+  transaction.add(
+    updateStakedEntriesCounter(connection, wallet, {
+      stakePoolId: params.stakePoolId,
+      counter: params.counter,
     })
   );
   return transaction;
