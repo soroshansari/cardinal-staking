@@ -74,6 +74,7 @@ export const withInitStakePool = async (
     overlayText?: string;
     imageUri?: string;
     resetOnStake?: boolean;
+    cooldownPeriod?: number;
   }
 ): Promise<[web3.Transaction, web3.PublicKey]> => {
   const [identifierId] = await findIdentifierId();
@@ -102,6 +103,7 @@ export const withInitStakePool = async (
       imageUri: params.imageUri || "",
       authority: wallet.publicKey,
       resetOnStake: params.resetOnStake || false,
+      cooldownPeriod: params.cooldownPeriod || null,
     })
   );
   return [transaction, stakePoolId];

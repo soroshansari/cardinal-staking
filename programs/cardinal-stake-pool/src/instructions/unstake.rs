@@ -61,7 +61,7 @@ pub fn handler(ctx: Context<UnstakeCtx>) -> Result<()> {
 
     let mut allow_unstake = true;
     if !stake_pool.cooldown_period.is_none() {
-        if !stake_entry.cooldown_start.is_none() {
+        if stake_entry.cooldown_start.is_none() {
             stake_entry.cooldown_start = Some(Clock::get().unwrap().unix_timestamp);
             allow_unstake = false;
         } else if ((Clock::get().unwrap().unix_timestamp - stake_entry.cooldown_start.unwrap()) as u32) < stake_pool.cooldown_period.unwrap() {

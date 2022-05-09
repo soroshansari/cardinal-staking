@@ -563,6 +563,12 @@ export type CardinalStakePool = {
             type: {
               option: "publicKey";
             };
+          },
+          {
+            name: "cooldownStart";
+            type: {
+              option: "i64";
+            };
           }
         ];
       };
@@ -611,6 +617,12 @@ export type CardinalStakePool = {
           {
             name: "resetOnStake";
             type: "bool";
+          },
+          {
+            name: "cooldownPeriod";
+            type: {
+              option: "u32";
+            };
           }
         ];
       };
@@ -689,6 +701,12 @@ export type CardinalStakePool = {
           {
             name: "resetOnStake";
             type: "bool";
+          },
+          {
+            name: "cooldownPeriod";
+            type: {
+              option: "u32";
+            };
           }
         ];
       };
@@ -1424,6 +1442,12 @@ export const IDL: CardinalStakePool = {
               option: "publicKey",
             },
           },
+          {
+            name: "cooldownStart",
+            type: {
+              option: "i64",
+            },
+          },
         ],
       },
     },
@@ -1471,6 +1495,12 @@ export const IDL: CardinalStakePool = {
           {
             name: "resetOnStake",
             type: "bool",
+          },
+          {
+            name: "cooldownPeriod",
+            type: {
+              option: "u32",
+            },
           },
         ],
       },
@@ -1549,6 +1579,12 @@ export const IDL: CardinalStakePool = {
           {
             name: "resetOnStake",
             type: "bool",
+          },
+          {
+            name: "cooldownPeriod",
+            type: {
+              option: "u32",
+            },
           },
         ],
       },
