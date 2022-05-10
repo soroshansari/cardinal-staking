@@ -3,7 +3,8 @@
   "compilerOptions": {
     "module": "CommonJS",
     "noEmit": true,
-    "types": ["mocha"]
+    "types": ["mocha"],
+    "noUnusedLocals": false
   },
-  "include": ["src/", "tests/"]
+  "include": ["src/", "tests/", "tools"]
 }
