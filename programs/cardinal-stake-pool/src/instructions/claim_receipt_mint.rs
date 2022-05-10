@@ -102,7 +102,7 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
         issuer: stake_entry.to_account_info(),
     };
     let cpi_ctx = CpiContext::new(ctx.accounts.token_manager_program.to_account_info(), cpi_accounts).with_signer(stake_entry_signer);
-    cardinal_token_manager::cpi::add_invalidator(cpi_ctx, ctx.accounts.user.key())?;
+    cardinal_token_manager::cpi::add_invalidator(cpi_ctx, stake_entry.key())?;
 
     // token manager issue
     let cpi_accounts = cardinal_token_manager::cpi::accounts::IssueCtx {
