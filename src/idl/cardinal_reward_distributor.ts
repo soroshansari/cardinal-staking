@@ -65,7 +65,7 @@ export type CardinalRewardDistributor = {
         },
         {
           name: "rewardDistributor";
-          isMut: false;
+          isMut: true;
           isSigner: false;
         },
         {
@@ -216,6 +216,17 @@ export type CardinalRewardDistributor = {
         }
       ];
       args: [];
+    },
+    {
+      name: "defaultRewardDistributor";
+      accounts: [
+        {
+          name: "rewardDistributor";
+          isMut: true;
+          isSigner: false;
+        }
+      ];
+      args: [];
     }
   ];
   accounts: [
@@ -289,6 +300,14 @@ export type CardinalRewardDistributor = {
             type: {
               option: "u64";
             };
+          },
+          {
+            name: "defaultMultiplier";
+            type: "u64";
+          },
+          {
+            name: "multiplierDecimals";
+            type: "u8";
           }
         ];
       };
@@ -322,6 +341,18 @@ export type CardinalRewardDistributor = {
             name: "maxSupply";
             type: {
               option: "u64";
+            };
+          },
+          {
+            name: "defaultMultiplier";
+            type: {
+              option: "u64";
+            };
+          },
+          {
+            name: "multiplierDecimals";
+            type: {
+              option: "u8";
             };
           }
         ];
@@ -490,7 +521,7 @@ export const IDL: CardinalRewardDistributor = {
         },
         {
           name: "rewardDistributor",
-          isMut: false,
+          isMut: true,
           isSigner: false,
         },
         {
@@ -642,6 +673,17 @@ export const IDL: CardinalRewardDistributor = {
       ],
       args: [],
     },
+    {
+      name: "defaultRewardDistributor",
+      accounts: [
+        {
+          name: "rewardDistributor",
+          isMut: true,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
   ],
   accounts: [
     {
@@ -715,6 +757,14 @@ export const IDL: CardinalRewardDistributor = {
               option: "u64",
             },
           },
+          {
+            name: "defaultMultiplier",
+            type: "u64",
+          },
+          {
+            name: "multiplierDecimals",
+            type: "u8",
+          },
         ],
       },
     },
@@ -747,6 +797,18 @@ export const IDL: CardinalRewardDistributor = {
             name: "maxSupply",
             type: {
               option: "u64",
+            },
+          },
+          {
+            name: "defaultMultiplier",
+            type: {
+              option: "u64",
+            },
+          },
+          {
+            name: "multiplierDecimals",
+            type: {
+              option: "u8",
             },
           },
         ],
