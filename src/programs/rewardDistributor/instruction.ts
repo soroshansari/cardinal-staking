@@ -29,6 +29,8 @@ export const initRewardDistributor = (
     remainingAccountsForKind: AccountMeta[];
     maxSupply?: BN;
     supply?: BN;
+    defaultMultiplier?: BN;
+    multiplierDecimals?: number;
   }
 ): TransactionInstruction => {
   const provider = new AnchorProvider(connection, wallet, {});
@@ -44,6 +46,8 @@ export const initRewardDistributor = (
       maxSupply: params.maxSupply || null,
       supply: params.supply || null,
       kind: params.kind,
+      defaultMultiplier: params.defaultMultiplier || null,
+      multiplierDecimals: params.multiplierDecimals || null,
     },
     {
       accounts: {
@@ -60,27 +64,24 @@ export const initRewardDistributor = (
   );
 };
 
-export const initRewardEntry = async (
+export const initRewardEntry = (
   connection: Connection,
   wallet: Wallet,
   params: {
     stakeEntryId: PublicKey;
     rewardDistributor: PublicKey;
+    rewardEntryId: PublicKey;
   }
-): Promise<TransactionInstruction> => {
+): TransactionInstruction => {
   const provider = new AnchorProvider(connection, wallet, {});
   const rewardDistributorProgram = new Program<REWARD_DISTRIBUTOR_PROGRAM>(
     REWARD_DISTRIBUTOR_IDL,
     REWARD_DISTRIBUTOR_ADDRESS,
     provider
   );
-  const [rewardEntryId] = await findRewardEntryId(
-    params.rewardDistributor,
-    params.stakeEntryId
-  );
   return rewardDistributorProgram.instruction.initRewardEntry({
     accounts: {
-      rewardEntry: rewardEntryId,
+      rewardEntry: params.rewardEntryId,
       stakeEntry: params.stakeEntryId,
       rewardDistributor: params.rewardDistributor,
       payer: wallet.publicKey,

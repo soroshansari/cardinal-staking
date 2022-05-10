@@ -32,6 +32,8 @@ export const withInitRewardDistributor = async (
     kind?: RewardDistributorKind;
     maxSupply?: BN;
     supply?: BN;
+    defaultMultiplier?: BN;
+    multiplierDecimals?: number;
   }
 ): Promise<[Transaction, web3.PublicKey]> => {
   const [rewardDistributorId] = await findRewardDistributorId(
@@ -56,6 +58,8 @@ export const withInitRewardDistributor = async (
       remainingAccountsForKind,
       maxSupply: params.maxSupply,
       supply: params.supply,
+      defaultMultiplier: params.defaultMultiplier,
+      multiplierDecimals: params.multiplierDecimals,
     })
   );
   return [transaction, rewardDistributorId];
@@ -69,13 +73,19 @@ export const withInitRewardEntry = async (
     stakeEntryId: PublicKey;
     rewardDistributorId: PublicKey;
   }
-): Promise<Transaction> => {
-  return transaction.add(
-    await initRewardEntry(connection, wallet, {
+): Promise<[Transaction, PublicKey]> => {
+  const [rewardEntryId] = await findRewardEntryId(
+    params.rewardDistributorId,
+    params.stakeEntryId
+  );
+  transaction.add(
+    initRewardEntry(connection, wallet, {
       stakeEntryId: params.stakeEntryId,
       rewardDistributor: params.rewardDistributorId,
+      rewardEntryId: rewardEntryId,
     })
   );
+  return [transaction, rewardEntryId];
 };
 
 export const withClaimRewards = async (
@@ -122,9 +132,10 @@ export const withClaimRewards = async (
 
     if (!rewardEntryData) {
       transaction.add(
-        await initRewardEntry(connection, wallet, {
+        initRewardEntry(connection, wallet, {
           stakeEntryId: params.stakeEntryId,
           rewardDistributor: rewardDistributorData.pubkey,
+          rewardEntryId: rewardEntryId,
         })
       );
     }
