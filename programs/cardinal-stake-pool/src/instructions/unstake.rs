@@ -77,7 +77,7 @@ pub fn handler(ctx: Context<UnstakeCtx>) -> Result<()> {
     stake_entry.original_mint_claimed = false;
     stake_entry.stake_mint_claimed = false;
     stake_entry.amount = 0;
-    stake_pool.staked_entries_counter -= 1;
+    stake_pool.total_staked = stake_pool.total_staked.checked_sub(1).expect("Sub error");
 
     Ok(())
 }

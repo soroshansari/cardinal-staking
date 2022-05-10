@@ -62,7 +62,7 @@ pub mod cardinal_stake_pool {
         close_stake_entry::handler(ctx)
     }
 
-    pub fn update_staked_entries_counter(ctx: Context<UpdateStakedEntriesCounterCtx>, counter: u64) -> Result<()> {
-        update_staked_entries_counter::handler(ctx, counter)
+    pub fn update_staked_entries_counter(ctx: Context<UpdateTotalStakeCtx>, counter: u64) -> Result<()> {
+        update_total_staked_counter::handler(ctx, counter)
     }
 }

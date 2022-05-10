@@ -634,7 +634,7 @@ export type CardinalStakePool = {
             type: "bool";
           },
           {
-            name: "stakedEntriesCounter";
+            name: "totalStaked";
             type: "u64";
           }
         ];
@@ -1529,7 +1529,7 @@ export const IDL: CardinalStakePool = {
             type: "bool",
           },
           {
-            name: "stakedEntriesCounter",
+            name: "totalStaked",
             type: "u64",
           },
         ],
