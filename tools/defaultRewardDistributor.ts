@@ -5,7 +5,7 @@ import { Keypair, Transaction } from "@solana/web3.js";
 
 import { getRewardDistributor } from "../src/programs/rewardDistributor/accounts";
 import { findRewardDistributorId } from "../src/programs/rewardDistributor/pda";
-import { withDefaultRewardDistributor } from "../src/programs/rewardDistributor/transaction";
+// import { withDefaultRewardDistributor } from "../src/programs/rewardDistributor/transaction";
 import { getAllStakePools } from "../src/programs/stakePool/accounts";
 import { executeTransaction } from "../src/utils";
 
@@ -13,7 +13,6 @@ const wallet = Keypair.fromSecretKey(utils.bytes.bs58.decode("SECRET_KEY"));
 
 const main = async (cluster = "mainnet") => {
   const connection = connectionFor(cluster);
-  const transaction = new Transaction();
   const allStakePools = await getAllStakePools(connection);
 
   for (const pool of allStakePools) {
@@ -26,14 +25,15 @@ const main = async (cluster = "mainnet") => {
         console.log(
           `Defaulting reward distributor ${rewardDistrubutorData.pubkey.toString()}`
         );
-        await withDefaultRewardDistributor(
-          transaction,
-          connection,
-          new SignerWallet(wallet),
-          {
-            stakePoolId: pool.pubkey,
-          }
-        );
+        const transaction = new Transaction();
+        // await withDefaultRewardDistributor(
+        //   transaction,
+        //   connection,
+        //   new SignerWallet(wallet),
+        //   {
+        //     stakePoolId: pool.pubkey,
+        //   }
+        // );
 
         try {
           await executeTransaction(

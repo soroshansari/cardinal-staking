@@ -216,17 +216,6 @@ export type CardinalRewardDistributor = {
         }
       ];
       args: [];
-    },
-    {
-      name: "defaultRewardDistributor";
-      accounts: [
-        {
-          name: "rewardDistributor";
-          isMut: true;
-          isSigner: false;
-        }
-      ];
-      args: [];
     }
   ];
   accounts: [
@@ -669,17 +658,6 @@ export const IDL: CardinalRewardDistributor = {
           name: "authority",
           isMut: true,
           isSigner: true,
-        },
-      ],
-      args: [],
-    },
-    {
-      name: "defaultRewardDistributor",
-      accounts: [
-        {
-          name: "rewardDistributor",
-          isMut: true,
-          isSigner: false,
         },
       ],
       args: [],

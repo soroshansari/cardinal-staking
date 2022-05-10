@@ -226,24 +226,3 @@ export const closeRewardEntry = (
     },
   });
 };
-
-export const defaultRewardDistributor = (
-  connection: Connection,
-  wallet: Wallet,
-  params: {
-    rewardDistributorId: PublicKey;
-  }
-): TransactionInstruction => {
-  const provider = new AnchorProvider(connection, wallet, {});
-  const rewardDistributorProgram = new Program<REWARD_DISTRIBUTOR_PROGRAM>(
-    REWARD_DISTRIBUTOR_IDL,
-    REWARD_DISTRIBUTOR_ADDRESS,
-    provider
-  );
-
-  return rewardDistributorProgram.instruction.defaultRewardDistributor({
-    accounts: {
-      rewardDistributor: params.rewardDistributorId,
-    },
-  });
-};
