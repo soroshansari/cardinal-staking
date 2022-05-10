@@ -64,27 +64,24 @@ export const initRewardDistributor = (
   );
 };
 
-export const initRewardEntry = async (
+export const initRewardEntry = (
   connection: Connection,
   wallet: Wallet,
   params: {
     stakeEntryId: PublicKey;
     rewardDistributor: PublicKey;
+    rewardEntryId: PublicKey;
   }
-): Promise<TransactionInstruction> => {
+): TransactionInstruction => {
   const provider = new AnchorProvider(connection, wallet, {});
   const rewardDistributorProgram = new Program<REWARD_DISTRIBUTOR_PROGRAM>(
     REWARD_DISTRIBUTOR_IDL,
     REWARD_DISTRIBUTOR_ADDRESS,
     provider
   );
-  const [rewardEntryId] = await findRewardEntryId(
-    params.rewardDistributor,
-    params.stakeEntryId
-  );
   return rewardDistributorProgram.instruction.initRewardEntry({
     accounts: {
-      rewardEntry: rewardEntryId,
+      rewardEntry: params.rewardEntryId,
       stakeEntry: params.stakeEntryId,
       rewardDistributor: params.rewardDistributor,
       payer: wallet.publicKey,
