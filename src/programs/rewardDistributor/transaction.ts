@@ -13,7 +13,6 @@ import {
   claimRewards,
   closeRewardDistributor,
   closeRewardEntry,
-  defaultRewardDistributor,
   initRewardDistributor,
   initRewardEntry,
   updateRewardEntry,
@@ -232,25 +231,6 @@ export const withCloseRewardEntry = async (
     closeRewardEntry(connection, wallet, {
       rewardDistributorId: rewardDistributorId,
       rewardEntryId: rewardEntryId,
-    })
-  );
-};
-
-export const withDefaultRewardDistributor = async (
-  transaction: Transaction,
-  connection: Connection,
-  wallet: Wallet,
-  params: {
-    stakePoolId: PublicKey;
-  }
-): Promise<Transaction> => {
-  const [rewardDistributorId] = await findRewardDistributorId(
-    params.stakePoolId
-  );
-
-  return transaction.add(
-    defaultRewardDistributor(connection, wallet, {
-      rewardDistributorId: rewardDistributorId,
     })
   );
 };
