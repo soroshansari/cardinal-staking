@@ -528,26 +528,19 @@ export const withCloseStakePool = (
   return transaction;
 };
 
-export const withCloseStakeEntry = async (
+export const withCloseStakeEntry = (
   transaction: web3.Transaction,
   connection: web3.Connection,
   wallet: Wallet,
   params: {
     stakePoolId: web3.PublicKey;
-    userId: web3.PublicKey;
-    originalMintId: web3.PublicKey;
+    stakeEntryId: web3.PublicKey;
   }
-): Promise<web3.Transaction> => {
-  const [stakeEntryId] = await findStakeEntryIdFromMint(
-    connection,
-    params.userId,
-    params.stakePoolId,
-    params.originalMintId
-  );
+): web3.Transaction => {
   transaction.add(
     closeStakeEntry(connection, wallet, {
       stakePoolId: params.stakePoolId,
-      stakeEntryId: stakeEntryId,
+      stakeEntryId: params.stakeEntryId,
       authority: wallet.publicKey,
     })
   );

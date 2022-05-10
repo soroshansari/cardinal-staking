@@ -10,8 +10,8 @@ pub mod return_receipt_mint;
 pub mod stake;
 pub mod unstake;
 pub mod update_pool;
-pub mod update_total_staked_counter;
 pub mod update_total_stake_seconds;
+pub mod update_total_staked_counter;
 
 pub use authorize_mint::*;
 pub use claim_receipt_mint::*;
@@ -25,5 +25,5 @@ pub use return_receipt_mint::*;
 pub use stake::*;
 pub use unstake::*;
 pub use update_pool::*;
-pub use update_total_staked_counter::*;
 pub use update_total_stake_seconds::*;
+pub use update_total_staked_counter::*;

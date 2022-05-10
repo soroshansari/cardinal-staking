@@ -8,6 +8,7 @@ import type {
   ConfirmOptions,
   Connection,
   PublicKey,
+  SendTransactionError,
   Signer,
   Transaction,
 } from "@solana/web3.js";
@@ -52,7 +53,7 @@ export const executeTransaction = async (
     config.callback && config.callback(true);
     console.log("Successful tx", txid);
   } catch (e: unknown) {
-    console.log("Failed transaction: ", e);
+    console.log("Failed transaction: ", (e as SendTransactionError).logs, e);
     config.callback && config.callback(false);
     if (!config.silent) {
       throw new Error(`${e instanceof Error ? e.message : String(e)}`);
