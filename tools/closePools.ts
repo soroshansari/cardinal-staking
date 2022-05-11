@@ -16,7 +16,7 @@ import {
 } from "../src/programs/rewardDistributor/transaction";
 import {
   getAllStakeEntries,
-  getAllStakePools,
+  getStakePools,
 } from "../src/programs/stakePool/accounts";
 import {
   withCloseStakeEntry,
@@ -28,16 +28,12 @@ const wallet = Keypair.fromSecretKey(
   utils.bytes.bs58.decode("ENTER_SECRET_KEY")
 ); // your wallet's secret key
 
-const pool_skip_list = [""];
+const POOLS_TO_CLOSE: string[] = [];
 
-const main = async (cluster = "mainnet") => {
+const main = async (poolIds: PublicKey[], cluster = "mainnet") => {
   const connection = connectionFor(cluster);
 
-  const stakePools = (await getAllStakePools(connection)).filter(
-    (s) =>
-      s.parsed.authority.toString() === wallet.publicKey.toString() &&
-      !pool_skip_list.includes(s.pubkey.toString())
-  );
+  const stakePools = await getStakePools(connection, poolIds);
   const stakeEntries = await getAllStakeEntries(connection);
   const rewardEntries = await getAllRewardEntries(connection);
 
@@ -192,4 +188,7 @@ const main = async (cluster = "mainnet") => {
   }
 };
 
-main("mainnet").catch((e) => console.log(e));
+main(
+  POOLS_TO_CLOSE.map((s) => new PublicKey(s)),
+  "mainnet"
+).catch((e) => console.log(e));

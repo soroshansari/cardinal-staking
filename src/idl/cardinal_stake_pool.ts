@@ -611,6 +611,10 @@ export type CardinalStakePool = {
           {
             name: "resetOnStake";
             type: "bool";
+          },
+          {
+            name: "totalStaked";
+            type: "u32";
           }
         ];
       };
@@ -854,6 +858,16 @@ export type CardinalStakePool = {
       code: 6017;
       name: "InvalidAuthority";
       msg: "Invalid authority";
+    },
+    {
+      code: 6018;
+      name: "CannotCloseStakedEntry";
+      msg: "Cannot close staked entry";
+    },
+    {
+      code: 6019;
+      name: "CannotClosePoolWithStakedEntries";
+      msg: "Cannot close staked entry";
     }
   ];
 };
@@ -1472,6 +1486,10 @@ export const IDL: CardinalStakePool = {
             name: "resetOnStake",
             type: "bool",
           },
+          {
+            name: "totalStaked",
+            type: "u32",
+          },
         ],
       },
     },
@@ -1714,6 +1732,16 @@ export const IDL: CardinalStakePool = {
       code: 6017,
       name: "InvalidAuthority",
       msg: "Invalid authority",
+    },
+    {
+      code: 6018,
+      name: "CannotCloseStakedEntry",
+      msg: "Cannot close staked entry",
+    },
+    {
+      code: 6019,
+      name: "CannotClosePoolWithStakedEntries",
+      msg: "Cannot close staked entry",
     },
   ],
 };
