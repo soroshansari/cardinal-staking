@@ -39,7 +39,7 @@ pub struct StakePool {
     pub overlay_text: String,
     pub image_uri: String,
     pub reset_on_stake: bool,
-    pub total_staked: u64,
+    pub total_staked: u32,
 }
 
 #[account]

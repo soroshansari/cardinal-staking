@@ -1,11 +1,13 @@
 import { utils } from "@project-serum/anchor";
 import { SignerWallet } from "@saberhq/solana-contrib";
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
-import { BN } from "bn.js";
 
 import { executeTransaction } from "../src";
-import { getAllStakeEntries } from "../src/programs/stakePool/accounts";
-import { withUpdateStakedEntriesCounter } from "../src/programs/stakePool/transaction";
+import {
+  getAllStakeEntries,
+  getStakePool,
+} from "../src/programs/stakePool/accounts";
+// import { withUpdateStakedEntriesCounter } from "../src/programs/stakePool/transaction";
 import { connectionFor } from "./connection";
 
 const wallet = Keypair.fromSecretKey(utils.bytes.bs58.decode("SECRET_KEY"));
@@ -25,20 +27,28 @@ const main = async (cluster = "mainnet") => {
       }
     }
   }
+  console.log(poolsMap);
   console.log(`Updating ${Object.keys(poolsMap).length} pools\n`);
   for (const poolId in poolsMap) {
-    const transaction = new Transaction();
-    console.log(`Updating pool ${poolId}...`);
-    withUpdateStakedEntriesCounter(
-      transaction,
-      connection,
-      new SignerWallet(wallet),
-      {
-        stakePoolId: new PublicKey(poolId),
-        counter: new BN(poolsMap[poolId]!),
-      }
-    );
     try {
+      const transaction = new Transaction();
+      console.log(`Updating pool ${poolId}...`);
+      const stakePoolData = await getStakePool(
+        connection,
+        new PublicKey(poolId)
+      );
+      if (stakePoolData.parsed.totalStaked !== 0) {
+        continue;
+      }
+      // withUpdateStakedEntriesCounter(
+      //   transaction,
+      //   connection,
+      //   new SignerWallet(wallet),
+      //   {
+      //     stakePoolId: new PublicKey(poolId),
+      //     counter: poolsMap[poolId]!,
+      //   }
+      // );
       await executeTransaction(
         connection,
         new SignerWallet(wallet),
@@ -49,7 +59,7 @@ const main = async (cluster = "mainnet") => {
     } catch (e) {
       console.log(`Error with pool ${poolId}`);
       console.log(e);
-      break;
+      // break;
     }
   }
 };
