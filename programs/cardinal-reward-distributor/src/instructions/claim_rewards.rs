@@ -105,14 +105,15 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
         // this is nuanced about if the rewards are closed, should they get the reward time for that time even though they didnt get any rewards?
         // this only matters if the reward distributor becomes open again and they missed out on some rewards they coudlve gotten
         let reward_time_to_receive = reward_amount_to_receive
-            .checked_mul(reward_duration_seconds)
-            .unwrap()
-            .checked_div(reward_amount as u128)
+            .checked_mul((10_u128).checked_pow(reward_distributor.multiplier_decimals as u32).unwrap())
             .unwrap()
             .checked_div(reward_entry.multiplier as u128)
             .unwrap()
-            .checked_mul((10_u128).checked_pow(reward_distributor.multiplier_decimals as u32).unwrap())
+            .checked_div(reward_amount as u128)
+            .unwrap()
+            .checked_mul(reward_duration_seconds)
             .unwrap();
+
         reward_distributor.rewards_issued = reward_distributor.rewards_issued.checked_add(reward_amount_to_receive).unwrap();
         reward_entry.reward_seconds_received = reward_entry.reward_seconds_received.checked_add(reward_time_to_receive).unwrap();
 
