@@ -30,7 +30,7 @@ const wallet = Keypair.fromSecretKey(
 
 const POOLS_TO_CLOSE: string[] = [];
 
-const main = async (poolIds: PublicKey[], cluster = "mainnet") => {
+const main = async (poolIds: PublicKey[], cluster = "devnet") => {
   const connection = connectionFor(cluster);
 
   const stakePools = await getStakePools(connection, poolIds);
@@ -48,7 +48,7 @@ const main = async (poolIds: PublicKey[], cluster = "mainnet") => {
     if (cluster !== "devnet") {
       if (activeStakeEntries.length !== 0) {
         console.log(
-          "Owners:",
+          "Owners of staked entries:",
           activeStakeEntries.map((s) => s.parsed.lastStaker.toString())
         );
         throw new Error(
@@ -188,7 +188,4 @@ const main = async (poolIds: PublicKey[], cluster = "mainnet") => {
   }
 };
 
-main(
-  POOLS_TO_CLOSE.map((s) => new PublicKey(s)),
-  "mainnet"
-).catch((e) => console.log(e));
+main(POOLS_TO_CLOSE.map((s) => new PublicKey(s))).catch((e) => console.log(e));
