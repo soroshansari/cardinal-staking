@@ -256,7 +256,8 @@ export const calculatePendingRewards = (
     .sub(rewardSecondsReceived)
     .div(rewardDistributor.parsed.rewardDurationSeconds)
     .mul(rewardDistributor.parsed.rewardAmount)
-    .mul(multiplier);
+    .mul(multiplier)
+    .div(new BN(10).pow(new BN(rewardDistributor.parsed.multiplierDecimals)));
 
   if (
     rewardDistributor.parsed.maxSupply &&
