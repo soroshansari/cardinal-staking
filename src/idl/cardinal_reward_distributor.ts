@@ -91,7 +91,7 @@ export type CardinalRewardDistributor = {
         },
         {
           name: "rewardDistributor";
-          isMut: false;
+          isMut: true;
           isSigner: false;
         },
         {
@@ -536,7 +536,7 @@ export const IDL: CardinalRewardDistributor = {
         },
         {
           name: "rewardDistributor",
-          isMut: false,
+          isMut: true,
           isSigner: false,
         },
         {

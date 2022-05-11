@@ -12,7 +12,7 @@ use {
 pub struct ClaimRewardsCtx<'info> {
     #[account(mut)]
     reward_entry: Box<Account<'info, RewardEntry>>,
-    #[account(constraint = reward_distributor.stake_pool == stake_pool.key())]
+    #[account(mut, constraint = reward_distributor.stake_pool == stake_pool.key())]
     reward_distributor: Box<Account<'info, RewardDistributor>>,
 
     #[account(constraint = stake_entry.key() == reward_entry.stake_entry @ ErrorCode::InvalidStakeEntry)]

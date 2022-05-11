@@ -26,7 +26,8 @@ export const createMint = async (
   recipient: web3.PublicKey,
   amount = 1,
   freezeAuthority: web3.PublicKey = recipient,
-  mintAuthority: web3.PublicKey = creator.publicKey
+  mintAuthority: web3.PublicKey = creator.publicKey,
+  decimals?: number
 ): Promise<[web3.PublicKey, splToken.Token]> => {
   const fromAirdropSignature = await connection.requestAirdrop(
     creator.publicKey,
@@ -38,7 +39,7 @@ export const createMint = async (
     creator,
     mintAuthority,
     freezeAuthority,
-    0,
+    decimals ?? 0,
     splToken.TOKEN_PROGRAM_ID
   );
   const tokenAccount = await mint.createAssociatedTokenAccount(recipient);
