@@ -58,7 +58,7 @@ pub fn handler(ctx: Context<StakeCtx>, amount: u64) -> Result<()> {
     stake_entry.last_staked_at = Clock::get().unwrap().unix_timestamp;
     stake_entry.last_staker = ctx.accounts.user.key();
     stake_entry.amount = amount;
-    stake_pool.total_staked += 1;
+    stake_pool.total_staked = stake_pool.total_staked.checked_add(1).expect("Add error");
 
     if ctx.accounts.stake_pool.reset_on_stake {
         stake_entry.total_stake_seconds = 0;
