@@ -37,7 +37,7 @@ import { getMintSupply } from "./utils";
  * @param overlayText - (Optional) Text to overlay on receipt mint tokens
  * @param imageUri - (Optional) Image URI for stake pool
  * @param resetOnStake - (Optional) Boolean to reset an entry's total stake seconds on unstake
- * @param cooldownPeriod - (Optional) Number of seconds for token to cool down before returned to the staker
+ * @param cooldownSeconds - (Optional) Number of seconds for token to cool down before returned to the staker
  * @param rewardDistributor - (Optional) Parameters to creat reward distributor
  * @returns
  */
@@ -51,7 +51,7 @@ export const createStakePool = async (
     overlayText?: string;
     imageUri?: string;
     resetOnStake?: boolean;
-    cooldownPeriod?: number;
+    cooldownSeconds?: number;
     rewardDistributor?: {
       rewardMintId: PublicKey;
       rewardAmount?: BN;

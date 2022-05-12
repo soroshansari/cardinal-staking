@@ -19,7 +19,7 @@ import { getMintSupply } from "../../utils";
 import { getRewardDistributor } from "../rewardDistributor/accounts";
 import { findRewardDistributorId } from "../rewardDistributor/pda";
 import { withClaimRewards } from "../rewardDistributor/transaction";
-import { getPoolIdentifier, getStakeEntry } from "./accounts";
+import { getPoolIdentifier, getStakeEntry, getStakePool } from "./accounts";
 import { ReceiptType } from "./constants";
 import {
   authorizeStakeEntry,
@@ -74,7 +74,7 @@ export const withInitStakePool = async (
     overlayText?: string;
     imageUri?: string;
     resetOnStake?: boolean;
-    cooldownPeriod?: number;
+    cooldownSeconds?: number;
   }
 ): Promise<[web3.Transaction, web3.PublicKey]> => {
   const [identifierId] = await findIdentifierId();
@@ -103,7 +103,7 @@ export const withInitStakePool = async (
       imageUri: params.imageUri || "",
       authority: wallet.publicKey,
       resetOnStake: params.resetOnStake || false,
-      cooldownPeriod: params.cooldownPeriod || null,
+      cooldownSeconds: params.cooldownSeconds || null,
     })
   );
   return [transaction, stakePoolId];
@@ -360,10 +360,21 @@ export const withUnstake = async (
     tryGetAccount(() => getRewardDistributor(connection, rewardDistributorId)),
   ]);
 
-  // return receipt mint if its claimed
-  await withReturnReceiptMint(transaction, connection, wallet, {
-    stakeEntryId: stakeEntryId,
-  });
+  const stakePoolData = await getStakePool(connection, params.stakePoolId);
+
+  if (
+    !stakePoolData.parsed.cooldownSeconds ||
+    stakePoolData.parsed.cooldownSeconds === 0 ||
+    (stakeEntryData?.parsed.cooldownStartSeconds &&
+      Date.now() / 1000 -
+        stakeEntryData.parsed.cooldownStartSeconds.toNumber() >=
+        stakePoolData.parsed.cooldownSeconds)
+  ) {
+    // return receipt mint if its claimed
+    await withReturnReceiptMint(transaction, connection, wallet, {
+      stakeEntryId: stakeEntryId,
+    });
+  }
 
   const stakeEntryOriginalMintTokenAccountId =
     await withFindOrInitAssociatedTokenAccount(

@@ -12,10 +12,7 @@ import { expect } from "chai";
 
 import { createStakeEntry, createStakePool, stake, unstake } from "../src";
 import { ReceiptType } from "../src/programs/stakePool";
-import {
-  getStakeEntry,
-  getStakePool,
-} from "../src/programs/stakePool/accounts";
+import { getStakeEntry } from "../src/programs/stakePool/accounts";
 import { findStakeEntryIdFromMint } from "../src/programs/stakePool/utils";
 import { createMasterEditionIxs, createMint, delay } from "./utils";
 import { getProvider } from "./workspace";
@@ -63,7 +60,7 @@ describe("Create stake pool", () => {
     [transaction, stakePoolId] = await createStakePool(
       provider.connection,
       provider.wallet,
-      { cooldownPeriod: 5 }
+      { cooldownSeconds: 5 }
     );
 
     await expectTXTable(
@@ -72,9 +69,6 @@ describe("Create stake pool", () => {
       ]),
       "Create pool"
     ).to.be.fulfilled;
-
-    const stakePoolData = await getStakePool(provider.connection, stakePoolId);
-    console.log(stakePoolData.parsed.cooldownPeriod);
   });
 
   it("Init stake entry for pool", async () => {
@@ -177,9 +171,8 @@ describe("Create stake pool", () => {
       )[0]
     );
 
-    expect(oldStakeEntryData.parsed.cooldownStart).to.be.null;
+    expect(oldStakeEntryData.parsed.cooldownStartSeconds).to.be.null;
 
-    console.log(oldStakeEntryData.parsed.cooldownStart?.toNumber());
     await expectTXTable(
       new TransactionEnvelope(SolanaProvider.init(provider), [
         ...(
@@ -203,14 +196,12 @@ describe("Create stake pool", () => {
         )
       )[0]
     );
-    console.log(newStakeEntryData.parsed.cooldownStart?.toNumber());
-    expect(newStakeEntryData.parsed.cooldownStart).to.not.be.null;
+    expect(newStakeEntryData.parsed.cooldownStartSeconds).to.not.be.null;
     const userOriginalMintTokenAccountId = await findAta(
       originalMint.publicKey,
       provider.wallet.publicKey,
       true
     );
-
     expect(newStakeEntryData.parsed.lastStakedAt.toNumber()).to.be.greaterThan(
       0
     );
@@ -221,8 +212,8 @@ describe("Create stake pool", () => {
     const checkUserOriginalTokenAccount = await originalMint.getAccountInfo(
       userOriginalMintTokenAccountId
     );
-    expect(checkUserOriginalTokenAccount.amount.toNumber()).to.eq(1);
     expect(checkUserOriginalTokenAccount.isFrozen).to.eq(true);
+    expect(checkUserOriginalTokenAccount.amount.toNumber()).to.eq(1);
   });
 
   it("Unstake cooldown completed", async () => {
@@ -266,6 +257,6 @@ describe("Create stake pool", () => {
     );
     expect(checkUserOriginalTokenAccount.amount.toNumber()).to.eq(1);
     expect(checkUserOriginalTokenAccount.isFrozen).to.eq(false);
-    expect(stakeEntryData.parsed.cooldownStart).to.be.null;
+    expect(stakeEntryData.parsed.cooldownStartSeconds).to.be.null;
   });
 });

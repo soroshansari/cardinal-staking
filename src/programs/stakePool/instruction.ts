@@ -67,7 +67,7 @@ export const initStakePool = (
     imageUri: string;
     authority: PublicKey;
     resetOnStake: boolean;
-    cooldownPeriod: number | null;
+    cooldownSeconds: number | null;
   }
 ): TransactionInstruction => {
   const provider = new AnchorProvider(connection, wallet, {});
@@ -85,7 +85,7 @@ export const initStakePool = (
       requiresAuthorization: params.requiresAuthorization ?? false,
       authority: params.authority,
       resetOnStake: params.resetOnStake,
-      cooldownPeriod: params.cooldownPeriod,
+      cooldownSeconds: params.cooldownSeconds,
     },
     {
       accounts: {
