@@ -5,7 +5,7 @@ type ErrorCode = {
   message: string;
 };
 
-export const errors_map: { [key: string]: ErrorCode[] } = {
+export const errorsMap: { [key: string]: ErrorCode[] } = {
   // stake pool errors
   stakePool: [
     { code: "6000", message: "Original mint is invalid" },
@@ -255,20 +255,20 @@ export const parseError = (e: any, fallBackMessage: string): string => {
       const program = "";
       let out = null;
       if (dec < 6000) {
-        out = errors_map["native"]?.find(
+        out = errorsMap["native"]?.find(
           (err) => err.code === dec.toString()
         )?.message;
       } else {
         if (program) {
-          out = errors_map[program]?.find(
+          out = errorsMap[program]?.find(
             (err) => err.code === dec.toString()
           )?.message;
         } else {
           const stakePoolErr =
-            errors_map["stakePool"]?.find((err) => err.code === dec.toString())
+            errorsMap["stakePool"]?.find((err) => err.code === dec.toString())
               ?.message ?? "";
           const rewardDistributorErr =
-            errors_map["rewardDistributor"]?.find(
+            errorsMap["rewardDistributor"]?.find(
               (err) => err.code === dec.toString()
             )?.message ?? "";
           console.log(stakePoolErr, rewardDistributorErr);
