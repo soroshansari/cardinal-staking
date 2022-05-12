@@ -26,7 +26,7 @@ pub struct StakeEntry {
     pub stake_mint_claimed: bool,
     pub kind: u8,
     pub stake_mint: Option<Pubkey>,
-    pub cooldown_start: Option<i64>,
+    pub cooldown_start_seconds: Option<i64>,
 }
 
 #[account]
@@ -40,7 +40,7 @@ pub struct StakePool {
     pub overlay_text: String,
     pub image_uri: String,
     pub reset_on_stake: bool,
-    pub cooldown_period: Option<u32>,
+    pub cooldown_seconds: Option<u32>,
     pub total_staked: u32,
 }
 

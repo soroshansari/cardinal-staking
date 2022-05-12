@@ -565,7 +565,7 @@ export type CardinalStakePool = {
             };
           },
           {
-            name: "cooldownStart";
+            name: "cooldownStartSeconds";
             type: {
               option: "i64";
             };
@@ -619,7 +619,7 @@ export type CardinalStakePool = {
             type: "bool";
           },
           {
-            name: "cooldownPeriod";
+            name: "cooldownSeconds";
             type: {
               option: "u32";
             };
@@ -707,7 +707,7 @@ export type CardinalStakePool = {
             type: "bool";
           },
           {
-            name: "cooldownPeriod";
+            name: "cooldownSeconds";
             type: {
               option: "u32";
             };
@@ -886,6 +886,11 @@ export type CardinalStakePool = {
       code: 6019;
       name: "CannotClosePoolWithStakedEntries";
       msg: "Cannot close staked entry";
+    },
+    {
+      code: 6020;
+      name: "CooldownSecondRemaining";
+      msg: "Token still has some cooldown seconds remaining";
     }
   ];
 };
@@ -1457,7 +1462,7 @@ export const IDL: CardinalStakePool = {
             },
           },
           {
-            name: "cooldownStart",
+            name: "cooldownStartSeconds",
             type: {
               option: "i64",
             },
@@ -1511,7 +1516,7 @@ export const IDL: CardinalStakePool = {
             type: "bool",
           },
           {
-            name: "cooldownPeriod",
+            name: "cooldownSeconds",
             type: {
               option: "u32",
             },
@@ -1599,7 +1604,7 @@ export const IDL: CardinalStakePool = {
             type: "bool",
           },
           {
-            name: "cooldownPeriod",
+            name: "cooldownSeconds",
             type: {
               option: "u32",
             },
@@ -1778,6 +1783,11 @@ export const IDL: CardinalStakePool = {
       code: 6019,
       name: "CannotClosePoolWithStakedEntries",
       msg: "Cannot close staked entry",
+    },
+    {
+      code: 6020,
+      name: "CooldownSecondRemaining",
+      msg: "Token still has some cooldown seconds remaining",
     },
   ],
 };
