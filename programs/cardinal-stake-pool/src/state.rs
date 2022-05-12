@@ -41,6 +41,7 @@ pub struct StakePool {
     pub image_uri: String,
     pub reset_on_stake: bool,
     pub cooldown_period: Option<u32>,
+    pub total_staked: u32,
 }
 
 #[account]

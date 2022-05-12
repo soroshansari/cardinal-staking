@@ -148,6 +148,8 @@ pub struct RewardDistributor {
     pub reward_duration_seconds: u64,
     pub rewards_issued: u64,
     pub max_supply: Option<u64>,
+    pub default_multiplier: u64,
+    pub multiplier_decimals: u8,
 }
 ```
 
@@ -179,7 +181,7 @@ Because reward distributor is modeled separately from the stake_pool, a user can
 
 **Reward Distributor Multipliers**
 
-Multipliers is a feature that can set a given token (via its reward_entry) to receive more rewards than the others. Only the authority of the pool can change the multiplier by calling `update_reward_entry` instruction.
+Multipliers is a feature that can set a given token (via its reward_entry) to receive more rewards than the others. A reward distributor has two fields one for the `default_multiplier`, defaults to `1`, and another for the `multiplier_decimals`, defaults to `0`. Every time a reward entry is initialized, its multiplier gets set to the `default_multiplier` of its reward distributor. Only the authority of the pool can change the multiplier by calling `update_reward_entry` instruction. In the calculation of the claimable rewards for an entry, the `multiplier` is divided by ten to the power of the distributor's `multiplier_decimals`, achieving the outcome of decimal multipliers.
 
 - Modeling this separately allows for either 1) the user to initialize their own reward_entries and the authority to update their multiplier later on or 2) the authority to run arbitrary events / bonuses for specific NFTs at any time.
 - In addition, the authority may initialize all the entries up front and set the correct / desired multipliers for their NFTs such that it will correctly allocate when the user first stakes.

@@ -44,6 +44,7 @@ pub fn handler(ctx: Context<InitPoolCtx>, ix: InitPoolIx) -> Result<()> {
     stake_pool.authority = ix.authority;
     stake_pool.reset_on_stake = ix.reset_on_stake;
     stake_pool.cooldown_period = ix.cooldown_period;
+    stake_pool.total_staked = 0;
 
     let identifier = &mut ctx.accounts.identifier;
     identifier.count += 1;
