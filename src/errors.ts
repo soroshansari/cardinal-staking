@@ -244,3 +244,36 @@ export const errors_map: { [key: string]: ErrorCode[] } = {
     },
   ],
 };
+
+export const parseError = (hex: string) => {
+  if (hex) {
+    const dec = parseInt(hex, 16);
+    const program = "";
+    let out = null;
+    if (dec < 6000) {
+      out = errors_map["native"]?.find(
+        (err) => err.code === dec.toString()
+      )?.message;
+    } else {
+      if (program) {
+        out = errors_map[program]?.find(
+          (err) => err.code === dec.toString()
+        )?.message;
+      } else {
+        const stakePoolErr =
+          errors_map["stakePool"]?.find((err) => err.code === dec.toString())
+            ?.message ?? "";
+        const rewardDistributorErr =
+          errors_map["rewardDistributor"]?.find(
+            (err) => err.code === dec.toString()
+          )?.message ?? "";
+        console.log(stakePoolErr, rewardDistributorErr);
+        out =
+          stakePoolErr +
+          (stakePoolErr && rewardDistributorErr && " or ") +
+          rewardDistributorErr;
+      }
+    }
+    return out;
+  }
+};
