@@ -1,3 +1,5 @@
+import type { SendTransactionError } from "@solana/web3.js";
+
 type ErrorCode = {
   code: string;
   message: string;
@@ -243,4 +245,42 @@ export const errors_map: { [key: string]: ErrorCode[] } = {
         "Deprecated: The API being used is deprecated and should no longer be used",
     },
   ],
+};
+
+export const parseError = (e: any, fallBackMessage: string) => {
+  try {
+    const hex = (e as SendTransactionError).message.split(" ").at(-1);
+    if (hex) {
+      const dec = parseInt(hex, 16);
+      const program = "";
+      let out = null;
+      if (dec < 6000) {
+        out = errors_map["native"]?.find(
+          (err) => err.code === dec.toString()
+        )?.message;
+      } else {
+        if (program) {
+          out = errors_map[program]?.find(
+            (err) => err.code === dec.toString()
+          )?.message;
+        } else {
+          const stakePoolErr =
+            errors_map["stakePool"]?.find((err) => err.code === dec.toString())
+              ?.message ?? "";
+          const rewardDistributorErr =
+            errors_map["rewardDistributor"]?.find(
+              (err) => err.code === dec.toString()
+            )?.message ?? "";
+          console.log(stakePoolErr, rewardDistributorErr);
+          out =
+            stakePoolErr +
+            (stakePoolErr && rewardDistributorErr && " or ") +
+            rewardDistributorErr;
+        }
+      }
+      return out ?? fallBackMessage;
+    }
+  } catch (e) {
+    return fallBackMessage;
+  }
 };
