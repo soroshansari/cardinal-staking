@@ -15,7 +15,7 @@ pub struct UnstakeCtx<'info> {
 
     // stake_entry token accounts
     #[account(mut, constraint =
-        stake_entry_original_mint_token_account.amount > 0
+        (stake_entry_original_mint_token_account.amount > 0 || stake_pool.cooldown_seconds.is_some())
         && stake_entry_original_mint_token_account.mint == stake_entry.original_mint
         && stake_entry_original_mint_token_account.owner == stake_entry.key()
         @ ErrorCode::InvalidStakeEntryOriginalMintTokenAccount)]
@@ -40,10 +40,20 @@ pub fn handler(ctx: Context<UnstakeCtx>) -> Result<()> {
 
     let original_mint = stake_entry.original_mint;
     let user = ctx.accounts.user.key();
+    let stake_pool_key = stake_pool.key();
     let seed = get_stake_seed(ctx.accounts.original_mint.supply, user);
 
-    let stake_entry_seed = [STAKE_ENTRY_PREFIX.as_bytes(), stake_entry.pool.as_ref(), original_mint.as_ref(), seed.as_ref(), &[stake_entry.bump]];
+    let stake_entry_seed = [STAKE_ENTRY_PREFIX.as_bytes(), stake_pool_key.as_ref(), original_mint.as_ref(), seed.as_ref(), &[stake_entry.bump]];
     let stake_entry_signer = &[&stake_entry_seed[..]];
+
+    if stake_pool.cooldown_seconds.is_some() && stake_pool.cooldown_seconds.unwrap() > 0 {
+        if stake_entry.cooldown_start_seconds.is_none() {
+            stake_entry.cooldown_start_seconds = Some(Clock::get().unwrap().unix_timestamp);
+            return Ok(());
+        } else if stake_entry.cooldown_start_seconds.is_some() && ((Clock::get().unwrap().unix_timestamp - stake_entry.cooldown_start_seconds.unwrap()) as u32) < stake_pool.cooldown_seconds.unwrap() {
+            return Err(error!(ErrorCode::CooldownSecondRemaining));
+        }
+    }
 
     // If receipt has been minted, ensure it is back in the stake_entry
     if stake_entry.stake_mint != None {
@@ -77,6 +87,7 @@ pub fn handler(ctx: Context<UnstakeCtx>) -> Result<()> {
     stake_entry.original_mint_claimed = false;
     stake_entry.stake_mint_claimed = false;
     stake_entry.amount = 0;
+    stake_entry.cooldown_start_seconds = None;
     stake_pool.total_staked = stake_pool.total_staked.checked_sub(1).expect("Sub error");
 
     Ok(())

@@ -563,6 +563,12 @@ export type CardinalStakePool = {
             type: {
               option: "publicKey";
             };
+          },
+          {
+            name: "cooldownStartSeconds";
+            type: {
+              option: "i64";
+            };
           }
         ];
       };
@@ -611,6 +617,12 @@ export type CardinalStakePool = {
           {
             name: "resetOnStake";
             type: "bool";
+          },
+          {
+            name: "cooldownSeconds";
+            type: {
+              option: "u32";
+            };
           },
           {
             name: "totalStaked";
@@ -693,6 +705,12 @@ export type CardinalStakePool = {
           {
             name: "resetOnStake";
             type: "bool";
+          },
+          {
+            name: "cooldownSeconds";
+            type: {
+              option: "u32";
+            };
           }
         ];
       };
@@ -868,6 +886,11 @@ export type CardinalStakePool = {
       code: 6019;
       name: "CannotClosePoolWithStakedEntries";
       msg: "Cannot close staked entry";
+    },
+    {
+      code: 6020;
+      name: "CooldownSecondRemaining";
+      msg: "Token still has some cooldown seconds remaining";
     }
   ];
 };
@@ -1438,6 +1461,12 @@ export const IDL: CardinalStakePool = {
               option: "publicKey",
             },
           },
+          {
+            name: "cooldownStartSeconds",
+            type: {
+              option: "i64",
+            },
+          },
         ],
       },
     },
@@ -1485,6 +1514,12 @@ export const IDL: CardinalStakePool = {
           {
             name: "resetOnStake",
             type: "bool",
+          },
+          {
+            name: "cooldownSeconds",
+            type: {
+              option: "u32",
+            },
           },
           {
             name: "totalStaked",
@@ -1567,6 +1602,12 @@ export const IDL: CardinalStakePool = {
           {
             name: "resetOnStake",
             type: "bool",
+          },
+          {
+            name: "cooldownSeconds",
+            type: {
+              option: "u32",
+            },
           },
         ],
       },
@@ -1742,6 +1783,11 @@ export const IDL: CardinalStakePool = {
       code: 6019,
       name: "CannotClosePoolWithStakedEntries",
       msg: "Cannot close staked entry",
+    },
+    {
+      code: 6020,
+      name: "CooldownSecondRemaining",
+      msg: "Token still has some cooldown seconds remaining",
     },
   ],
 };

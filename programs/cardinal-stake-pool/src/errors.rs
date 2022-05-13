@@ -42,4 +42,6 @@ pub enum ErrorCode {
     CannotCloseStakedEntry,
     #[msg("Cannot close staked entry")]
     CannotClosePoolWithStakedEntries,
+    #[msg("Token still has some cooldown seconds remaining")]
+    CooldownSecondRemaining,
 }
