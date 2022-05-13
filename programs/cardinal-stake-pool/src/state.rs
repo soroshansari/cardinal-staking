@@ -42,6 +42,7 @@ pub struct StakePool {
     pub reset_on_stake: bool,
     pub total_staked: u32,
     pub cooldown_seconds: Option<u32>,
+    pub min_stake_seconds: Option<u32>,
 }
 
 #[account]

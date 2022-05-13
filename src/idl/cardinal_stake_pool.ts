@@ -619,14 +619,20 @@ export type CardinalStakePool = {
             type: "bool";
           },
           {
+            name: "totalStaked";
+            type: "u32";
+          },
+          {
             name: "cooldownSeconds";
             type: {
               option: "u32";
             };
           },
           {
-            name: "totalStaked";
-            type: "u32";
+            name: "minStakeSeconds";
+            type: {
+              option: "u32";
+            };
           }
         ];
       };
@@ -708,6 +714,12 @@ export type CardinalStakePool = {
           },
           {
             name: "cooldownSeconds";
+            type: {
+              option: "u32";
+            };
+          },
+          {
+            name: "minStakeSeconds";
             type: {
               option: "u32";
             };
@@ -891,6 +903,11 @@ export type CardinalStakePool = {
       code: 6020;
       name: "CooldownSecondRemaining";
       msg: "Token still has some cooldown seconds remaining";
+    },
+    {
+      code: 6021;
+      name: "MinStakeSecondsNotSatisfied";
+      msg: "Minimum stake seconds not satisfied";
     }
   ];
 };
@@ -1516,14 +1533,20 @@ export const IDL: CardinalStakePool = {
             type: "bool",
           },
           {
+            name: "totalStaked",
+            type: "u32",
+          },
+          {
             name: "cooldownSeconds",
             type: {
               option: "u32",
             },
           },
           {
-            name: "totalStaked",
-            type: "u32",
+            name: "minStakeSeconds",
+            type: {
+              option: "u32",
+            },
           },
         ],
       },
@@ -1605,6 +1628,12 @@ export const IDL: CardinalStakePool = {
           },
           {
             name: "cooldownSeconds",
+            type: {
+              option: "u32",
+            },
+          },
+          {
+            name: "minStakeSeconds",
             type: {
               option: "u32",
             },
@@ -1788,6 +1817,11 @@ export const IDL: CardinalStakePool = {
       code: 6020,
       name: "CooldownSecondRemaining",
       msg: "Token still has some cooldown seconds remaining",
+    },
+    {
+      code: 6021,
+      name: "MinStakeSecondsNotSatisfied",
+      msg: "Minimum stake seconds not satisfied",
     },
   ],
 };

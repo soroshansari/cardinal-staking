@@ -15,7 +15,7 @@ pub struct UnstakeCtx<'info> {
 
     // stake_entry token accounts
     #[account(mut, constraint =
-        (stake_entry_original_mint_token_account.amount > 0 || stake_pool.cooldown_seconds.is_some())
+        (stake_entry_original_mint_token_account.amount > 0 || stake_pool.cooldown_seconds.is_some() || stake_pool.min_stake_seconds.is_some())
         && stake_entry_original_mint_token_account.mint == stake_entry.original_mint
         && stake_entry_original_mint_token_account.owner == stake_entry.key()
         @ ErrorCode::InvalidStakeEntryOriginalMintTokenAccount)]
@@ -53,6 +53,13 @@ pub fn handler(ctx: Context<UnstakeCtx>) -> Result<()> {
         } else if stake_entry.cooldown_start_seconds.is_some() && ((Clock::get().unwrap().unix_timestamp - stake_entry.cooldown_start_seconds.unwrap()) as u32) < stake_pool.cooldown_seconds.unwrap() {
             return Err(error!(ErrorCode::CooldownSecondRemaining));
         }
+    }
+
+    if stake_pool.min_stake_seconds.is_some()
+        && stake_pool.min_stake_seconds.unwrap() > 0
+        && ((Clock::get().unwrap().unix_timestamp - stake_entry.last_staked_at) as u32) < stake_pool.min_stake_seconds.unwrap()
+    {
+        return Err(error!(ErrorCode::MinStakeSecondsNotSatisfied));
     }
 
     // If receipt has been minted, ensure it is back in the stake_entry
