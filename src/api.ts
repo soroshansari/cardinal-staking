@@ -52,6 +52,7 @@ export const createStakePool = async (
     imageUri?: string;
     resetOnStake?: boolean;
     cooldownSeconds?: number;
+    minStakeSeconds?: number;
     rewardDistributor?: {
       rewardMintId: PublicKey;
       rewardAmount?: BN;

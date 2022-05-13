@@ -75,6 +75,7 @@ export const withInitStakePool = async (
     imageUri?: string;
     resetOnStake?: boolean;
     cooldownSeconds?: number;
+    minStakeSeconds?: number;
   }
 ): Promise<[web3.Transaction, web3.PublicKey]> => {
   const [identifierId] = await findIdentifierId();
@@ -104,6 +105,7 @@ export const withInitStakePool = async (
       authority: wallet.publicKey,
       resetOnStake: params.resetOnStake || false,
       cooldownSeconds: params.cooldownSeconds || null,
+      minStakeSeconds: params.minStakeSeconds || null,
     })
   );
   return [transaction, stakePoolId];
@@ -363,12 +365,17 @@ export const withUnstake = async (
   const stakePoolData = await getStakePool(connection, params.stakePoolId);
 
   if (
-    !stakePoolData.parsed.cooldownSeconds ||
-    stakePoolData.parsed.cooldownSeconds === 0 ||
-    (stakeEntryData?.parsed.cooldownStartSeconds &&
-      Date.now() / 1000 -
-        stakeEntryData.parsed.cooldownStartSeconds.toNumber() >=
-        stakePoolData.parsed.cooldownSeconds)
+    (!stakePoolData.parsed.cooldownSeconds ||
+      stakePoolData.parsed.cooldownSeconds === 0 ||
+      (stakeEntryData?.parsed.cooldownStartSeconds &&
+        Date.now() / 1000 -
+          stakeEntryData.parsed.cooldownStartSeconds.toNumber() >=
+          stakePoolData.parsed.cooldownSeconds)) &&
+    (!stakePoolData.parsed.minStakeSeconds ||
+      stakePoolData.parsed.minStakeSeconds === 0 ||
+      (stakeEntryData?.parsed.lastStakedAt &&
+        Date.now() / 1000 - stakeEntryData.parsed.lastStakedAt.toNumber() >=
+          stakePoolData.parsed.minStakeSeconds))
   ) {
     // return receipt mint if its claimed
     await withReturnReceiptMint(transaction, connection, wallet, {
