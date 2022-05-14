@@ -348,6 +348,8 @@ export const updateStakePool = (
     imageUri?: string;
     authority?: PublicKey;
     resetOnStake?: boolean;
+    cooldownSeconds?: number;
+    minStakeSeconds?: number;
   }
 ): TransactionInstruction => {
   const provider = new AnchorProvider(connection, wallet, {});
@@ -365,6 +367,8 @@ export const updateStakePool = (
       requiresAuthorization: params.requiresAuthorization || false,
       authority: params.authority || null,
       resetOnStake: params.resetOnStake || false,
+      cooldownSeconds: params.cooldownSeconds || null,
+      minStakeSeconds: params.minStakeSeconds || null,
     },
     {
       accounts: {

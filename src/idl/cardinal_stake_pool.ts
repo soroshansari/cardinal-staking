@@ -793,6 +793,18 @@ export type CardinalStakePool = {
             type: {
               option: "bool";
             };
+          },
+          {
+            name: "cooldownSeconds";
+            type: {
+              option: "u32";
+            };
+          },
+          {
+            name: "minStakeSeconds";
+            type: {
+              option: "u32";
+            };
           }
         ];
       };
@@ -1706,6 +1718,18 @@ export const IDL: CardinalStakePool = {
             name: "resetOnStake",
             type: {
               option: "bool",
+            },
+          },
+          {
+            name: "cooldownSeconds",
+            type: {
+              option: "u32",
+            },
+          },
+          {
+            name: "minStakeSeconds",
+            type: {
+              option: "u32",
             },
           },
         ],

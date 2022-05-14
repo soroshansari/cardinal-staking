@@ -445,6 +445,8 @@ export const withUpdateStakePool = (
     overlayText?: string;
     imageUri?: string;
     resetOnStake?: boolean;
+    cooldownSeconds?: number;
+    minStakeSeconds?: number;
   }
 ): [web3.Transaction, web3.PublicKey] => {
   transaction.add(
@@ -457,6 +459,8 @@ export const withUpdateStakePool = (
       imageUri: params.imageUri,
       authority: wallet.publicKey,
       resetOnStake: params.resetOnStake,
+      cooldownSeconds: params.cooldownSeconds,
+      minStakeSeconds: params.minStakeSeconds,
     })
   );
   return [transaction, params.stakePoolId];

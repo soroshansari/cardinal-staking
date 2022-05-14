@@ -9,6 +9,8 @@ pub struct UpdatePoolIx {
     requires_authorization: Option<bool>,
     authority: Option<Pubkey>,
     reset_on_stake: Option<bool>,
+    cooldown_seconds: Option<u32>,
+    min_stake_seconds: Option<u32>,
 }
 
 #[derive(Accounts)]
@@ -30,6 +32,12 @@ pub fn handler(ctx: Context<UpdatePoolCtx>, ix: UpdatePoolIx) -> Result<()> {
     stake_pool.image_uri = ix.image_uri.unwrap_or_else(|| stake_pool.image_uri.clone());
     stake_pool.authority = ix.authority.unwrap_or(stake_pool.authority);
     stake_pool.reset_on_stake = ix.reset_on_stake.unwrap_or(stake_pool.reset_on_stake);
+    if ix.cooldown_seconds.is_some() {
+        stake_pool.cooldown_seconds = ix.cooldown_seconds;
+    }
+    if ix.min_stake_seconds.is_some() {
+        stake_pool.min_stake_seconds = ix.min_stake_seconds;
+    }
 
     Ok(())
 }
