@@ -37,6 +37,11 @@ export const errorsMap: { [key: string]: ErrorCode[] } = {
     { code: "6017", message: "Invalid authority" },
     { code: "6018", message: "Cannot close staked entry" },
     { code: "6019", message: "Cannot close staked entry" },
+    {
+      code: "6020",
+      message: "Token still has some cooldown seconds remaining",
+    },
+    { code: "6019", message: "Minimum stake seconds not satisfied" },
   ],
 
   // reward distributor errors
