@@ -291,6 +291,16 @@ export const getStakeAuthorizationsForPool = async (
     {
       filters: [
         {
+          memcmp: {
+            offset: 0,
+            bytes: utils.bytes.bs58.encode(
+              BorshAccountsCoder.accountDiscriminator(
+                "stakeAuthorizationRecord"
+              )
+            ),
+          },
+        },
+        {
           memcmp: { offset: POOL_OFFSET, bytes: poolId.toBase58() },
         },
       ],
@@ -309,9 +319,8 @@ export const getStakeAuthorizationsForPool = async (
         ...account,
         parsed: data,
       });
-    } catch (e) {
-      // console.log(`Failed to decode token manager data`);
-    }
+      // eslint-disable-next-line no-empty
+    } catch (e) {}
   });
 
   return stakeAuthorizationDatas.sort((a, b) =>
