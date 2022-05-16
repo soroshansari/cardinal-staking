@@ -56,6 +56,10 @@ pub struct StakePool {
     pub requires_authorization: bool,
     pub overlay_text: String,
     pub image_uri: String,
+    pub reset_on_stake: bool,
+    pub total_staked: u32,
+    pub cooldown_seconds: Option<u32>,
+    pub min_stake_seconds: Option<u32>,
 }
 ```
 
@@ -78,6 +82,15 @@ Overlay text is used when creating receipts. This text will be automatically dis
 <div style="text-align: center; width: 100%;">
   <img style="height: 250px" src="./images/example-staked.png" />
 </div>
+
+Reset_on_stake, cooldown_period and min_stake_seconds are three additional functionalities you can add to your pool.
+
+- reset_on_stake
+  - Resets the total stake seconds of a mint every time it gets staked.
+- cooldown_seconds
+  - Number of seconds to "cool down" (unstaked, but still in the pool) once user unstakes a mint
+- min_stake_seconds.
+  - Number of seconds a mint has to stay in the pool once staked before being able to be unstaked.
 
 **Stake Entry**
 
