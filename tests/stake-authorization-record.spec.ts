@@ -19,6 +19,7 @@ import {
 import { ReceiptType } from "../src/programs/stakePool";
 import {
   getStakeAuthorization,
+  getStakeAuthorizationsForPool,
   getStakeEntry,
   getStakePool,
 } from "../src/programs/stakePool/accounts";
@@ -116,6 +117,15 @@ describe("Requires authorization success", () => {
     );
 
     expect(stakeAuthorizationData).to.not.eq(null);
+
+    const stakeAuthorizationsForPool = await getStakeAuthorizationsForPool(
+      provider.connection,
+      stakePoolId
+    );
+    expect(stakeAuthorizationsForPool.length).to.eq(1);
+    expect(stakeAuthorizationData.pubkey.toString()).to.eq(
+      stakeAuthorizationsForPool[0]?.pubkey.toString()
+    );
   });
 
   it("Init stake entry for pool", async () => {
