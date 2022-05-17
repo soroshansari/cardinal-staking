@@ -33,4 +33,8 @@ pub mod cardinal_reward_distributor {
     pub fn close_reward_entry(ctx: Context<CloseRewardEntryCtx>) -> Result<()> {
         close_reward_entry::handler(ctx)
     }
+
+    pub fn update_reward_distributor(ctx: Context<UpdateRewardDistributorCtx>, ix: UpdateRewardDistributorIx) -> Result<()> {
+        update_reward_distributor::handler(ctx, ix)
+    }
 }

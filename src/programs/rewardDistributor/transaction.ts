@@ -15,6 +15,7 @@ import {
   closeRewardEntry,
   initRewardDistributor,
   initRewardEntry,
+  updateRewardDistributor,
   updateRewardEntry,
 } from "./instruction";
 import { findRewardDistributorId, findRewardEntryId } from "./pda";
@@ -231,6 +232,29 @@ export const withCloseRewardEntry = async (
     closeRewardEntry(connection, wallet, {
       rewardDistributorId: rewardDistributorId,
       rewardEntryId: rewardEntryId,
+    })
+  );
+};
+
+export const withUpdateRewardDistributor = async (
+  transaction: Transaction,
+  connection: Connection,
+  wallet: Wallet,
+  params: {
+    stakePoolId: PublicKey;
+    defaultMultiplier: BN;
+    multiplierDecimals: number;
+  }
+): Promise<Transaction> => {
+  const [rewardDistributorId] = await findRewardDistributorId(
+    params.stakePoolId
+  );
+
+  return transaction.add(
+    updateRewardDistributor(connection, wallet, {
+      rewardDistributorId: rewardDistributorId,
+      defaultMultiplier: params.defaultMultiplier,
+      multiplierDecimals: params.multiplierDecimals,
     })
   );
 };
