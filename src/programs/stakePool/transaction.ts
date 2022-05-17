@@ -512,7 +512,7 @@ export const withReturnReceiptMint = async (
   );
 
   if (!tokenManagerData) {
-    throw new Error("Token manager not found");
+    return transaction;
   }
 
   const remainingAccountsForReturn = await withRemainingAccountsForReturn(
