@@ -120,14 +120,10 @@ describe("Stake and claim rewards from treasury", () => {
       ...transaction.instructions,
     ]);
 
-    await expectTXTable(
-      txEnvelope,
-      "Create reward distributor and reward entry",
-      {
-        verbosity: "error",
-        formatLogs: true,
-      }
-    ).to.be.fulfilled;
+    await expectTXTable(txEnvelope, "Create reward distributor", {
+      verbosity: "error",
+      formatLogs: true,
+    }).to.be.fulfilled;
 
     const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
     const rewardDistributorData = await getRewardDistributor(
