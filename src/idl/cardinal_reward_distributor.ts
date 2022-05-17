@@ -216,6 +216,29 @@ export type CardinalRewardDistributor = {
         }
       ];
       args: [];
+    },
+    {
+      name: "updateRewardDistributor";
+      accounts: [
+        {
+          name: "rewardDistributor";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
+          isMut: false;
+          isSigner: true;
+        }
+      ];
+      args: [
+        {
+          name: "ix";
+          type: {
+            defined: "UpdateRewardDistributorIx";
+          };
+        }
+      ];
     }
   ];
   accounts: [
@@ -343,6 +366,22 @@ export type CardinalRewardDistributor = {
             type: {
               option: "u8";
             };
+          }
+        ];
+      };
+    },
+    {
+      name: "UpdateRewardDistributorIx";
+      type: {
+        kind: "struct";
+        fields: [
+          {
+            name: "defaultMultiplier";
+            type: "u64";
+          },
+          {
+            name: "multiplierDecimals";
+            type: "u8";
           }
         ];
       };
@@ -662,6 +701,29 @@ export const IDL: CardinalRewardDistributor = {
       ],
       args: [],
     },
+    {
+      name: "updateRewardDistributor",
+      accounts: [
+        {
+          name: "rewardDistributor",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
+          isMut: false,
+          isSigner: true,
+        },
+      ],
+      args: [
+        {
+          name: "ix",
+          type: {
+            defined: "UpdateRewardDistributorIx",
+          },
+        },
+      ],
+    },
   ],
   accounts: [
     {
@@ -788,6 +850,22 @@ export const IDL: CardinalRewardDistributor = {
             type: {
               option: "u8",
             },
+          },
+        ],
+      },
+    },
+    {
+      name: "UpdateRewardDistributorIx",
+      type: {
+        kind: "struct",
+        fields: [
+          {
+            name: "defaultMultiplier",
+            type: "u64",
+          },
+          {
+            name: "multiplierDecimals",
+            type: "u8",
           },
         ],
       },
