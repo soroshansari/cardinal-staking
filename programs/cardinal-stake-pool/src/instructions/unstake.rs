@@ -86,7 +86,11 @@ pub fn handler(ctx: Context<UnstakeCtx>) -> Result<()> {
     token::transfer(cpi_context, stake_entry.amount)?;
 
     stake_entry.total_stake_seconds = stake_entry.total_stake_seconds.saturating_add(
-        (Clock::get().unwrap().unix_timestamp.checked_sub(stake_entry.last_staked_at).unwrap() as u64)
+        (stake_entry
+            .cooldown_start_seconds
+            .unwrap_or(Clock::get().unwrap().unix_timestamp)
+            .checked_sub(stake_entry.last_staked_at)
+            .unwrap() as u64)
             .checked_mul(stake_entry.amount)
             .unwrap() as u128,
     );
