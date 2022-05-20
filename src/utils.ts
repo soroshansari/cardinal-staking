@@ -56,7 +56,7 @@ export const executeTransaction = async (
     console.log("Failed transaction: ", (e as SendTransactionError).logs, e);
     config.callback && config.callback(false);
     if (!config.silent) {
-      throw new Error(`${e instanceof Error ? e.message : String(e)}`);
+      throw e;
     }
   }
   return txid;

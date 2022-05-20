@@ -204,8 +204,8 @@ export const handleError = (
   fallBackMessage = "Transaction failed"
 ): string => {
   const hex = (e as SendTransactionError).message.split(" ").at(-1);
-  if (hex) {
-    const dec = parseInt(hex, 16);
+  const dec = parseInt(hex || "", 16);
+  if (dec) {
     if (dec < 6000) {
       return (
         nativeErrors.find((err) => err.code === dec.toString())?.message ||
@@ -231,10 +231,25 @@ export const handleError = (
         return "Stake Pool Error: " + stakePoolErr.msg;
       } else if (rewardDistributorProgram && rewardDistributorErr) {
         return "Reward Distributor Error: " + rewardDistributorErr.msg;
+      } else if (stakePoolErr || rewardDistributorErr) {
+        return `${stakePoolErr ? `${stakePoolErr?.msg} or ` : ""}${
+          rewardDistributorErr ? rewardDistributorErr?.msg : ""
+        }}`;
       } else {
         return fallBackMessage;
       }
     }
   }
-  return fallBackMessage;
+  return (
+    nativeErrors.find((err) =>
+      (e as SendTransactionError).toString().includes(err.code.toString())
+    )?.message ||
+    STAKE_POOL_IDL.errors.find((err) =>
+      (e as SendTransactionError).toString().includes(err.code.toString())
+    )?.msg ||
+    REWARD_DISTRIBUTOR_IDL.errors.find((err) =>
+      (e as SendTransactionError).toString().includes(err.code.toString())
+    )?.msg ||
+    fallBackMessage
+  );
 };
