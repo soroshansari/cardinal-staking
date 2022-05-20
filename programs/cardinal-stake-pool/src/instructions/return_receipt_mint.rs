@@ -35,7 +35,7 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
     let stake_entry = &mut ctx.accounts.stake_entry;
     let user_receipt_mint_token_account = &mut ctx.accounts.user_receipt_mint_token_account;
 
-    if user_receipt_mint_token_account.amount > 0 {
+    if user_receipt_mint_token_account.amount > 0 && (stake_entry.stake_mint_claimed || stake_entry.original_mint_claimed) {
         if stake_entry.original_mint == ctx.accounts.receipt_mint.key() {
             stake_entry.original_mint_claimed = false;
         } else if ctx.accounts.receipt_mint.key() == stake_entry.stake_mint.unwrap() {
