@@ -90,9 +90,9 @@ pub fn handler(ctx: Context<UnstakeCtx>) -> Result<()> {
             .cooldown_start_seconds
             .unwrap_or(Clock::get().unwrap().unix_timestamp)
             .checked_sub(stake_entry.last_staked_at)
-            .unwrap() as u64)
-            .checked_mul(stake_entry.amount)
-            .unwrap() as u128,
+            .unwrap() as u128)
+            .checked_mul(stake_entry.amount as u128)
+            .unwrap(),
     );
     stake_entry.last_staker = Pubkey::default();
     stake_entry.original_mint_claimed = false;
