@@ -28,6 +28,4 @@ pub enum ErrorCode {
     InvalidStakeEntry,
     #[msg("Invalid reward entry")]
     InvalidRewardEntry,
-    #[msg("Cannot claim rewards during cooldown")]
-    CannotClaimRewardsDuringCooldown,
 }
