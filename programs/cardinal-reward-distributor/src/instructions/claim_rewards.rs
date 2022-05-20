@@ -47,6 +47,10 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
     let reward_amount = reward_distributor.reward_amount;
     let reward_duration_seconds = reward_distributor.reward_duration_seconds;
 
+    if stake_entry.cooldown_start_seconds.is_some() {
+        return Err(error!(ErrorCode::CannotClaimRewardsDuringCooldown));
+    }
+
     let reward_seconds_received = reward_entry.reward_seconds_received;
     if reward_seconds_received <= stake_entry.total_stake_seconds && (reward_distributor.max_supply == None || reward_distributor.rewards_issued < reward_distributor.max_supply.unwrap() as u128) {
         let mut reward_amount_to_receive = stake_entry
