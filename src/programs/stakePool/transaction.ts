@@ -498,6 +498,15 @@ export const withReturnReceiptMint = async (
   if (!stakeEntryData) {
     throw new Error(`Stake entry ${params.stakeEntryId.toString()} not found`);
   }
+
+  if (
+    !stakeEntryData.parsed.stakeMintClaimed &&
+    !stakeEntryData.parsed.originalMintClaimed
+  ) {
+    console.log("No receipt mint to return");
+    return transaction;
+  }
+
   const receiptMint =
     stakeEntryData.parsed.stakeMint && stakeEntryData.parsed.stakeMintClaimed
       ? stakeEntryData.parsed.stakeMint
