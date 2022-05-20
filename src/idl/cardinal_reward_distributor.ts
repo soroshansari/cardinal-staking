@@ -478,6 +478,11 @@ export type CardinalRewardDistributor = {
       code: 6012;
       name: "InvalidRewardEntry";
       msg: "Invalid reward entry";
+    },
+    {
+      code: 6013;
+      name: "CannotClaimRewardsDuringCooldown";
+      msg: "Cannot claim rewards during cooldown";
     }
   ];
 };
@@ -962,6 +967,11 @@ export const IDL: CardinalRewardDistributor = {
       code: 6012,
       name: "InvalidRewardEntry",
       msg: "Invalid reward entry",
+    },
+    {
+      code: 6013,
+      name: "CannotClaimRewardsDuringCooldown",
+      msg: "Cannot claim rewards during cooldown",
     },
   ],
 };
