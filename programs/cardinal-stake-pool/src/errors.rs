@@ -46,4 +46,6 @@ pub enum ErrorCode {
     CooldownSecondRemaining,
     #[msg("Minimum stake seconds not satisfied")]
     MinStakeSecondsNotSatisfied,
+    #[msg("Invalid stake authorization provided")]
+    InvalidStakeAuthorizationRecord,
 }

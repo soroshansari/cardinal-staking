@@ -64,7 +64,10 @@ pub fn handler(ctx: Context<InitEntryCtx>, _user: Pubkey) -> Result<()> {
         if stake_pool.requires_authorization || !allowed {
             let remaining_accs = &mut ctx.remaining_accounts.iter();
             let stake_entry_authorization_info = next_account_info(remaining_accs)?;
-            let stake_entry_authorization_account = Account::<StakeAuthorizationRecord>::try_from(stake_entry_authorization_info)?;
+            let stake_entry_authorization_account = match Account::<StakeAuthorizationRecord>::try_from(stake_entry_authorization_info) {
+                Ok(record) => record,
+                Err(_) => return Err(error!(ErrorCode::InvalidStakeAuthorizationRecord)),
+            };
             if stake_entry_authorization_account.pool == stake_entry.pool && stake_entry_authorization_account.mint == stake_entry.original_mint {
                 allowed = true;
             }
