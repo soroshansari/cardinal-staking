@@ -326,7 +326,10 @@ export const stake = async (
   }
 ): Promise<Transaction> => {
   const supply = await getMintSupply(connection, params.originalMintId);
-  if (supply.gt(new BN(1)) && params.receiptType === ReceiptType.Original) {
+  if (
+    (supply.gt(new BN(1)) || params.amount?.gt(new BN(1))) &&
+    params.receiptType === ReceiptType.Original
+  ) {
     throw new Error("Fungible with receipt type Original is not supported yet");
   }
 
