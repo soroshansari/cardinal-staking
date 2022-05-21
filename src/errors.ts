@@ -1,4 +1,5 @@
-import type { SendTransactionError } from "@solana/web3.js";
+import type { Idl } from "@project-serum/anchor";
+import type { PublicKey, SendTransactionError } from "@solana/web3.js";
 
 import {
   REWARD_DISTRIBUTOR_ADDRESS,
@@ -201,55 +202,75 @@ export const nativeErrors: ErrorCode[] = [
 
 export const handleError = (
   e: any,
-  fallBackMessage = "Transaction failed"
+  fallBackMessage = "Transaction failed",
+  // programIdls in priority order
+  programIdls: { idl: Idl; programId: PublicKey }[] = [
+    { programId: STAKE_POOL_ADDRESS, idl: STAKE_POOL_IDL },
+    { programId: REWARD_DISTRIBUTOR_ADDRESS, idl: REWARD_DISTRIBUTOR_IDL },
+  ]
 ): string => {
   const hex = (e as SendTransactionError).message.split(" ").at(-1);
   const dec = parseInt(hex || "", 16);
-  if (dec) {
-    if (dec < 6000) {
-      return (
-        nativeErrors.find((err) => err.code === dec.toString())?.message ||
-        fallBackMessage
-      );
-    } else {
-      const stakePoolErr = STAKE_POOL_IDL.errors.find(
-        (err) => err.code === dec
-      );
-      const rewardDistributorErr = REWARD_DISTRIBUTOR_IDL.errors.find(
-        (err) => err.code === dec
-      );
-      let stakePoolProgram = false;
-      let rewardDistributorProgram = false;
-      const logs = (e as SendTransactionError).logs;
-      if (logs) {
-        stakePoolProgram = logs[0]!.includes(STAKE_POOL_ADDRESS.toString());
-        rewardDistributorProgram = logs[0]!.includes(
-          REWARD_DISTRIBUTOR_ADDRESS.toString()
-        );
-      }
-      if (stakePoolProgram && stakePoolErr) {
-        return "Stake Pool Error: " + stakePoolErr.msg;
-      } else if (rewardDistributorProgram && rewardDistributorErr) {
-        return "Reward Distributor Error: " + rewardDistributorErr.msg;
-      } else if (stakePoolErr || rewardDistributorErr) {
-        return `${stakePoolErr ? `${stakePoolErr?.msg} or ` : ""}${
-          rewardDistributorErr ? rewardDistributorErr?.msg : ""
-        }}`;
-      } else {
-        return fallBackMessage;
-      }
-    }
-  }
+  const logs =
+    (e as SendTransactionError).logs ?? [
+      (e as SendTransactionError).message,
+    ] ?? [(e as Error).toString()] ??
+    [];
+
+  const matchedErrors: { programMatch?: boolean; errorMatch?: string }[] = dec
+    ? [
+        ...programIdls.map(({ idl, programId }) => ({
+          // match program on any log that includes programId and 'failed'
+          programMatch: logs?.some(
+            (l) => l.includes(programId.toString()) && l.includes("failed")
+          ),
+          // match error with decimal
+          errorMatch: idl.errors?.find((err) => err.code === dec)?.msg,
+        })),
+        {
+          // match native error with decimal
+          errorMatch: nativeErrors.find((err) => err.code === dec.toString())
+            ?.message,
+        },
+      ]
+    : [
+        ...programIdls.map(({ idl, programId }) => ({
+          // match program on any log that includes programId and 'failed'
+          programMatch: logs?.some(
+            (l) => l.includes(programId.toString()) && l.includes("failed")
+          ),
+          errorMatch: idl.errors?.find(
+            (err) =>
+              // message includes error
+              (e as SendTransactionError).message.includes(
+                err.code.toString()
+              ) ||
+              // toString includes error
+              (e as Error).toString().includes(err.code.toString()) ||
+              // any log includes error
+              (e as SendTransactionError).logs?.some((l) =>
+                l.toString().includes(err.code.toString())
+              )
+          )?.msg,
+        })),
+        {
+          errorMatch: nativeErrors.find(
+            (err) =>
+              // message includes error
+              (e as SendTransactionError).message.includes(err.code) ||
+              // toString includes error
+              (e as Error).toString().includes(err.code) ||
+              // any log includes error
+              (e as SendTransactionError).logs?.some((l) =>
+                l.toString().includes(err.code)
+              )
+          )?.message,
+        },
+      ];
+
   return (
-    nativeErrors.find((err) =>
-      (e as SendTransactionError).toString().includes(err.code.toString())
-    )?.message ||
-    STAKE_POOL_IDL.errors.find((err) =>
-      (e as SendTransactionError).toString().includes(err.code.toString())
-    )?.msg ||
-    REWARD_DISTRIBUTOR_IDL.errors.find((err) =>
-      (e as SendTransactionError).toString().includes(err.code.toString())
-    )?.msg ||
+    matchedErrors.find((e) => e.programMatch && e.errorMatch)?.errorMatch ||
+    matchedErrors.find((e) => e.errorMatch)?.errorMatch ||
     fallBackMessage
   );
 };
