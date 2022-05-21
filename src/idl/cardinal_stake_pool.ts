@@ -1,5 +1,5 @@
 export type CardinalStakePool = {
-  version: "1.5.10";
+  version: "1.5.11";
   name: "cardinal_stake_pool";
   instructions: [
     {
@@ -920,12 +920,17 @@ export type CardinalStakePool = {
       code: 6021;
       name: "MinStakeSecondsNotSatisfied";
       msg: "Minimum stake seconds not satisfied";
+    },
+    {
+      code: 6022;
+      name: "InvalidStakeAuthorizationRecord";
+      msg: "Invalid stake authorization provided";
     }
   ];
 };
 
 export const IDL: CardinalStakePool = {
-  version: "1.5.10",
+  version: "1.5.11",
   name: "cardinal_stake_pool",
   instructions: [
     {
@@ -1846,6 +1851,11 @@ export const IDL: CardinalStakePool = {
       code: 6021,
       name: "MinStakeSecondsNotSatisfied",
       msg: "Minimum stake seconds not satisfied",
+    },
+    {
+      code: 6022,
+      name: "InvalidStakeAuthorizationRecord",
+      msg: "Invalid stake authorization provided",
     },
   ],
 };
