@@ -151,7 +151,9 @@ describe("Create stake pool", () => {
       stakeEntryData.pubkey,
       true
     );
-    expect(stakeEntryData.parsed.cooldownStartSeconds).to.be.greaterThan(0);
+    expect(
+      stakeEntryData.parsed.cooldownStartSeconds?.toNumber()
+    ).to.be.greaterThan(0);
     expect(stakeEntryData.parsed.amount.toNumber()).to.eq(stakingAmount / 2);
     expect(stakeEntryData.parsed.lastStakedAt.toNumber()).to.be.greaterThan(0);
     expect(stakeEntryData.parsed.lastStaker.toString()).to.eq(

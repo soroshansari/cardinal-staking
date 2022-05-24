@@ -20,7 +20,7 @@ import { findRewardDistributorId } from "../src/programs/rewardDistributor/pda";
 import { ReceiptType } from "../src/programs/stakePool";
 import { getStakeEntry } from "../src/programs/stakePool/accounts";
 import { findStakeEntryIdFromMint } from "../src/programs/stakePool/utils";
-import { createMint } from "./utils";
+import { createMint, delay } from "./utils";
 import { getProvider } from "./workspace";
 
 describe("Create stake pool", () => {
@@ -285,27 +285,42 @@ describe("Create stake pool", () => {
   });
 
   it("Stake another half", async () => {
+    await delay(3000);
     const provider = getProvider();
 
-    await stake(provider.connection, provider.wallet, {
-      stakePoolId: stakePoolId,
-      originalMintId: originalMint.publicKey,
-      userOriginalMintTokenAccountId: originalMintTokenAccountId,
-      receiptType: ReceiptType.Receipt,
-      amount: new BN(stakingAmount / 2),
-    });
-
-    const stakeEntryData = await getStakeEntry(
+    const stakeEntryId = (
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
+    )[0];
+    const stakeEntryDataBefore = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      stakeEntryId
     );
+
+    await expectTXTable(
+      new TransactionEnvelope(SolanaProvider.init(provider), [
+        ...(
+          await stake(provider.connection, provider.wallet, {
+            stakePoolId: stakePoolId,
+            originalMintId: originalMint.publicKey,
+            userOriginalMintTokenAccountId: originalMintTokenAccountId,
+            receiptType: ReceiptType.Receipt,
+            amount: new BN(stakingAmount / 2),
+          })
+        ).instructions,
+      ]),
+      "Stake another half"
+    ).to.be.fulfilled;
+
+    const stakeEntryDataAfter = await getStakeEntry(
+      provider.connection,
+      stakeEntryId
+    );
+
     const userOriginalMintTokenAccountId = await findAta(
       originalMint.publicKey,
       provider.wallet.publicKey,
@@ -314,7 +329,7 @@ describe("Create stake pool", () => {
 
     const stakeEntryOriginalMintTokenAccountId = await findAta(
       originalMint.publicKey,
-      stakeEntryData.pubkey,
+      stakeEntryDataAfter.pubkey,
       true
     );
 
@@ -328,6 +343,11 @@ describe("Create stake pool", () => {
 
     expect(checkStakeEntryOriginalMintTokenAccount.amount.toNumber()).to.eq(
       stakingAmount
+    );
+
+    // stake seconds increased
+    expect(stakeEntryDataAfter.parsed.totalStakeSeconds.toNumber()).greaterThan(
+      stakeEntryDataBefore.parsed.totalStakeSeconds.toNumber() + 4
     );
   });
 
