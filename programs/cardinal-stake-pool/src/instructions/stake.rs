@@ -44,6 +44,18 @@ pub fn handler(ctx: Context<StakeCtx>, amount: u64) -> Result<()> {
         return Err(error!(ErrorCode::StakeEntryAlreadyStaked));
     }
 
+    if stake_entry.amount != 0 {
+        stake_entry.total_stake_seconds = stake_entry.total_stake_seconds.saturating_add(
+            (stake_entry
+                .cooldown_start_seconds
+                .unwrap_or(Clock::get().unwrap().unix_timestamp)
+                .checked_sub(stake_entry.last_staked_at)
+                .unwrap() as u64)
+                .checked_mul(stake_entry.amount)
+                .unwrap() as u128,
+        );
+    }
+
     // transfer original
     let cpi_accounts = token::Transfer {
         from: ctx.accounts.user_original_mint_token_account.to_account_info(),
@@ -54,15 +66,15 @@ pub fn handler(ctx: Context<StakeCtx>, amount: u64) -> Result<()> {
     let cpi_context = CpiContext::new(cpi_program, cpi_accounts);
     token::transfer(cpi_context, amount)?;
 
+    if stake_pool.reset_on_stake && stake_entry.amount == 0 {
+        stake_entry.total_stake_seconds = 0;
+    }
+
     // update stake entry
     stake_entry.last_staked_at = Clock::get().unwrap().unix_timestamp;
     stake_entry.last_staker = ctx.accounts.user.key();
-    stake_entry.amount = amount;
+    stake_entry.amount = stake_entry.amount.checked_add(amount).unwrap();
     stake_pool.total_staked = stake_pool.total_staked.checked_add(1).expect("Add error");
-
-    if ctx.accounts.stake_pool.reset_on_stake {
-        stake_entry.total_stake_seconds = 0;
-    }
 
     Ok(())
 }
