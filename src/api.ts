@@ -1,8 +1,8 @@
 import { tryGetAccount } from "@cardinal/common";
 import { BN } from "@project-serum/anchor";
 import type { Wallet } from "@saberhq/solana-contrib";
-import type { Connection } from "@solana/web3.js";
-import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
+import type { Connection, PublicKey } from "@solana/web3.js";
+import { Keypair, Transaction } from "@solana/web3.js";
 
 import type { RewardDistributorKind } from "./programs/rewardDistributor";
 import { findRewardDistributorId } from "./programs/rewardDistributor/pda";
@@ -348,14 +348,6 @@ export const stake = async (
       stakePoolId: params.stakePoolId,
       originalMintId: params.originalMintId,
     });
-  } else if (
-    stakeEntryData.parsed.lastStaker.toString() !==
-      PublicKey.default.toString() &&
-    supply.gt(new BN(1))
-  ) {
-    throw new Error(
-      "User has fungible tokens already staked in the pool. Staked tokens need to be unstaked and then restaked together with the new tokens."
-    );
   }
 
   await withStake(transaction, connection, wallet, {
@@ -374,6 +366,12 @@ export const stake = async (
       throw new Error(
         "Stake entry has no stake mint. Initialize stake mint first."
       );
+    }
+    if (
+      stakeEntryData?.parsed.stakeMintClaimed ||
+      stakeEntryData?.parsed.originalMintClaimed
+    ) {
+      throw new Error("Receipt has already been claimed.");
     }
 
     await withClaimReceiptMint(transaction, connection, wallet, {
