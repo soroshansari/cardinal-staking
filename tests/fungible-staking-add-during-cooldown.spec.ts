@@ -8,7 +8,6 @@ import { Keypair } from "@solana/web3.js";
 import { expect } from "chai";
 
 import { createStakePool, stake, unstake } from "../src";
-import { ReceiptType } from "../src/programs/stakePool";
 import { getStakeEntry } from "../src/programs/stakePool/accounts";
 import { findStakeEntryIdFromMint } from "../src/programs/stakePool/utils";
 import { createMint } from "./utils";
@@ -64,7 +63,6 @@ describe("Create stake pool", () => {
             stakePoolId: stakePoolId,
             originalMintId: originalMint.publicKey,
             userOriginalMintTokenAccountId: originalMintTokenAccountId,
-            receiptType: ReceiptType.Receipt,
             amount: new BN(stakingAmount / 2),
           })
         ).instructions,
@@ -184,7 +182,6 @@ describe("Create stake pool", () => {
               stakePoolId: stakePoolId,
               originalMintId: originalMint.publicKey,
               userOriginalMintTokenAccountId: originalMintTokenAccountId,
-              receiptType: ReceiptType.Receipt,
               amount: new BN(stakingAmount / 2),
             })
           ).instructions,
