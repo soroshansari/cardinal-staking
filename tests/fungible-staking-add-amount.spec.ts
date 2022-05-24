@@ -243,32 +243,30 @@ describe("Create stake pool", () => {
       true
     );
 
+    expect(stakeEntryData.parsed.amount.toNumber()).to.eq(stakingAmount / 2);
+    expect(stakeEntryData.parsed.lastStakedAt.toNumber()).to.be.greaterThan(0);
+    expect(stakeEntryData.parsed.lastStaker.toString()).to.eq(
+      provider.wallet.publicKey.toString()
+    );
+
+    const checkUserOriginalTokenAccount = await originalMint.getAccountInfo(
+      userOriginalMintTokenAccountId
+    );
+    expect(checkUserOriginalTokenAccount.amount.toNumber()).to.eq(
+      stakingAmount / 2
+    );
+
+    const checkStakeEntryOriginalMintTokenAccount =
+      await originalMint.getAccountInfo(stakeEntryOriginalMintTokenAccountId);
+    expect(checkStakeEntryOriginalMintTokenAccount.amount.toNumber()).to.eq(
+      stakingAmount / 2
+    );
+
     if (stakeMintKeypair) {
       const userReceiptTokenAccountId = await findAta(
         stakeMintKeypair.publicKey,
         provider.wallet.publicKey,
         true
-      );
-
-      expect(stakeEntryData.parsed.amount.toNumber()).to.eq(stakingAmount / 2);
-      expect(stakeEntryData.parsed.lastStakedAt.toNumber()).to.be.greaterThan(
-        0
-      );
-      expect(stakeEntryData.parsed.lastStaker.toString()).to.eq(
-        provider.wallet.publicKey.toString()
-      );
-
-      const checkUserOriginalTokenAccount = await originalMint.getAccountInfo(
-        userOriginalMintTokenAccountId
-      );
-      expect(checkUserOriginalTokenAccount.amount.toNumber()).to.eq(
-        stakingAmount / 2
-      );
-
-      const checkStakeEntryOriginalMintTokenAccount =
-        await originalMint.getAccountInfo(stakeEntryOriginalMintTokenAccountId);
-      expect(checkStakeEntryOriginalMintTokenAccount.amount.toNumber()).to.eq(
-        stakingAmount / 2
       );
 
       const checkReceiptMint = new splToken.Token(
@@ -323,15 +321,13 @@ describe("Create stake pool", () => {
     const checkUserOriginalTokenAccount = await originalMint.getAccountInfo(
       userOriginalMintTokenAccountId
     );
-    expect(checkUserOriginalTokenAccount.amount.toNumber()).to.eq(
-      stakingAmount / 2
-    );
+    expect(checkUserOriginalTokenAccount.amount.toNumber()).to.eq(0);
 
     const checkStakeEntryOriginalMintTokenAccount =
       await originalMint.getAccountInfo(stakeEntryOriginalMintTokenAccountId);
 
     expect(checkStakeEntryOriginalMintTokenAccount.amount.toNumber()).to.eq(
-      stakingAmount / 2
+      stakingAmount
     );
   });
 
@@ -373,7 +369,9 @@ describe("Create stake pool", () => {
     const checkUserOriginalTokenAccount = await originalMint.getAccountInfo(
       userOriginalMintTokenAccountId
     );
-    expect(checkUserOriginalTokenAccount.amount.toNumber()).to.eq(10);
+    expect(checkUserOriginalTokenAccount.amount.toNumber()).to.eq(
+      stakingAmount
+    );
     expect(checkUserOriginalTokenAccount.isFrozen).to.eq(false);
   });
 });
