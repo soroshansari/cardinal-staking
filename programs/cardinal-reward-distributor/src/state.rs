@@ -18,7 +18,7 @@ pub struct RewardEntry {
     pub multiplier: u64,
 }
 
-#[derive(Clone, Debug, PartialEq, AnchorSerialize, AnchorDeserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, AnchorSerialize, AnchorDeserialize)]
 #[repr(u8)]
 pub enum RewardDistributorKind {
     /// Rewards are distributed by minting new tokens
