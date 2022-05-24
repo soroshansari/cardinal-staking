@@ -367,6 +367,12 @@ export const stake = async (
         "Stake entry has no stake mint. Initialize stake mint first."
       );
     }
+    if (
+      stakeEntryData?.parsed.stakeMintClaimed ||
+      stakeEntryData?.parsed.originalMintClaimed
+    ) {
+      throw new Error("Receipt has already been claimed.");
+    }
 
     await withClaimReceiptMint(transaction, connection, wallet, {
       stakePoolId: params.stakePoolId,

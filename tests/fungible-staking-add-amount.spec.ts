@@ -308,7 +308,6 @@ describe("Create stake pool", () => {
             stakePoolId: stakePoolId,
             originalMintId: originalMint.publicKey,
             userOriginalMintTokenAccountId: originalMintTokenAccountId,
-            receiptType: ReceiptType.Receipt,
             amount: new BN(stakingAmount / 2),
           })
         ).instructions,
