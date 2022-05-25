@@ -49,7 +49,7 @@ pub fn handler(ctx: Context<StakeCtx>, amount: u64) -> Result<()> {
                 .cooldown_start_seconds
                 .unwrap_or(Clock::get().unwrap().unix_timestamp)
                 .checked_sub(stake_entry.last_staked_at)
-                .unwrap() as u64)
+                .unwrap_or(0) as u64)
                 .checked_mul(stake_entry.amount)
                 .unwrap() as u128,
         );
