@@ -83,11 +83,12 @@
 <li>As it sounds, this is a filter on the NFT &quot;creators&quot; array (as stored in metaplex metadata <a href="https://docs.metaplex.com/token-metadata/specification">https://docs.metaplex.com/token-metadata/specification</a>).</li>
 <li>If this is set, any NFT with a creator that is listed in the array will be allowed to stake in the pool.</li>
 <li>If your NFT was minted via Metaplex Candy Machine, you will likely want to use the candy machine ID in the requires_creator array.</li>
+<li>The stake pool enforces that creators are verified.</li>
 </ul>
 </li>
 <li>required_collections<ul>
 <li>This is a filter on the collection of an NFT that uses the Metaplex Collections standard <a href="https://docs.metaplex.com/token-metadata/specification">https://docs.metaplex.com/token-metadata/specification</a>.</li>
-<li>The stake pool DOES NOT enforce that collections are verified.</li>
+<li>The stake pool enforces that collections are verified.</li>
 </ul>
 </li>
 <li>requires_authorization<ul>
