@@ -69,9 +69,10 @@ Requires_creators, requires_collections and requires_authorization are the 3 dif
   - As it sounds, this is a filter on the NFT "creators" array (as stored in metaplex metadata https://docs.metaplex.com/token-metadata/specification).
   - If this is set, any NFT with a creator that is listed in the array will be allowed to stake in the pool.
   - If your NFT was minted via Metaplex Candy Machine, you will likely want to use the candy machine ID in the requires_creator array.
+  - The stake pool enforces that creators are verified.
 - required_collections
   - This is a filter on the collection of an NFT that uses the Metaplex Collections standard https://docs.metaplex.com/token-metadata/specification.
-  - The stake pool DOES NOT enforce that collections are verified.
+  - The stake pool enforces that collections are verified.
 - requires_authorization
   - If none of the above checks pass, a final check can be made to allow-list arbitrary mintIDs. The authority of a pool can set requires_authorization to TRUE and then allow-list any mint using the authorize_mint instruction.
   - This is purely additive, so if you want add more mints in addition to those passing the creators/collections check, you can leverage this feature.
