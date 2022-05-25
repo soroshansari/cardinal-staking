@@ -86,16 +86,11 @@ pub fn handler(ctx: Context<UnstakeCtx>) -> Result<()> {
     token::transfer(cpi_context, stake_entry.amount)?;
 
     stake_entry.total_stake_seconds = stake_entry.total_stake_seconds.saturating_add(
-        u128::try_from(
-            stake_entry
-                .cooldown_start_seconds
-                .unwrap_or(Clock::get().unwrap().unix_timestamp)
-                .checked_sub(stake_entry.last_staked_at)
-                .unwrap_or(0),
-        )
-        .unwrap()
-        .checked_mul(u128::try_from(stake_entry.amount).unwrap())
-        .unwrap(),
+        u128::try_from(stake_entry.cooldown_start_seconds.unwrap_or(Clock::get().unwrap().unix_timestamp))
+            .unwrap()
+            .saturating_sub(u128::try_from(stake_entry.last_staked_at).unwrap())
+            .checked_mul(u128::try_from(stake_entry.amount).unwrap())
+            .unwrap(),
     );
     stake_entry.last_staker = Pubkey::default();
     stake_entry.original_mint_claimed = false;

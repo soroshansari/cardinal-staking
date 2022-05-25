@@ -14,13 +14,11 @@ pub fn handler(ctx: Context<UpdateTotalStakeSecondsCtx>) -> Result<()> {
 
     if stake_entry.cooldown_start_seconds.is_none() {
         stake_entry.total_stake_seconds = stake_entry.total_stake_seconds.saturating_add(
-            (stake_entry
-                .cooldown_start_seconds
-                .unwrap_or(Clock::get().unwrap().unix_timestamp)
-                .checked_sub(stake_entry.last_staked_at)
-                .unwrap_or(0) as u64)
-                .checked_mul(stake_entry.amount)
-                .unwrap() as u128,
+            u128::try_from(stake_entry.cooldown_start_seconds.unwrap_or(Clock::get().unwrap().unix_timestamp))
+                .unwrap()
+                .saturating_sub(u128::try_from(stake_entry.last_staked_at).unwrap())
+                .checked_mul(u128::try_from(stake_entry.amount).unwrap())
+                .unwrap(),
         );
         stake_entry.last_staked_at = Clock::get().unwrap().unix_timestamp;
     }
