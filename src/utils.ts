@@ -95,7 +95,8 @@ export const getPendingRewardsForPool = async (
   connection: Connection,
   wallet: PublicKey,
   mintIds: PublicKey[],
-  rewardDistributor: AccountData<RewardDistributorData>
+  rewardDistributor: AccountData<RewardDistributorData>,
+  UTCNow: number
 ): Promise<{
   rewardMap: {
     [mintId: string]: { claimableRewards: BN; nextRewardsIn: BN };
@@ -150,7 +151,8 @@ export const getPendingRewardsForPool = async (
     stakeEntries,
     rewardEntries,
     rewardDistributor,
-    rewardDistributorTokenAccountInfo.amount
+    rewardDistributorTokenAccountInfo.amount,
+    UTCNow
   );
 };
 
@@ -167,7 +169,8 @@ export const getRewardMap = (
   stakeEntries: AccountData<StakeEntryData>[],
   rewardEntries: AccountData<RewardEntryData>[],
   rewardDistributor: AccountData<RewardDistributorData>,
-  remainingRewardAmount: BN
+  remainingRewardAmount: BN,
+  UTCNow: number
 ): {
   rewardMap: {
     [stakeEntryId: string]: { claimableRewards: BN; nextRewardsIn: BN };
@@ -190,7 +193,7 @@ export const getRewardMap = (
         stakeEntry,
         rewardEntry,
         remainingRewardAmount,
-        Date.now() / 1000
+        UTCNow
       );
       rewardMap[stakeEntry.pubkey.toString()] = {
         claimableRewards,
