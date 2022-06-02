@@ -26,7 +26,8 @@ const CLUSTER = "mainnet";
 const initializeEntries = async (
   stakePoolId: PublicKey,
   mintIds: PublicKey[],
-  cluster: string
+  cluster: string,
+  fungible = false
 ) => {
   const connection = connectionFor(cluster);
   const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
@@ -49,7 +50,7 @@ const initializeEntries = async (
         wallet.publicKey,
         stakePoolId,
         mintId,
-        true
+        fungible
       );
       const stakeEntry = await tryGetAccount(() =>
         getStakeEntry(connection, stakeEntryId)
