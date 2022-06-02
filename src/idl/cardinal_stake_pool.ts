@@ -925,6 +925,11 @@ export type CardinalStakePool = {
       code: 6022;
       name: "InvalidStakeAuthorizationRecord";
       msg: "Invalid stake authorization provided";
+    },
+    {
+      code: 6023;
+      name: "InvalidMintMetadata";
+      msg: "Invalid mint metadata";
     }
   ];
 };
@@ -1856,6 +1861,11 @@ export const IDL: CardinalStakePool = {
       code: 6022,
       name: "InvalidStakeAuthorizationRecord",
       msg: "Invalid stake authorization provided",
+    },
+    {
+      code: 6023,
+      name: "InvalidMintMetadata",
+      msg: "Invalid mint metadata",
     },
   ],
 };

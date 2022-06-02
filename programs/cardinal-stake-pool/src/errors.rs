@@ -48,4 +48,6 @@ pub enum ErrorCode {
     MinStakeSecondsNotSatisfied,
     #[msg("Invalid stake authorization provided")]
     InvalidStakeAuthorizationRecord,
+    #[msg("Invalid mint metadata")]
+    InvalidMintMetadata,
 }
