@@ -13,16 +13,12 @@ import {
 import { getAllStakeEntries } from "../src/programs/stakePool/accounts";
 // import { findStakeEntryIdFromMint } from "../src/programs/stakePool/utils";
 import { connectionFor } from "./connection";
+import { chunkArray } from "./utils";
 
 // crkdpVWjHWdggGgBuSyAqSmZUmAjYLzD435tcLDRLXr
 const wallet = Keypair.fromSecretKey(
   utils.bytes.bs58.decode(process.env.CRANK_SOLANA_KEY || "")
 );
-
-const chunkArray = (arr: any[], size: number): any[][] =>
-  arr.length > size
-    ? [arr.slice(0, size), ...chunkArray(arr.slice(size), size)]
-    : [arr];
 
 const BATCH_SIZE = 1;
 const REVERSE = false;
