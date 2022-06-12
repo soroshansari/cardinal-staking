@@ -250,7 +250,9 @@ export const calculatePendingRewards = (
 
   const rewardSecondsReceived =
     rewardEntry?.parsed.rewardSecondsReceived || new BN(0);
-  const multiplier = rewardEntry?.parsed?.multiplier || new BN(1);
+  const multiplier =
+    rewardEntry?.parsed?.multiplier ||
+    rewardDistributor.parsed.defaultMultiplier;
 
   let rewardAmountToReceive = (
     stakeEntry.parsed.cooldownStartSeconds || new BN(UTCNow)
