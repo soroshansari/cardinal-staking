@@ -14,6 +14,14 @@ type ErrorCode = {
 
 export const nativeErrors: ErrorCode[] = [
   {
+    code: "0",
+    message: "Low wallet lamports balance",
+  },
+  {
+    code: "1",
+    message: "Insufficient funds",
+  },
+  {
     code: "100",
     message: "InstructionMissing: 8 byte instruction identifier not provided",
   },
