@@ -47,22 +47,18 @@ pub fn handler(ctx: Context<InitEntryCtx>, _user: Pubkey) -> Result<()> {
                 return Err(error!(ErrorCode::InvalidMintMetadata));
             }
 
-            if !stake_pool.requires_creators.is_empty() {
-                if original_mint_metadata.data.creators.is_some() {
-                    let creators = original_mint_metadata.data.creators.unwrap();
-                    let find = creators.iter().find(|c| stake_pool.requires_creators.contains(&c.address) && c.verified);
-                    if find != None {
-                        allowed = true
-                    };
-                }
+            if !stake_pool.requires_creators.is_empty() && original_mint_metadata.data.creators.is_some() {
+                let creators = original_mint_metadata.data.creators.unwrap();
+                let find = creators.iter().find(|c| stake_pool.requires_creators.contains(&c.address) && c.verified);
+                if find != None {
+                    allowed = true
+                };
             }
 
-            if !stake_pool.requires_collections.is_empty() {
-                if original_mint_metadata.collection.is_some() {
-                    let collection = original_mint_metadata.collection.unwrap();
-                    if collection.verified && stake_pool.requires_collections.contains(&collection.key) {
-                        allowed = true
-                    }
+            if !stake_pool.requires_collections.is_empty() && original_mint_metadata.collection.is_some() {
+                let collection = original_mint_metadata.collection.unwrap();
+                if collection.verified && stake_pool.requires_collections.contains(&collection.key) {
+                    allowed = true
                 }
             }
         }
