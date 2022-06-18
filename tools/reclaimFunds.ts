@@ -37,6 +37,6 @@ const main = async (
   console.log("Successfully reclaimed funds");
 };
 
-const stakePoolId = new PublicKey("STAKE POO ID");
+const stakePoolId = new PublicKey("STAKE POOL ID");
 const amount = 0;
 main(stakePoolId, amount).catch((e) => console.log(e));

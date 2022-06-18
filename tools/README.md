@@ -62,3 +62,17 @@ Given `MINT_LIST`, a list of entries in the format
 ```
 
 the script is used to initialize stake entries and reward entries for a given stake pool. The script allows the functionality of providing **custom multipliers** for given mints, so it can also be used to set multipliers for given mints.
+
+## reclaimFunds.ts
+
+### Params:
+
+`stakePoolId`, `amount`, `cluster`
+
+### Usage:
+
+Reclaims `amount` numerb of tokens from the reward distributor associated with the pool provided.
+
+### Constraint
+
+Only the stake pool authority can successfully execute this transaction
