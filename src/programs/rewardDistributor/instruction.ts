@@ -256,3 +256,32 @@ export const updateRewardDistributor = (
     }
   );
 };
+
+export const reclaimFunds = (
+  connection: Connection,
+  wallet: Wallet,
+  params: {
+    rewardDistributorId: PublicKey;
+    rewardDistributorTokenAccountId: PublicKey;
+    authorityTokenAccountId: PublicKey;
+    authority: PublicKey;
+    amount: BN;
+  }
+): TransactionInstruction => {
+  const provider = new AnchorProvider(connection, wallet, {});
+  const rewardDistributorProgram = new Program<REWARD_DISTRIBUTOR_PROGRAM>(
+    REWARD_DISTRIBUTOR_IDL,
+    REWARD_DISTRIBUTOR_ADDRESS,
+    provider
+  );
+
+  return rewardDistributorProgram.instruction.reclaimFunds(params.amount, {
+    accounts: {
+      rewardDistributor: params.rewardDistributorId,
+      rewardDistributorTokenAccount: params.rewardDistributorTokenAccountId,
+      authorityTokenAccount: params.authorityTokenAccountId,
+      authority: wallet.publicKey,
+      tokenProgram: TOKEN_PROGRAM_ID,
+    },
+  });
+};

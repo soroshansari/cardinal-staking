@@ -239,6 +239,42 @@ export type CardinalRewardDistributor = {
           };
         }
       ];
+    },
+    {
+      name: "reclaimFunds";
+      accounts: [
+        {
+          name: "rewardDistributor";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "rewardDistributorTokenAccount";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authorityTokenAccount";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [
+        {
+          name: "amount";
+          type: "u64";
+        }
+      ];
     }
   ];
   accounts: [
@@ -478,6 +514,16 @@ export type CardinalRewardDistributor = {
       code: 6012;
       name: "InvalidRewardEntry";
       msg: "Invalid reward entry";
+    },
+    {
+      code: 6013;
+      name: "InvalidRewardDistributorTokenAccount";
+      msg: "Invalid reward distributor token account";
+    },
+    {
+      code: 6014;
+      name: "InvalidAuthorityTokenAccount";
+      msg: "Invalid authority token account";
     }
   ];
 };
@@ -724,6 +770,42 @@ export const IDL: CardinalRewardDistributor = {
         },
       ],
     },
+    {
+      name: "reclaimFunds",
+      accounts: [
+        {
+          name: "rewardDistributor",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "rewardDistributorTokenAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authorityTokenAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "tokenProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: "amount",
+          type: "u64",
+        },
+      ],
+    },
   ],
   accounts: [
     {
@@ -962,6 +1044,16 @@ export const IDL: CardinalRewardDistributor = {
       code: 6012,
       name: "InvalidRewardEntry",
       msg: "Invalid reward entry",
+    },
+    {
+      code: 6013,
+      name: "InvalidRewardDistributorTokenAccount",
+      msg: "Invalid reward distributor token account",
+    },
+    {
+      code: 6014,
+      name: "InvalidAuthorityTokenAccount",
+      msg: "Invalid authority token account",
     },
   ],
 };
