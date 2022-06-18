@@ -37,4 +37,8 @@ pub mod cardinal_reward_distributor {
     pub fn update_reward_distributor(ctx: Context<UpdateRewardDistributorCtx>, ix: UpdateRewardDistributorIx) -> Result<()> {
         update_reward_distributor::handler(ctx, ix)
     }
+
+    pub fn reclaim_funds(ctx: Context<ReclaimFundsCtx>, amount: u64) -> Result<()> {
+        reclaim_funds::handler(ctx, amount)
+    }
 }

@@ -28,4 +28,8 @@ pub enum ErrorCode {
     InvalidStakeEntry,
     #[msg("Invalid reward entry")]
     InvalidRewardEntry,
+    #[msg("Invalid reward distributor token account")]
+    InvalidRewardDistributorTokenAccount,
+    #[msg("Invalid authority token account")]
+    InvalidAuthorityTokenAccount,
 }

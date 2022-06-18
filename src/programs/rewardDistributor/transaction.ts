@@ -1,4 +1,5 @@
 import {
+  findAta,
   tryGetAccount,
   withFindOrInitAssociatedTokenAccount,
 } from "@cardinal/common";
@@ -15,6 +16,7 @@ import {
   closeRewardEntry,
   initRewardDistributor,
   initRewardEntry,
+  reclaimFunds,
   updateRewardDistributor,
   updateRewardEntry,
 } from "./instruction";
@@ -255,6 +257,48 @@ export const withUpdateRewardDistributor = async (
       rewardDistributorId: rewardDistributorId,
       defaultMultiplier: params.defaultMultiplier,
       multiplierDecimals: params.multiplierDecimals,
+    })
+  );
+};
+export const withReclaimFunds = async (
+  transaction: Transaction,
+  connection: Connection,
+  wallet: Wallet,
+  params: {
+    stakePoolId: PublicKey;
+    amount: BN;
+  }
+): Promise<Transaction> => {
+  const [rewardDistributorId] = await findRewardDistributorId(
+    params.stakePoolId
+  );
+
+  const rewardDistributorData = await tryGetAccount(() =>
+    getRewardDistributor(connection, rewardDistributorId)
+  );
+  if (!rewardDistributorData) {
+    throw new Error("No reward distrbutor found");
+  }
+
+  const rewardDistributorTokenAccountId = await findAta(
+    rewardDistributorData.parsed.rewardMint,
+    rewardDistributorData.pubkey,
+    true
+  );
+
+  const authorityTokenAccountId = await findAta(
+    rewardDistributorData.parsed.rewardMint,
+    wallet.publicKey,
+    true
+  );
+
+  return transaction.add(
+    reclaimFunds(connection, wallet, {
+      rewardDistributorId: rewardDistributorId,
+      rewardDistributorTokenAccountId: rewardDistributorTokenAccountId,
+      authorityTokenAccountId: authorityTokenAccountId,
+      authority: wallet.publicKey,
+      amount: params.amount,
     })
   );
 };
