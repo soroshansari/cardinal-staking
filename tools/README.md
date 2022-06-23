@@ -54,7 +54,7 @@ Handy script to create a fungible token with configurable `SUPPLY` and `DECIMALS
 
 Given a list of metadata keys and a pool pubkey, the script looks up all staked tokens for the given pool and logs the metadata requested from `metadataKeys` array for every staked mint.
 
-## initializeEntries.ts
+## initializeEntriesAndSetMultipliers.ts
 
 ### Params:
 
