@@ -44,6 +44,16 @@ Used to **safely** close a pool by making sure there are not staked tokens in th
 
 Handy script to create a fungible token with configurable `SUPPLY` and `DECIMALS`
 
+## getMetadataForPoolTokens
+
+### Params:
+
+`poolId`, `metadataKeys`
+
+### Usage:
+
+Given a list of metadata keys and a pool pubkey, the script looks up all staked tokens for the given pool and logs the metadata requested from `metadataKeys` array for every staked mint.
+
 ## initializeEntries.ts
 
 ### Params:
