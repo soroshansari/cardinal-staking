@@ -244,8 +244,10 @@ export const withUpdateRewardDistributor = async (
   wallet: Wallet,
   params: {
     stakePoolId: PublicKey;
-    defaultMultiplier: BN;
-    multiplierDecimals: number;
+    defaultMultiplier?: BN;
+    multiplierDecimals?: number;
+    rewardAmount?: BN;
+    rewardDurationSeconds?: BN;
   }
 ): Promise<Transaction> => {
   const [rewardDistributorId] = await findRewardDistributorId(
@@ -257,6 +259,8 @@ export const withUpdateRewardDistributor = async (
       rewardDistributorId: rewardDistributorId,
       defaultMultiplier: params.defaultMultiplier,
       multiplierDecimals: params.multiplierDecimals,
+      rewardAmount: params.rewardAmount,
+      rewardDurationSeconds: params.rewardDurationSeconds,
     })
   );
 };
