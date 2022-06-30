@@ -1,5 +1,5 @@
 export type CardinalStakePool = {
-  version: "1.5.26";
+  version: "1.5.27";
   name: "cardinal_stake_pool";
   instructions: [
     {
@@ -761,68 +761,50 @@ export type CardinalStakePool = {
         kind: "struct";
         fields: [
           {
-            name: "overlayText";
-            type: {
-              option: "string";
-            };
-          },
-          {
             name: "imageUri";
             type: {
               option: "string";
             };
           },
           {
+            name: "overlayText";
+            type: "string";
+          },
+          {
             name: "requiresCollections";
             type: {
-              option: {
-                vec: "publicKey";
-              };
+              vec: "publicKey";
             };
           },
           {
             name: "requiresCreators";
             type: {
-              option: {
-                vec: "publicKey";
-              };
+              vec: "publicKey";
             };
           },
           {
             name: "requiresAuthorization";
-            type: {
-              option: "bool";
-            };
+            type: "bool";
           },
           {
             name: "authority";
-            type: {
-              option: "publicKey";
-            };
+            type: "publicKey";
           },
           {
             name: "resetOnStake";
-            type: {
-              option: "bool";
-            };
+            type: "bool";
           },
           {
             name: "cooldownSeconds";
-            type: {
-              option: "u32";
-            };
+            type: "u32";
           },
           {
             name: "minStakeSeconds";
-            type: {
-              option: "u32";
-            };
+            type: "u32";
           },
           {
             name: "endDate";
-            type: {
-              option: "i64";
-            };
+            type: "i64";
           }
         ];
       };
@@ -958,7 +940,7 @@ export type CardinalStakePool = {
 };
 
 export const IDL: CardinalStakePool = {
-  version: "1.5.26",
+  version: "1.5.27",
   name: "cardinal_stake_pool",
   instructions: [
     {
@@ -1720,68 +1702,50 @@ export const IDL: CardinalStakePool = {
         kind: "struct",
         fields: [
           {
-            name: "overlayText",
-            type: {
-              option: "string",
-            },
-          },
-          {
             name: "imageUri",
             type: {
               option: "string",
             },
           },
           {
+            name: "overlayText",
+            type: "string",
+          },
+          {
             name: "requiresCollections",
             type: {
-              option: {
-                vec: "publicKey",
-              },
+              vec: "publicKey",
             },
           },
           {
             name: "requiresCreators",
             type: {
-              option: {
-                vec: "publicKey",
-              },
+              vec: "publicKey",
             },
           },
           {
             name: "requiresAuthorization",
-            type: {
-              option: "bool",
-            },
+            type: "bool",
           },
           {
             name: "authority",
-            type: {
-              option: "publicKey",
-            },
+            type: "publicKey",
           },
           {
             name: "resetOnStake",
-            type: {
-              option: "bool",
-            },
+            type: "bool",
           },
           {
             name: "cooldownSeconds",
-            type: {
-              option: "u32",
-            },
+            type: "u32",
           },
           {
             name: "minStakeSeconds",
-            type: {
-              option: "u32",
-            },
+            type: "u32",
           },
           {
             name: "endDate",
-            type: {
-              option: "i64",
-            },
+            type: "i64",
           },
         ],
       },
