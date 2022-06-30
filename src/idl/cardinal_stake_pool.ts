@@ -796,15 +796,21 @@ export type CardinalStakePool = {
           },
           {
             name: "cooldownSeconds";
-            type: "u32";
+            type: {
+              option: "u32";
+            };
           },
           {
             name: "minStakeSeconds";
-            type: "u32";
+            type: {
+              option: "u32";
+            };
           },
           {
             name: "endDate";
-            type: "i64";
+            type: {
+              option: "i64";
+            };
           }
         ];
       };
@@ -1737,15 +1743,21 @@ export const IDL: CardinalStakePool = {
           },
           {
             name: "cooldownSeconds",
-            type: "u32",
+            type: {
+              option: "u32",
+            },
           },
           {
             name: "minStakeSeconds",
-            type: "u32",
+            type: {
+              option: "u32",
+            },
           },
           {
             name: "endDate",
-            type: "i64",
+            type: {
+              option: "i64",
+            },
           },
         ],
       },
