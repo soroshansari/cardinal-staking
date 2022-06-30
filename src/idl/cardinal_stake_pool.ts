@@ -646,7 +646,7 @@ export type CardinalStakePool = {
             };
           },
           {
-            name: "closePoolDate";
+            name: "endDate";
             type: {
               option: "i64";
             };
@@ -742,7 +742,7 @@ export type CardinalStakePool = {
             };
           },
           {
-            name: "closePoolDate";
+            name: "endDate";
             type: {
               option: "i64";
             };
@@ -830,7 +830,7 @@ export type CardinalStakePool = {
             };
           },
           {
-            name: "closePoolDate";
+            name: "endDate";
             type: {
               option: "i64";
             };
@@ -1616,7 +1616,7 @@ export const IDL: CardinalStakePool = {
             },
           },
           {
-            name: "closePoolDate",
+            name: "endDate",
             type: {
               option: "i64",
             },
@@ -1712,7 +1712,7 @@ export const IDL: CardinalStakePool = {
             },
           },
           {
-            name: "closePoolDate",
+            name: "endDate",
             type: {
               option: "i64",
             },
@@ -1800,7 +1800,7 @@ export const IDL: CardinalStakePool = {
             },
           },
           {
-            name: "closePoolDate",
+            name: "endDate",
             type: {
               option: "i64",
             },
