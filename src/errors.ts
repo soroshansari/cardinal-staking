@@ -12,7 +12,32 @@ type ErrorCode = {
   message: string;
 };
 
-export const nativeErrors: ErrorCode[] = [
+export const NATIVE_ERRORS: ErrorCode[] = [
+  {
+    code: "Blockhash not found",
+    message:
+      "Blockhash not found. Transaction may or may not have gone through",
+  },
+  {
+    code: "Transaction was not confirmed in",
+    message:
+      "Transaction timed out waiting on confirmation from Solana. It may or may not have gone through",
+  },
+  // token program errors
+  {
+    code: "0",
+    message: "Low wallet lamports balance",
+  },
+  {
+    code: "1",
+    message:
+      "Insufficient funds. User does not have enough balance of token to complete the transaction",
+  },
+  {
+    code: "91",
+    message: "Token is not ellgible for original receipts",
+  },
+  // anchor errors
   {
     code: "0",
     message: "Low wallet lamports balance",
@@ -215,7 +240,8 @@ export const handleError = (
   programIdls: { idl: Idl; programId: PublicKey }[] = [
     { programId: STAKE_POOL_ADDRESS, idl: STAKE_POOL_IDL },
     { programId: REWARD_DISTRIBUTOR_ADDRESS, idl: REWARD_DISTRIBUTOR_IDL },
-  ]
+  ],
+  additionalErrors = NATIVE_ERRORS
 ): string => {
   const hex = (e as SendTransactionError).message.split(" ").at(-1);
   const dec = parseInt(hex || "", 16);
@@ -237,8 +263,9 @@ export const handleError = (
         })),
         {
           // match native error with decimal
-          errorMatch: nativeErrors.find((err) => err.code === dec.toString())
-            ?.message,
+          errorMatch: additionalErrors.find(
+            (err) => err.code === dec.toString()
+          )?.message,
         },
       ]
     : [
@@ -262,7 +289,7 @@ export const handleError = (
           )?.msg,
         })),
         {
-          errorMatch: nativeErrors.find(
+          errorMatch: additionalErrors.find(
             (err) =>
               // message includes error
               (e as SendTransactionError).message.includes(err.code) ||
