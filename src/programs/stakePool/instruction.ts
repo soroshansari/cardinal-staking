@@ -69,6 +69,7 @@ export const initStakePool = (
     resetOnStake: boolean;
     cooldownSeconds: number | null;
     minStakeSeconds: number | null;
+    closePoolDate: BN | null;
   }
 ): TransactionInstruction => {
   const provider = new AnchorProvider(connection, wallet, {});
@@ -88,6 +89,7 @@ export const initStakePool = (
       resetOnStake: params.resetOnStake,
       cooldownSeconds: params.cooldownSeconds,
       minStakeSeconds: params.minStakeSeconds,
+      closePoolDate: params.closePoolDate,
     },
     {
       accounts: {
@@ -350,6 +352,7 @@ export const updateStakePool = (
     resetOnStake?: boolean;
     cooldownSeconds?: number;
     minStakeSeconds?: number;
+    closePoolDate?: BN;
   }
 ): TransactionInstruction => {
   const provider = new AnchorProvider(connection, wallet, {});
@@ -369,6 +372,7 @@ export const updateStakePool = (
       resetOnStake: params.resetOnStake || false,
       cooldownSeconds: params.cooldownSeconds || null,
       minStakeSeconds: params.minStakeSeconds || null,
+      closePoolDate: params.closePoolDate || null,
     },
     {
       accounts: {
