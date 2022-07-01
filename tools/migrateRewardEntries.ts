@@ -13,7 +13,6 @@ import { findRewardEntryId } from "../src/programs/rewardDistributor/pda";
 import { getAllStakeEntries } from "../src/programs/stakePool/accounts";
 // import { findStakeEntryIdFromMint } from "../src/programs/stakePool/utils";
 
-// crkdpVWjHWdggGgBuSyAqSmZUmAjYLzD435tcLDRLXr
 const wallet = Keypair.fromSecretKey(
   utils.bytes.bs58.decode(process.env.CRANK_SOLANA_KEY || "")
 );
