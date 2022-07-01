@@ -105,9 +105,9 @@ export const withInitStakePool = async (
       imageUri: params.imageUri || "",
       authority: wallet.publicKey,
       resetOnStake: params.resetOnStake || false,
-      cooldownSeconds: params.cooldownSeconds || null,
-      minStakeSeconds: params.minStakeSeconds || null,
-      endDate: params.endDate || null,
+      cooldownSeconds: params.cooldownSeconds,
+      minStakeSeconds: params.minStakeSeconds,
+      endDate: params.endDate,
     })
   );
   return [transaction, stakePoolId];
@@ -462,9 +462,9 @@ export const withUpdateStakePool = (
       imageUri: params.imageUri || "",
       authority: wallet.publicKey,
       resetOnStake: params.resetOnStake || false,
-      cooldownSeconds: params.cooldownSeconds || 0,
-      minStakeSeconds: params.minStakeSeconds || 0,
-      endDate: params.endDate || new BN(0),
+      cooldownSeconds: params.cooldownSeconds,
+      minStakeSeconds: params.minStakeSeconds,
+      endDate: params.endDate,
     })
   );
   return [transaction, params.stakePoolId];

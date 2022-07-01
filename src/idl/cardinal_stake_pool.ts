@@ -772,50 +772,38 @@ export type CardinalStakePool = {
         kind: "struct";
         fields: [
           {
-            name: "overlayText";
-            type: {
-              option: "string";
-            };
-          },
-          {
             name: "imageUri";
             type: {
               option: "string";
             };
           },
           {
+            name: "overlayText";
+            type: "string";
+          },
+          {
             name: "requiresCollections";
             type: {
-              option: {
-                vec: "publicKey";
-              };
+              vec: "publicKey";
             };
           },
           {
             name: "requiresCreators";
             type: {
-              option: {
-                vec: "publicKey";
-              };
+              vec: "publicKey";
             };
           },
           {
             name: "requiresAuthorization";
-            type: {
-              option: "bool";
-            };
+            type: "bool";
           },
           {
             name: "authority";
-            type: {
-              option: "publicKey";
-            };
+            type: "publicKey";
           },
           {
             name: "resetOnStake";
-            type: {
-              option: "bool";
-            };
+            type: "bool";
           },
           {
             name: "cooldownSeconds";
@@ -1742,50 +1730,38 @@ export const IDL: CardinalStakePool = {
         kind: "struct",
         fields: [
           {
-            name: "overlayText",
-            type: {
-              option: "string",
-            },
-          },
-          {
             name: "imageUri",
             type: {
               option: "string",
             },
           },
           {
+            name: "overlayText",
+            type: "string",
+          },
+          {
             name: "requiresCollections",
             type: {
-              option: {
-                vec: "publicKey",
-              },
+              vec: "publicKey",
             },
           },
           {
             name: "requiresCreators",
             type: {
-              option: {
-                vec: "publicKey",
-              },
+              vec: "publicKey",
             },
           },
           {
             name: "requiresAuthorization",
-            type: {
-              option: "bool",
-            },
+            type: "bool",
           },
           {
             name: "authority",
-            type: {
-              option: "publicKey",
-            },
+            type: "publicKey",
           },
           {
             name: "resetOnStake",
-            type: {
-              option: "bool",
-            },
+            type: "bool",
           },
           {
             name: "cooldownSeconds",

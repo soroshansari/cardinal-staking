@@ -67,9 +67,9 @@ export const initStakePool = (
     imageUri: string;
     authority: PublicKey;
     resetOnStake: boolean;
-    cooldownSeconds: number | null;
-    minStakeSeconds: number | null;
-    endDate: BN | null;
+    cooldownSeconds?: number;
+    minStakeSeconds?: number;
+    endDate?: BN;
   }
 ): TransactionInstruction => {
   const provider = new AnchorProvider(connection, wallet, {});
@@ -87,9 +87,9 @@ export const initStakePool = (
       requiresAuthorization: params.requiresAuthorization ?? false,
       authority: params.authority,
       resetOnStake: params.resetOnStake,
-      cooldownSeconds: params.cooldownSeconds,
-      minStakeSeconds: params.minStakeSeconds,
-      endDate: params.endDate,
+      cooldownSeconds: params.cooldownSeconds ?? null,
+      minStakeSeconds: params.minStakeSeconds ?? null,
+      endDate: params.endDate ?? null,
     },
     {
       accounts: {
