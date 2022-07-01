@@ -50,6 +50,6 @@ pub enum ErrorCode {
     InvalidStakeAuthorizationRecord,
     #[msg("Invalid mint metadata")]
     InvalidMintMetadata,
-    #[msg("Stake pool is closed")]
-    StakePoolIsClosed,
+    #[msg("Stake pool has ended")]
+    StakePoolHasEnded,
 }
