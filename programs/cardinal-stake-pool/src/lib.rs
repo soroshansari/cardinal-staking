@@ -61,4 +61,8 @@ pub mod cardinal_stake_pool {
     pub fn close_stake_entry(ctx: Context<CloseStakeEntryCtx>) -> Result<()> {
         close_stake_entry::handler(ctx)
     }
+
+    pub fn stake_pool_fill_zeros(ctx: Context<StakePoolFillZeros>) -> Result<()> {
+        stake_pool_fill_zeros::handler(ctx)
+    }
 }

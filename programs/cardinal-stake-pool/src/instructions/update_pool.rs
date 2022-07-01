@@ -39,5 +39,10 @@ pub fn handler(ctx: Context<UpdatePoolCtx>, ix: UpdatePoolIx) -> Result<()> {
         stake_pool.min_stake_seconds = ix.min_stake_seconds;
     }
 
+    // zero extra data
+    let stake_pool_account = stake_pool.to_account_info();
+    let mut stake_pool_data = stake_pool_account.data.borrow_mut();
+    let len = stake_pool_data.len();
+    stake_pool_data[stake_pool.try_to_vec()?.len()..len].iter_mut().for_each(|d| *d = 0);
     Ok(())
 }
