@@ -1,5 +1,5 @@
 export type CardinalStakePool = {
-  version: "1.5.30";
+  version: "1.5.31";
   name: "cardinal_stake_pool";
   instructions: [
     {
@@ -950,14 +950,14 @@ export type CardinalStakePool = {
     },
     {
       code: 6024;
-      name: "StakePoolIsClosed";
-      msg: "Stake pool is closed";
+      name: "StakePoolHasEnded";
+      msg: "Stake pool has ended";
     }
   ];
 };
 
 export const IDL: CardinalStakePool = {
-  version: "1.5.30",
+  version: "1.5.31",
   name: "cardinal_stake_pool",
   instructions: [
     {
@@ -1908,8 +1908,8 @@ export const IDL: CardinalStakePool = {
     },
     {
       code: 6024,
-      name: "StakePoolIsClosed",
-      msg: "Stake pool is closed",
+      name: "StakePoolHasEnded",
+      msg: "Stake pool has ended",
     },
   ],
 };
