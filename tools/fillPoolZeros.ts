@@ -16,9 +16,9 @@ import { chunkArray } from "./utils";
 const wallet = Keypair.fromSecretKey(utils.bytes.bs58.decode(""));
 
 const CLUSTER = "devnet";
-const BATCH_SIZE = 10;
+const BATCH_SIZE = 20;
 const MAX_RETRIES = 3;
-const MAX_SIZE = 1;
+const MAX_SIZE = 400;
 const DRY_RUN = false;
 const ALLOWED_POOL_IDS = ["2s3qXuGyMNedXS61Vi9XsRx7HuryyyZUYGyMtCrKUXva"];
 
