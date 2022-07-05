@@ -44,10 +44,6 @@ pub fn handler(ctx: Context<StakeCtx>, amount: u64) -> Result<()> {
         return Err(error!(ErrorCode::StakePoolHasEnded));
     }
 
-    if stake_entry.cooldown_start_seconds.is_some() {
-        return Err(error!(ErrorCode::CooldownSecondRemaining));
-    }
-
     if stake_entry.amount != 0 {
         stake_entry.total_stake_seconds = stake_entry.total_stake_seconds.saturating_add(
             (u128::try_from(stake_entry.cooldown_start_seconds.unwrap_or(Clock::get().unwrap().unix_timestamp))
@@ -56,6 +52,7 @@ pub fn handler(ctx: Context<StakeCtx>, amount: u64) -> Result<()> {
             .checked_mul(u128::try_from(stake_entry.amount).unwrap())
             .unwrap(),
         );
+        stake_entry.cooldown_start_seconds = None;
     }
 
     // transfer original
