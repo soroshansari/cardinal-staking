@@ -247,7 +247,7 @@ export const handleError = (
 ): string => {
   const programIdls = options.programIdls ?? [];
   const additionalErrors = options.additionalErrors ?? [];
-  const hex = (e as SendTransactionError).message.split(" ").at(-1);
+  const hex = (e as SendTransactionError).message?.split(" ").at(-1);
   const dec = parseInt(hex || "", 16);
   const logs =
     (e as SendTransactionError).logs ?? [
