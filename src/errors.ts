@@ -280,7 +280,7 @@ export const handleError = (
         errorMatch: idl.errors?.find(
           (err) =>
             // message includes error
-            (e as SendTransactionError)?.message.includes(
+            (e as SendTransactionError)?.message?.includes(
               err.code.toString()
             ) ||
             // toString includes error
@@ -295,7 +295,7 @@ export const handleError = (
         errorMatch: additionalErrors.find(
           (err) =>
             // message includes error
-            (e as SendTransactionError)?.message.includes(err.code) ||
+            (e as SendTransactionError)?.message?.includes(err.code) ||
             // toString includes error
             (e as Error).toString().includes(err.code) ||
             // any log includes error
