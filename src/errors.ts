@@ -25,27 +25,20 @@ export const NATIVE_ERRORS: ErrorCode[] = [
   },
   // token program errors
   {
-    code: "0",
-    message: "Low wallet lamports balance",
-  },
-  {
-    code: "1",
+    code: "0x1",
     message:
       "Insufficient funds. User does not have enough balance of token to complete the transaction",
+  },
+  {
+    code: "0x4",
+    message:
+      "Invalid owner. The user is likely not mint authority of this token.",
   },
   {
     code: "91",
     message: "Token is not ellgible for original receipts",
   },
   // anchor errors
-  {
-    code: "0",
-    message: "Low wallet lamports balance",
-  },
-  {
-    code: "1",
-    message: "Insufficient funds",
-  },
   {
     code: "100",
     message: "InstructionMissing: 8 byte instruction identifier not provided",
@@ -233,75 +226,86 @@ export const NATIVE_ERRORS: ErrorCode[] = [
   },
 ];
 
+export type ErrorOptions = {
+  /** ProgramIdls in priority order */
+  programIdls?: { idl: Idl; programId: PublicKey }[];
+  /** Additional errors by code */
+  additionalErrors?: ErrorCode[];
+};
+
 export const handleError = (
   e: any,
   fallBackMessage = "Transaction failed",
   // programIdls in priority order
-  programIdls: { idl: Idl; programId: PublicKey }[] = [
-    { programId: STAKE_POOL_ADDRESS, idl: STAKE_POOL_IDL },
-    { programId: REWARD_DISTRIBUTOR_ADDRESS, idl: REWARD_DISTRIBUTOR_IDL },
-  ],
-  additionalErrors = NATIVE_ERRORS
+  options: ErrorOptions = {
+    programIdls: [
+      { programId: STAKE_POOL_ADDRESS, idl: STAKE_POOL_IDL },
+      { programId: REWARD_DISTRIBUTOR_ADDRESS, idl: REWARD_DISTRIBUTOR_IDL },
+    ],
+    additionalErrors: NATIVE_ERRORS,
+  }
 ): string => {
-  const hex = (e as SendTransactionError).message.split(" ").at(-1);
+  const programIdls = options.programIdls ?? [];
+  const additionalErrors = options.additionalErrors ?? [];
+  const hex = (e as SendTransactionError)?.message?.split(" ").at(-1);
   const dec = parseInt(hex || "", 16);
   const logs =
-    (e as SendTransactionError).logs ?? [
-      (e as SendTransactionError).message,
+    (e as SendTransactionError)?.logs ?? [
+      (e as SendTransactionError)?.message,
     ] ?? [(e as Error).toString()] ??
     [];
 
-  const matchedErrors: { programMatch?: boolean; errorMatch?: string }[] = dec
-    ? [
-        ...programIdls.map(({ idl, programId }) => ({
-          // match program on any log that includes programId and 'failed'
-          programMatch: logs?.some(
-            (l) => l.includes(programId.toString()) && l.includes("failed")
-          ),
-          // match error with decimal
-          errorMatch: idl.errors?.find((err) => err.code === dec)?.msg,
-        })),
-        {
-          // match native error with decimal
-          errorMatch: additionalErrors.find(
-            (err) => err.code === dec.toString()
-          )?.message,
-        },
-      ]
-    : [
-        ...programIdls.map(({ idl, programId }) => ({
-          // match program on any log that includes programId and 'failed'
-          programMatch: logs?.some(
-            (l) => l.includes(programId.toString()) && l.includes("failed")
-          ),
-          errorMatch: idl.errors?.find(
-            (err) =>
-              // message includes error
-              (e as SendTransactionError).message.includes(
-                err.code.toString()
-              ) ||
-              // toString includes error
-              (e as Error).toString().includes(err.code.toString()) ||
-              // any log includes error
-              (e as SendTransactionError).logs?.some((l) =>
-                l.toString().includes(err.code.toString())
-              )
-          )?.msg,
-        })),
-        {
-          errorMatch: additionalErrors.find(
-            (err) =>
-              // message includes error
-              (e as SendTransactionError).message.includes(err.code) ||
-              // toString includes error
-              (e as Error).toString().includes(err.code) ||
-              // any log includes error
-              (e as SendTransactionError).logs?.some((l) =>
-                l.toString().includes(err.code)
-              )
-          )?.message,
-        },
-      ];
+  const matchedErrors: { programMatch?: boolean; errorMatch?: string }[] = [
+    ...[
+      ...programIdls.map(({ idl, programId }) => ({
+        // match program on any log that includes programId and 'failed'
+        programMatch: logs?.some(
+          (l) => l?.includes(programId.toString()) && l.includes("failed")
+        ),
+        // match error with decimal
+        errorMatch: idl.errors?.find((err) => err.code === dec)?.msg,
+      })),
+      {
+        // match native error with decimal
+        errorMatch: additionalErrors.find((err) => err.code === dec.toString())
+          ?.message,
+      },
+    ],
+    ...[
+      ...programIdls.map(({ idl, programId }) => ({
+        // match program on any log that includes programId and 'failed'
+        programMatch: logs?.some(
+          (l) => l?.includes(programId.toString()) && l.includes("failed")
+        ),
+        errorMatch: idl.errors?.find(
+          (err) =>
+            // message includes error
+            (e as SendTransactionError)?.message?.includes(
+              err.code.toString()
+            ) ||
+            // toString includes error
+            (e as Error).toString().includes(err.code.toString()) ||
+            // any log includes error
+            (e as SendTransactionError)?.logs?.some((l) =>
+              l.toString().includes(err.code.toString())
+            )
+        )?.msg,
+      })),
+      {
+        errorMatch: additionalErrors.find(
+          (err) =>
+            // message includes error
+            (e as SendTransactionError)?.message?.includes(err.code) ||
+            // toString includes error
+            (e as Error).toString().includes(err.code) ||
+            // any log includes error
+            (e as SendTransactionError)?.logs?.some((l) =>
+              l.toString().includes(err.code)
+            )
+        )?.message,
+      },
+    ],
+  ];
 
   return (
     matchedErrors.find((e) => e.programMatch && e.errorMatch)?.errorMatch ||
