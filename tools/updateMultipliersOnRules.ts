@@ -34,6 +34,11 @@ const CLUSTER = "mainnet";
 type UpdateRule = {
   volume?: { volumeUpperBound: number; multiplier: number }[];
   metadata?: { traitType: string; value: string; multiplier: number }[];
+  combination?: {
+    primaryMint: PublicKey;
+    secondaryMints: PublicKey[];
+    multiplier: number;
+  };
 };
 
 const UPDATE_RULES: UpdateRule[] = [
@@ -109,9 +114,8 @@ const updateMultipliersOnRules = async (
           );
         }
       }
-    }
-    // volume
-    if (rule.volume) {
+    } else if (rule.volume) {
+      // volume
       const volumeLogs: { [user: string]: PublicKey[] } = {};
       for (const entry of activeStakeEntries) {
         const user = entry.parsed.lastStaker.toString();
@@ -120,27 +124,64 @@ const updateMultipliersOnRules = async (
         } else {
           volumeLogs[user] = [entry.pubkey];
         }
-
-        for (const [_, entries] of Object.entries(volumeLogs)) {
-          if (entries.length > 0) {
-            // find multiplier for volume
-            const volume = entries.length;
-            let multiplierToSet = 1;
-            for (const volumeRule of rule.volume) {
-              multiplierToSet = volumeRule.multiplier;
-              if (volume <= volumeRule.volumeUpperBound) {
-                break;
-              }
+      }
+      for (const [_, entries] of Object.entries(volumeLogs)) {
+        if (entries.length > 0) {
+          // find multiplier for volume
+          const volume = entries.length;
+          let multiplierToSet = 1;
+          for (const volumeRule of rule.volume) {
+            multiplierToSet = volumeRule.multiplier;
+            if (volume <= volumeRule.volumeUpperBound) {
+              break;
             }
+          }
 
-            await updateMultiplier(
-              connection,
-              stakePoolId,
-              entries,
-              multiplierToSet
-            );
+          await updateMultiplier(
+            connection,
+            stakePoolId,
+            entries,
+            multiplierToSet
+          );
+        }
+      }
+    } else if (rule.combination) {
+      // combinations
+      const primaryMint = rule.combination.primaryMint;
+      const secondaryMints = rule.combination.secondaryMints;
+      const combinationLogs: { [user: string]: string[] } = {};
+
+      for (const entry of activeStakeEntries) {
+        const user = entry.parsed.lastStaker.toString();
+        if (combinationLogs[user]) {
+          combinationLogs[user]!.push(entry.pubkey.toString());
+        } else {
+          combinationLogs[user] = [entry.pubkey.toString()];
+        }
+      }
+      for (const [_, entries] of Object.entries(combinationLogs)) {
+        let multiplierToSet = 0;
+        let validCombination = true;
+        if (!entries.includes(primaryMint.toString())) {
+          validCombination = false;
+        }
+        for (const mint of secondaryMints) {
+          if (!entries.includes(mint.toString()) || !validCombination) {
+            validCombination = false;
+            break;
           }
         }
+
+        if (validCombination) {
+          multiplierToSet = rule.combination.multiplier;
+        }
+
+        await updateMultiplier(
+          connection,
+          stakePoolId,
+          [new PublicKey(primaryMint)],
+          multiplierToSet
+        );
       }
     }
   }
