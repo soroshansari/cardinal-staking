@@ -36,16 +36,30 @@ const getMetadataForPoolTokens = async (
     return;
   }
 
-  for (const [i, md] of metadata.entries()) {
-    const attrs = md.attributes;
-    console.log(`Mint ID: ${Object.keys(metaplexData)[i]!}`);
-    for (const attrKey of metadataKeys) {
+  console.log("Constructing metadata stats");
+  console.log("\n");
+  for (const attrKey of metadataKeys) {
+    const data: { [attr: string]: string[] } = {};
+    for (const [i, md] of metadata.entries()) {
+      const attrs = md.attributes;
       const foundAttr = attrs.find((trait) => attrKey === trait.trait_type);
       if (foundAttr) {
-        console.log(`${attrKey}: ${foundAttr.value}`);
+        if (!(foundAttr.value.toString() in data)) {
+          data[foundAttr.value.toString()] = [
+            Object.keys(metaplexData)[i]!.toString(),
+          ];
+        } else {
+          data[foundAttr.value.toString()]?.push(
+            Object.keys(metaplexData)[i]!.toString()
+          );
+        }
       } else {
         console.log(`Key ${attrKey} not found for mint`);
       }
+    }
+    console.log(`Trait type: ${attrKey}`);
+    for (const [md, pubkeys] of Object.entries(data)) {
+      console.log(`${md}: ${(pubkeys.length / metadata.length).toFixed(3)}%`);
     }
     console.log("\n");
   }
@@ -58,6 +72,7 @@ export const fetchMetadata = async (
   [Metadata[], { [mintId: string]: { pubkey: PublicKey; uri: string } }]
 > => {
   // lookup metaplex data
+  console.log("Looking up metaplex data");
   const metaplexIds = await Promise.all(
     mintIds.map(
       async (mint) =>
@@ -93,6 +108,7 @@ export const fetchMetadata = async (
     }
   );
 
+  console.log("Fetching off chain metadata");
   const metadata = await Promise.all(
     Object.values(metaplexData).map((data) =>
       fetch(data.uri).then(async (res) => (await res.json()) as Metadata)
