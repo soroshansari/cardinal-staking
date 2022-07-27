@@ -22,6 +22,7 @@ import {
   getActiveStakeEntriesForPool,
   getStakeEntry,
 } from "../src/programs/stakePool/accounts";
+import { findStakeEntryId } from "../src/programs/stakePool/pda";
 import { fetchMetadata } from "./getMetadataForPoolTokens";
 
 const wallet = new SignerWallet(
@@ -30,12 +31,13 @@ const wallet = new SignerWallet(
 
 const POOL_ID = new PublicKey("POOL_ID");
 const CLUSTER = "mainnet";
+const BATCH_SIZE = 5;
 
 type UpdateRule = {
   volume?: { volumeUpperBound: number; multiplier: number }[];
   metadata?: { traitType: string; value: string; multiplier: number }[];
   combination?: {
-    primaryMint: PublicKey;
+    primaryMint: PublicKey[];
     secondaryMints: PublicKey[];
     multiplier: number;
   };
@@ -72,6 +74,8 @@ const updateMultipliersOnRules = async (
   );
 
   for (const rule of UPDATE_RULES) {
+    let dataToSubmit: { mint: PublicKey; multiplier: number }[] = [];
+
     // metadata
     if (rule.metadata) {
       console.log("Fetching metadata...");
@@ -104,14 +108,24 @@ const updateMultipliersOnRules = async (
         }
       }
 
+      // Update multiplier of mints
       for (const [multiplierToSet, entries] of Object.entries(metadataLogs)) {
         if (entries.length > 0) {
-          await updateMultiplier(
-            connection,
-            stakePoolId,
-            entries,
-            Number(multiplierToSet)
-          );
+          for (const entry of entries) {
+            dataToSubmit.push({
+              mint: entry,
+              multiplier: Number(multiplierToSet),
+            });
+            if (dataToSubmit.length > BATCH_SIZE) {
+              await updateMultipliers(
+                connection,
+                stakePoolId,
+                dataToSubmit.map((entry) => entry.mint),
+                dataToSubmit.map((entry) => entry.multiplier)
+              );
+              dataToSubmit = [];
+            }
+          }
         }
       }
     } else if (rule.volume) {
@@ -137,17 +151,27 @@ const updateMultipliersOnRules = async (
             }
           }
 
-          await updateMultiplier(
-            connection,
-            stakePoolId,
-            entries,
-            multiplierToSet
-          );
+          // Update multiplier of mints
+          for (const entry of entries) {
+            dataToSubmit.push({
+              mint: entry,
+              multiplier: multiplierToSet,
+            });
+            if (dataToSubmit.length > BATCH_SIZE) {
+              await updateMultipliers(
+                connection,
+                stakePoolId,
+                dataToSubmit.map((entry) => entry.mint),
+                dataToSubmit.map((entry) => entry.multiplier)
+              );
+              dataToSubmit = [];
+            }
+          }
         }
       }
     } else if (rule.combination) {
       // combinations
-      const primaryMint = rule.combination.primaryMint;
+      const primaryMints = rule.combination.primaryMint;
       const secondaryMints = rule.combination.secondaryMints;
       const combinationLogs: { [user: string]: string[] } = {};
 
@@ -162,8 +186,12 @@ const updateMultipliersOnRules = async (
       for (const [_, entries] of Object.entries(combinationLogs)) {
         let multiplierToSet = 0;
         let validCombination = true;
-        if (!entries.includes(primaryMint.toString())) {
-          validCombination = false;
+        // Calculate if multiplier for primary mints
+        for (const mint of primaryMints) {
+          if (!entries.includes(mint.toString())) {
+            validCombination = false;
+            break;
+          }
         }
         for (const mint of secondaryMints) {
           if (!entries.includes(mint.toString()) || !validCombination) {
@@ -176,23 +204,40 @@ const updateMultipliersOnRules = async (
           multiplierToSet = rule.combination.multiplier;
         }
 
-        await updateMultiplier(
-          connection,
-          stakePoolId,
-          [new PublicKey(primaryMint)],
-          multiplierToSet
-        );
+        // Update multiplier of primary mints
+        for (const primaryMint of primaryMints) {
+          const [stakeEntryId] = await findStakeEntryId(
+            wallet.publicKey,
+            stakePoolId,
+            primaryMint,
+            false
+          );
+          dataToSubmit.push({
+            mint: stakeEntryId,
+            multiplier: multiplierToSet,
+          });
+          if (dataToSubmit.length > BATCH_SIZE) {
+            await updateMultipliers(
+              connection,
+              stakePoolId,
+              dataToSubmit.map((entry) => entry.mint),
+              dataToSubmit.map((entry) => entry.multiplier)
+            );
+            dataToSubmit = [];
+          }
+        }
       }
     }
   }
 };
 
-const updateMultiplier = async (
+const updateMultipliers = async (
   connection: Connection,
   stakePoolId: PublicKey,
   stakeEntryIds: PublicKey[],
-  multiplier: number
+  multipliers: number[]
 ): Promise<void> => {
+  const transaction = new Transaction();
   // update multipliers
   const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
   const rewardDistributorData = await tryGetAccount(() =>
@@ -203,55 +248,71 @@ const updateMultiplier = async (
     return;
   }
 
-  const multiplierToSet =
-    multiplier * 10 ** rewardDistributorData.parsed.multiplierDecimals;
-  for (const stakeEntryId of stakeEntryIds) {
-    const transaction = new Transaction();
-    const stakeEntryData = await getStakeEntry(connection, stakeEntryId);
-    const [rewardEntryId] = await findRewardEntryId(
-      rewardDistributorId,
-      stakeEntryId
-    );
-    const rewardEntryData = await tryGetAccount(() =>
-      getRewardEntry(connection, rewardEntryId)
-    );
-    if (!rewardEntryData) {
-      await withInitRewardEntry(transaction, connection, wallet, {
-        stakeEntryId: stakeEntryId,
-        rewardDistributorId: rewardDistributorId,
-      });
-      console.log("Adding init reward entry instruciton");
-    }
+  const multipliersToSet = multipliers.map(
+    (ml) => ml * 10 ** rewardDistributorData.parsed.multiplierDecimals
+  );
 
-    if (
-      !rewardEntryData ||
-      (rewardEntryData &&
-        rewardEntryData.parsed.multiplier.toNumber() !== multiplierToSet)
-    ) {
-      await withUpdateRewardEntry(transaction, connection, wallet, {
-        stakePoolId: stakePoolId,
-        rewardDistributorId: rewardDistributorId,
-        stakeEntryId: stakeEntryId,
-        multiplier: new BN(multiplierToSet),
-      });
-      console.log(
-        `Updating multiplier for mint ${stakeEntryData.parsed.originalMint.toString()} from ${
-          rewardEntryData ? rewardEntryData.parsed.multiplier.toString() : "100"
-        } to ${multiplierToSet}`
-      );
-    }
+  const stakeEntryDatas = await Promise.all(
+    stakeEntryIds.map((stakeEntryId) => getStakeEntry(connection, stakeEntryId))
+  );
+  const rewardEntryIds = await Promise.all(
+    stakeEntryIds.map((stakeEntryId) =>
+      findRewardEntryId(rewardDistributorId, stakeEntryId)
+    )
+  );
+  const rewardEntryDatas = await Promise.all(
+    rewardEntryIds.map((rewardEntryId) =>
+      tryGetAccount(() => getRewardEntry(connection, rewardEntryId[0]))
+    )
+  );
+  // Add init reward entry instructions
+  await Promise.all(
+    rewardEntryDatas.map((rewardEntryData, index) => {
+      if (!rewardEntryData) {
+        const stakeEntryId = stakeEntryIds[index]!;
+        return withInitRewardEntry(transaction, connection, wallet, {
+          stakeEntryId: stakeEntryId,
+          rewardDistributorId: rewardDistributorId,
+        });
+      }
+    })
+  );
 
-    if (transaction.instructions.length > 0) {
-      const txId = await executeTransaction(
-        connection,
-        wallet,
-        transaction,
-        {}
-      );
-      console.log(`Successfully executed transaction ${txId}\n`);
-    } else {
-      console.log("No instructions provided\n");
-    }
+  // Add update instruction if needed
+  await Promise.all(
+    rewardEntryDatas.map((rewardEntryData, index) => {
+      const multiplierToSet = multipliersToSet[index]!;
+      const stakeEntryId = stakeEntryIds[index]!;
+      if (
+        !rewardEntryData ||
+        (rewardEntryData &&
+          rewardEntryData.parsed.multiplier.toNumber() !== multiplierToSet)
+      ) {
+        console.log(
+          `Updating multiplier for mint ${stakeEntryDatas[
+            index
+          ]!.parsed.originalMint.toString()} from ${
+            rewardEntryData
+              ? rewardEntryData.parsed.multiplier.toString()
+              : "100"
+          } to ${multiplierToSet}`
+        );
+        return withUpdateRewardEntry(transaction, connection, wallet, {
+          stakePoolId: stakePoolId,
+          rewardDistributorId: rewardDistributorId,
+          stakeEntryId: stakeEntryId,
+          multiplier: new BN(multiplierToSet),
+        });
+      }
+    })
+  );
+
+  // Execute transaction
+  if (transaction.instructions.length > 0) {
+    const txId = await executeTransaction(connection, wallet, transaction, {});
+    console.log(`Successfully executed transaction ${txId}\n`);
+  } else {
+    console.log("No instructions provided\n");
   }
 };
 
