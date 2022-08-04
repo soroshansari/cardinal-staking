@@ -87,12 +87,12 @@ Reclaims `amount` numerb of tokens from the reward distributor associated with t
 
 Only the stake pool authority can successfully execute this transaction
 
-## updateMultipliersOnVolume.ts
+## updateMultipliersOnRules.ts
 
 ### Params:
 
-`VOLUME_RULES`, `stakePoolId`, `cluster`
+`UPDATE_RULES`, `stakePoolId`, `cluster`
 
 ### Usage:
 
-Given `VOLUME_RULES`, the script is used to update the multipliers of reward entries according to the number of tokens staked in a pool by a given user e.g. if a user stakes `X` number of tokens, user gets `Y` multiplier for their staked tokens. The rules regarding the mapping of volume of tokens by user to multiplier is defined in `VOLUME_RULES` by the pool authority in the script.
+Given `UPDATE_RULES`, the script is used to update the multipliers of reward entries according to give rules specified in the script. Rules option can be `volume` (if user stakes 2+ token, set token multpliers to `X`, if user staked 5+ token, set token multiplier to `Y`), `metadata` (if token has metadata attribute equal to specify value, set `X` multiplier), and `combination` (if user has to stake A,B,C mints together, token get `X` multiplier, else set to zero). Rules can only be set by the pool authority.
