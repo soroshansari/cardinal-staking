@@ -5,8 +5,9 @@ pub struct UpdateTotalStakeSecondsCtx<'info> {
     #[account(mut)]
     stake_entry: Account<'info, StakeEntry>,
 
-    #[account(mut, constraint = stake_entry.last_staker == last_staker.key())]
-    last_staker: Signer<'info>,
+    /// CHECK: This is not dangerous because we don't read or write from this account
+    #[account(mut)]
+    last_staker: UncheckedAccount<'info>,
 }
 
 pub fn handler(ctx: Context<UpdateTotalStakeSecondsCtx>) -> Result<()> {
