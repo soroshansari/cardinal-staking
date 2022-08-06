@@ -18,7 +18,8 @@ export const withRemainingAccountsForKind = async (
   wallet: Wallet,
   rewardDistributorId: PublicKey,
   kind: RewardDistributorKind,
-  rewardMint: PublicKey
+  rewardMint: PublicKey,
+  isClaimRewards?: boolean
 ): Promise<AccountMeta[]> => {
   switch (kind) {
     case RewardDistributorKind.Mint: {
@@ -45,12 +46,17 @@ export const withRemainingAccountsForKind = async (
           isSigner: false,
           isWritable: true,
         },
-        {
-          pubkey: userRewardMintTokenAccountId,
-          isSigner: false,
-          isWritable: true,
-        },
-      ];
+      ].concat(
+        !isClaimRewards
+          ? [
+              {
+                pubkey: userRewardMintTokenAccountId,
+                isSigner: false,
+                isWritable: true,
+              },
+            ]
+          : []
+      );
     }
     default:
       return [];

@@ -101,7 +101,8 @@ pub fn handler(ctx: Context<InitStakeMintCtx>, ix: InitStakeMintIx) -> Result<()
     // create metadata
     let mut metadata_uri_param: String = "".to_string();
     if !ctx.accounts.original_mint_metadata.data_is_empty() {
-        let original_mint_metadata = Metadata::from_account_info(&ctx.accounts.original_mint_metadata.to_account_info())?;
+        let mint_metadata_data = ctx.accounts.original_mint_metadata.try_borrow_mut_data().expect("Failed to borrow data");
+        let original_mint_metadata = Metadata::deserialize(&mut mint_metadata_data.as_ref())?;
         metadata_uri_param = "&uri=".to_string() + original_mint_metadata.data.uri.trim_matches(char::from(0));
     }
 

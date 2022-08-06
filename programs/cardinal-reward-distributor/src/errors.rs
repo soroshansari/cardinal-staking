@@ -32,4 +32,6 @@ pub enum ErrorCode {
     InvalidRewardDistributorTokenAccount,
     #[msg("Invalid authority token account")]
     InvalidAuthorityTokenAccount,
+    #[msg("Invalid payer")]
+    InvalidPayer,
 }
