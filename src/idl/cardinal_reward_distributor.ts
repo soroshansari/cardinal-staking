@@ -532,6 +532,11 @@ export type CardinalRewardDistributor = {
       code: 6014;
       name: "InvalidAuthorityTokenAccount";
       msg: "Invalid authority token account";
+    },
+    {
+      code: 6015;
+      name: "InvalidPayer";
+      msg: "Invalid payer";
     }
   ];
 };
@@ -1070,6 +1075,11 @@ export const IDL: CardinalRewardDistributor = {
       code: 6014,
       name: "InvalidAuthorityTokenAccount",
       msg: "Invalid authority token account",
+    },
+    {
+      code: 6015,
+      name: "InvalidPayer",
+      msg: "Invalid payer",
     },
   ],
 };

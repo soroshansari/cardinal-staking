@@ -121,13 +121,18 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
         reward_distributor.rewards_issued = reward_distributor.rewards_issued.checked_add(reward_amount_to_receive).unwrap();
         reward_entry.reward_seconds_received = reward_entry.reward_seconds_received.checked_add(reward_time_to_receive).unwrap();
 
+        let payer_info = next_account_info(remaining_accs);
+        let mut payer = ctx.accounts.user.to_account_info();
+        if payer_info.is_ok() {
+            payer = payer_info?.to_account_info();
+            if !payer.is_signer {
+                return Err(error!(ErrorCode::InvalidPayer));
+            }
+        }
+
         invoke(
-            &transfer(&ctx.accounts.user.key(), &ctx.accounts.reward_manager.key(), CLAIM_REWARD_LAMPORTS),
-            &[
-                ctx.accounts.user.to_account_info(),
-                ctx.accounts.reward_manager.to_account_info(),
-                ctx.accounts.system_program.to_account_info(),
-            ],
+            &transfer(&payer.key(), &ctx.accounts.reward_manager.key(), CLAIM_REWARD_LAMPORTS),
+            &[payer.to_account_info(), ctx.accounts.reward_manager.to_account_info(), ctx.accounts.system_program.to_account_info()],
         )?;
     }
 

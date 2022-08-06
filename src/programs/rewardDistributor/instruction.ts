@@ -99,6 +99,7 @@ export const claimRewards = async (
     rewardMintId: PublicKey;
     rewardMintTokenAccountId: PublicKey;
     remainingAccountsForKind: AccountMeta[];
+    payer?: PublicKey;
   }
 ): Promise<TransactionInstruction> => {
   const provider = new AnchorProvider(connection, wallet, {});
@@ -129,7 +130,18 @@ export const claimRewards = async (
       tokenProgram: TOKEN_PROGRAM_ID,
       systemProgram: SystemProgram.programId,
     },
-    remainingAccounts: params.remainingAccountsForKind,
+    remainingAccounts: [
+      ...params.remainingAccountsForKind,
+      ...(params.payer
+        ? [
+            {
+              pubkey: params.payer,
+              isSigner: true,
+              isWritable: true,
+            },
+          ]
+        : []),
+    ],
   });
 };
 
