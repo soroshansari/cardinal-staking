@@ -8,7 +8,7 @@ import { BN } from "bn.js";
 import { executeTransaction } from "../src";
 import {
   getRewardDistributor,
-  getRewardEntry,
+  getRewardEntries,
 } from "../src/programs/rewardDistributor/accounts";
 import {
   findRewardDistributorId,
@@ -20,7 +20,7 @@ import {
 } from "../src/programs/rewardDistributor/transaction";
 import {
   getActiveStakeEntriesForPool,
-  getStakeEntry,
+  getStakeEntries,
 } from "../src/programs/stakePool/accounts";
 import { findStakeEntryId } from "../src/programs/stakePool/pda";
 import { fetchMetadata } from "./getMetadataForPoolTokens";
@@ -252,23 +252,19 @@ const updateMultipliers = async (
     (ml) => ml * 10 ** rewardDistributorData.parsed.multiplierDecimals
   );
 
-  const stakeEntryDatas = await Promise.all(
-    stakeEntryIds.map((stakeEntryId) => getStakeEntry(connection, stakeEntryId))
-  );
-  const rewardEntryIds = await Promise.all(
-    stakeEntryIds.map((stakeEntryId) =>
-      findRewardEntryId(rewardDistributorId, stakeEntryId)
+  const rewardEntryIds = (
+    await Promise.all(
+      stakeEntryIds.map((stakeEntryId) =>
+        findRewardEntryId(rewardDistributorId, stakeEntryId)
+      )
     )
-  );
-  const rewardEntryDatas = await Promise.all(
-    rewardEntryIds.map((rewardEntryId) =>
-      tryGetAccount(() => getRewardEntry(connection, rewardEntryId[0]))
-    )
-  );
+  ).map((r) => r[0]);
+  const stakeEntryDatas = await getStakeEntries(connection, stakeEntryIds);
+  const rewardEntryDatas = await getRewardEntries(connection, rewardEntryIds);
   // Add init reward entry instructions
   await Promise.all(
     rewardEntryDatas.map((rewardEntryData, index) => {
-      if (!rewardEntryData) {
+      if (!rewardEntryData.parsed) {
         const stakeEntryId = stakeEntryIds[index]!;
         return withInitRewardEntry(transaction, connection, wallet, {
           stakeEntryId: stakeEntryId,
@@ -284,15 +280,15 @@ const updateMultipliers = async (
       const multiplierToSet = multipliersToSet[index]!;
       const stakeEntryId = stakeEntryIds[index]!;
       if (
-        !rewardEntryData ||
-        (rewardEntryData &&
+        !rewardEntryData.parsed ||
+        (rewardEntryData.parsed &&
           rewardEntryData.parsed.multiplier.toNumber() !== multiplierToSet)
       ) {
         console.log(
           `Updating multiplier for mint ${stakeEntryDatas[
             index
           ]!.parsed.originalMint.toString()} from ${
-            rewardEntryData
+            rewardEntryData.parsed
               ? rewardEntryData.parsed.multiplier.toString()
               : "100"
           } to ${multiplierToSet}`
