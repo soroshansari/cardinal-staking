@@ -224,7 +224,7 @@ export const NATIVE_ERRORS: ErrorCode[] = [
     message:
       "Deprecated: The API being used is deprecated and should no longer be used",
   },
-];
+].reverse();
 
 export type ErrorOptions = {
   /** ProgramIdls in priority order */
