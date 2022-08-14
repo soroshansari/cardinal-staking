@@ -232,6 +232,7 @@ export const createStakeEntryAndStakeMint = async (
   params: {
     stakePoolId: PublicKey;
     originalMintId: PublicKey;
+    receiptName?: string;
   }
 ): Promise<[Transaction, PublicKey, Keypair | undefined]> => {
   let transaction = new Transaction();
@@ -263,7 +264,9 @@ export const createStakeEntryAndStakeMint = async (
       stakeEntryId: stakeEntryId,
       originalMintId: params.originalMintId,
       stakeMintKeypair,
-      name: `POOl${stakePool.parsed.identifier.toString()} RECEIPT`,
+      name:
+        params.receiptName ??
+        `POOl${stakePool.parsed.identifier.toString()} RECEIPT`,
       symbol: `POOl${stakePool.parsed.identifier.toString()}`,
     });
   }
