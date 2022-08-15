@@ -272,6 +272,20 @@ export const handleError = (
       },
     ],
     ...[
+      {
+        programMatch: true,
+        errorMatch: additionalErrors.find(
+          (err) =>
+            // message includes error
+            (e as SendTransactionError)?.message?.includes(err.code) ||
+            // toString includes error
+            (e as Error).toString().includes(err.code) ||
+            // any log includes error
+            (e as SendTransactionError)?.logs?.some((l) =>
+              l.toString().includes(err.code)
+            )
+        )?.message,
+      },
       ...programIdls.map(({ idl, programId }) => ({
         // match program on any log that includes programId and 'failed'
         programMatch: logs?.some(
@@ -291,19 +305,6 @@ export const handleError = (
             )
         )?.msg,
       })),
-      {
-        errorMatch: additionalErrors.find(
-          (err) =>
-            // message includes error
-            (e as SendTransactionError)?.message?.includes(err.code) ||
-            // toString includes error
-            (e as Error).toString().includes(err.code) ||
-            // any log includes error
-            (e as SendTransactionError)?.logs?.some((l) =>
-              l.toString().includes(err.code)
-            )
-        )?.message,
-      },
     ],
   ];
 
