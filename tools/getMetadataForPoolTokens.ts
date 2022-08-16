@@ -1,7 +1,6 @@
 import { getBatchedMultipleAccounts } from "@cardinal/common";
 import * as metaplex from "@metaplex-foundation/mpl-token-metadata";
-import type { Connection } from "@solana/web3.js";
-import { PublicKey } from "@solana/web3.js";
+import type { Connection, PublicKey } from "@solana/web3.js";
 import fetch from "node-fetch";
 
 import { getActiveStakeEntriesForPool } from "../src/programs/stakePool/accounts";
@@ -118,8 +117,8 @@ export const fetchMetadata = async (
 };
 
 const metadataKeys: string[] = [];
-getMetadataForPoolTokens(
-  "mainnet",
-  new PublicKey("POOL_ID"),
-  metadataKeys
-).catch((e) => console.log(e));
+// getMetadataForPoolTokens(
+//   "mainnet",
+//   new PublicKey("POOL_ID"),
+//   metadataKeys
+// ).catch((e) => console.log(e));
