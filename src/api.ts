@@ -378,13 +378,18 @@ export const stake = async (
       throw new Error("Receipt has already been claimed.");
     }
 
-    await withClaimReceiptMint(transaction, connection, wallet, {
-      stakePoolId: params.stakePoolId,
-      stakeEntryId: stakeEntryId,
-      originalMintId: params.originalMintId,
-      receiptMintId: receiptMintId,
-      receiptType: params.receiptType,
-    });
+    if (
+      !stakeEntryData?.parsed ||
+      stakeEntryData.parsed.amount.toNumber() === 0
+    ) {
+      await withClaimReceiptMint(transaction, connection, wallet, {
+        stakePoolId: params.stakePoolId,
+        stakeEntryId: stakeEntryId,
+        originalMintId: params.originalMintId,
+        receiptMintId: receiptMintId,
+        receiptType: params.receiptType,
+      });
+    }
   }
 
   return transaction;
