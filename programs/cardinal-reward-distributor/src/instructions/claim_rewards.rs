@@ -30,8 +30,9 @@ pub struct ClaimRewardsCtx<'info> {
     #[account(mut, constraint = assert_reward_manager(&reward_manager.key()))]
     reward_manager: UncheckedAccount<'info>,
 
+    /// CHECK: This is not dangerous because we don't read or write from this account
     #[account(mut)]
-    user: Signer<'info>,
+    user: UncheckedAccount<'info>,
     token_program: Program<'info, Token>,
     system_program: Program<'info, System>,
 }

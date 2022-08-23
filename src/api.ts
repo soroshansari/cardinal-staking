@@ -300,6 +300,7 @@ export const claimRewards = async (
   await withClaimRewards(transaction, connection, wallet, {
     stakePoolId: params.stakePoolId,
     stakeEntryId: params.stakeEntryId,
+    payer: wallet.publicKey,
   });
 
   return transaction;

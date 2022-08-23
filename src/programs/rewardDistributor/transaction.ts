@@ -151,7 +151,13 @@ export const withClaimRewards = async (
         stakeEntryId: params.stakeEntryId,
         rewardMintId: rewardDistributorData.parsed.rewardMint,
         rewardMintTokenAccountId: rewardMintTokenAccountId,
-        remainingAccountsForKind,
+        remainingAccountsForKind: remainingAccountsForKind.concat([
+          {
+            pubkey: params.payer || wallet.publicKey,
+            isSigner: false,
+            isWritable: true,
+          },
+        ]),
       })
     );
   }
