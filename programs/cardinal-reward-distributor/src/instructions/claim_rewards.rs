@@ -121,25 +121,13 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
         reward_distributor.rewards_issued = reward_distributor.rewards_issued.checked_add(reward_amount_to_receive).unwrap();
         reward_entry.reward_seconds_received = reward_entry.reward_seconds_received.checked_add(reward_time_to_receive).unwrap();
 
-        let mut payer = ctx.accounts.user.to_account_info();
-        let remaining_acc1_info = next_account_info(remaining_accs);
-        if remaining_acc1_info.is_ok() {
-            let account = remaining_acc1_info?;
-            if account.is_signer {
-                payer = account.to_account_info();
-            }
-        }
-        let remaining_acc2_info = next_account_info(remaining_accs);
-        if remaining_acc2_info.is_ok() {
-            let account = remaining_acc2_info?;
-            if account.is_signer {
-                payer = account.to_account_info();
-            }
-        }
-
         invoke(
-            &transfer(&payer.key(), &ctx.accounts.reward_manager.key(), CLAIM_REWARD_LAMPORTS),
-            &[payer.to_account_info(), ctx.accounts.reward_manager.to_account_info(), ctx.accounts.system_program.to_account_info()],
+            &transfer(&ctx.accounts.user.to_account_info().key(), &ctx.accounts.reward_manager.key(), CLAIM_REWARD_LAMPORTS),
+            &[
+                ctx.accounts.user.to_account_info(),
+                ctx.accounts.reward_manager.to_account_info(),
+                ctx.accounts.system_program.to_account_info(),
+            ],
         )?;
     }
 

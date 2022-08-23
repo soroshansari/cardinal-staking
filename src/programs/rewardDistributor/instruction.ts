@@ -130,18 +130,7 @@ export const claimRewards = async (
       tokenProgram: TOKEN_PROGRAM_ID,
       systemProgram: SystemProgram.programId,
     },
-    remainingAccounts: [
-      ...params.remainingAccountsForKind,
-      ...(params.payer
-        ? [
-            {
-              pubkey: params.payer,
-              isSigner: true,
-              isWritable: true,
-            },
-          ]
-        : []),
-    ],
+    remainingAccounts: [...params.remainingAccountsForKind],
   });
 };
 
