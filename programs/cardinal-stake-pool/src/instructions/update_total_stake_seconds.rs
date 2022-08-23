@@ -1,4 +1,7 @@
-use {crate::state::*, anchor_lang::prelude::*};
+use {
+    crate::{errors::ErrorCode, state::*},
+    anchor_lang::prelude::*,
+};
 
 #[derive(Accounts)]
 pub struct UpdateTotalStakeSecondsCtx<'info> {
@@ -6,7 +9,7 @@ pub struct UpdateTotalStakeSecondsCtx<'info> {
     stake_entry: Account<'info, StakeEntry>,
 
     /// CHECK: This is not dangerous because we don't read or write from this account
-    #[account(mut)]
+    #[account(mut, constraint = last_staker.key() == stake_entry.last_staker @ErrorCode::InvalidLastStaker)]
     last_staker: UncheckedAccount<'info>,
 }
 
