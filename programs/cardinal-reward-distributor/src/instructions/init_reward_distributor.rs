@@ -66,7 +66,7 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
             token::set_authority(cpi_context, AuthorityType::MintTokens, Some(reward_distributor.key()))?;
         }
         k if k == RewardDistributorKind::Treasury as u8 => {
-            if ix.supply == None && ix.max_supply == None {
+            if ix.supply.is_none() && ix.max_supply.is_none() {
                 return Err(error!(ErrorCode::SupplyRequired));
             }
             let reward_distributor_token_account_info = next_account_info(remaining_accs)?;

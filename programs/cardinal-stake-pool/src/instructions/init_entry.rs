@@ -51,7 +51,7 @@ pub fn handler(ctx: Context<InitEntryCtx>, _user: Pubkey) -> Result<()> {
             if !stake_pool.requires_creators.is_empty() && original_mint_metadata.data.creators.is_some() {
                 let creators = original_mint_metadata.data.creators.unwrap();
                 let find = creators.iter().find(|c| stake_pool.requires_creators.contains(&c.address) && c.verified);
-                if find != None {
+                if find.is_some() {
                     allowed = true
                 };
             }

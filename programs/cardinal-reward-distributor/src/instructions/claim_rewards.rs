@@ -49,7 +49,7 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
     let reward_duration_seconds = reward_distributor.reward_duration_seconds;
 
     let reward_seconds_received = reward_entry.reward_seconds_received;
-    if reward_seconds_received <= stake_entry.total_stake_seconds && (reward_distributor.max_supply == None || reward_distributor.rewards_issued < reward_distributor.max_supply.unwrap() as u128) {
+    if reward_seconds_received <= stake_entry.total_stake_seconds && (reward_distributor.max_supply.is_none() || reward_distributor.rewards_issued < reward_distributor.max_supply.unwrap() as u128) {
         let mut reward_seconds = stake_entry.total_stake_seconds;
         if let Some(max_reward_seconds) = reward_distributor.max_reward_seconds_received {
             reward_seconds = min(reward_seconds, max_reward_seconds)
@@ -67,7 +67,7 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
             .unwrap();
 
         // if this will go over max supply give rewards up to max supply
-        if reward_distributor.max_supply != None && reward_distributor.rewards_issued.checked_add(reward_amount_to_receive).unwrap() >= reward_distributor.max_supply.unwrap() as u128 {
+        if reward_distributor.max_supply.is_some() && reward_distributor.rewards_issued.checked_add(reward_amount_to_receive).unwrap() >= reward_distributor.max_supply.unwrap() as u128 {
             reward_amount_to_receive = (reward_distributor.max_supply.unwrap() as u128).checked_sub(reward_distributor.rewards_issued).unwrap();
         }
 

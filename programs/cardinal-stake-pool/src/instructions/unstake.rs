@@ -63,7 +63,7 @@ pub fn handler(ctx: Context<UnstakeCtx>) -> Result<()> {
     }
 
     // If receipt has been minted, ensure it is back in the stake_entry
-    if stake_entry.stake_mint != None {
+    if stake_entry.stake_mint.is_some() {
         let remaining_accs = &mut ctx.remaining_accounts.iter();
         let stake_entry_receipt_mint_token_account_info = next_account_info(remaining_accs)?;
         let stake_entry_receipt_mint_token_account = Account::<TokenAccount>::try_from(stake_entry_receipt_mint_token_account_info)?;
