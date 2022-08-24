@@ -42,4 +42,5 @@ pub struct RewardDistributor {
     pub max_supply: Option<u64>,
     pub default_multiplier: u64,
     pub multiplier_decimals: u8,
+    pub max_reward_seconds_received: Option<u128>,
 }

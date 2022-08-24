@@ -15,6 +15,7 @@ pub struct InitRewardDistributorIx {
     pub max_supply: Option<u64>,
     pub default_multiplier: Option<u64>,
     pub multiplier_decimals: Option<u8>,
+    pub max_reward_seconds_received: Option<u128>,
 }
 
 #[derive(Accounts)]
@@ -51,6 +52,7 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
     reward_distributor.max_supply = ix.max_supply;
     reward_distributor.default_multiplier = ix.default_multiplier.unwrap_or(1);
     reward_distributor.multiplier_decimals = ix.multiplier_decimals.unwrap_or(0);
+    reward_distributor.max_reward_seconds_received = ix.max_reward_seconds_received;
 
     let remaining_accs = &mut ctx.remaining_accounts.iter();
     match ix.kind {

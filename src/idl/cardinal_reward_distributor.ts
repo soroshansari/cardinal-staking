@@ -356,6 +356,12 @@ export type CardinalRewardDistributor = {
           {
             name: "multiplierDecimals";
             type: "u8";
+          },
+          {
+            name: "maxRewardSecondsReceived";
+            type: {
+              option: "u128";
+            };
           }
         ];
       };
@@ -401,6 +407,12 @@ export type CardinalRewardDistributor = {
             name: "multiplierDecimals";
             type: {
               option: "u8";
+            };
+          },
+          {
+            name: "maxRewardSecondsReceived";
+            type: {
+              option: "u128";
             };
           }
         ];
@@ -900,6 +912,12 @@ export const IDL: CardinalRewardDistributor = {
             name: "multiplierDecimals",
             type: "u8",
           },
+          {
+            name: "maxRewardSecondsReceived",
+            type: {
+              option: "u128",
+            },
+          },
         ],
       },
     },
@@ -944,6 +962,12 @@ export const IDL: CardinalRewardDistributor = {
             name: "multiplierDecimals",
             type: {
               option: "u8",
+            },
+          },
+          {
+            name: "maxRewardSecondsReceived",
+            type: {
+              option: "u128",
             },
           },
         ],

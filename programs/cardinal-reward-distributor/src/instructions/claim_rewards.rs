@@ -6,6 +6,7 @@ use {
     },
     anchor_spl::token::{self, Mint, Token, TokenAccount},
     cardinal_stake_pool::state::{StakeEntry, StakePool},
+    std::cmp::min,
 };
 
 #[derive(Accounts)]
@@ -49,8 +50,11 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
 
     let reward_seconds_received = reward_entry.reward_seconds_received;
     if reward_seconds_received <= stake_entry.total_stake_seconds && (reward_distributor.max_supply == None || reward_distributor.rewards_issued < reward_distributor.max_supply.unwrap() as u128) {
-        let mut reward_amount_to_receive = stake_entry
-            .total_stake_seconds
+        let mut reward_seconds = stake_entry.total_stake_seconds;
+        if let Some(max_reward_seconds) = reward_distributor.max_reward_seconds_received {
+            reward_seconds = min(reward_seconds, max_reward_seconds)
+        };
+        let mut reward_amount_to_receive = reward_seconds
             .checked_sub(reward_seconds_received)
             .unwrap()
             .checked_div(reward_duration_seconds)
