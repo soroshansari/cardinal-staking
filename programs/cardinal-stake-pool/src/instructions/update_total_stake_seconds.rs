@@ -16,6 +16,10 @@ pub struct UpdateTotalStakeSecondsCtx<'info> {
 pub fn handler(ctx: Context<UpdateTotalStakeSecondsCtx>) -> Result<()> {
     let stake_entry = &mut ctx.accounts.stake_entry;
 
+    if stake_entry.pool_end_date.is_some() && Clock::get().unwrap().unix_timestamp > stake_entry.pool_end_date.unwrap() {
+        return Ok(());
+    }
+
     if stake_entry.cooldown_start_seconds.is_none() {
         stake_entry.total_stake_seconds = stake_entry.total_stake_seconds.saturating_add(
             (u128::try_from(stake_entry.cooldown_start_seconds.unwrap_or(Clock::get().unwrap().unix_timestamp))

@@ -27,6 +27,7 @@ pub struct StakeEntry {
     pub kind: u8,
     pub stake_mint: Option<Pubkey>,
     pub cooldown_start_seconds: Option<i64>,
+    pub pool_end_date: Option<i64>,
 }
 
 #[account]
