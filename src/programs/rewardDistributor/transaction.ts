@@ -252,6 +252,7 @@ export const withUpdateRewardDistributor = async (
     multiplierDecimals?: number;
     rewardAmount?: BN;
     rewardDurationSeconds?: BN;
+    maxRewardSecondsReceived?: BN;
   }
 ): Promise<Transaction> => {
   const [rewardDistributorId] = await findRewardDistributorId(
@@ -265,6 +266,7 @@ export const withUpdateRewardDistributor = async (
       multiplierDecimals: params.multiplierDecimals || 0,
       rewardAmount: params.rewardAmount || new BN(0),
       rewardDurationSeconds: params.rewardDurationSeconds || new BN(0),
+      maxRewardSecondsReceived: params.maxRewardSecondsReceived,
     })
   );
 };

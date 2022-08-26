@@ -239,6 +239,7 @@ export const updateRewardDistributor = (
     multiplierDecimals: number;
     rewardAmount: BN;
     rewardDurationSeconds: BN;
+    maxRewardSecondsReceived?: BN;
   }
 ): TransactionInstruction => {
   const provider = new AnchorProvider(connection, wallet, {});
@@ -254,6 +255,7 @@ export const updateRewardDistributor = (
       multiplierDecimals: params.multiplierDecimals,
       rewardAmount: params.rewardAmount,
       rewardDurationSeconds: params.rewardDurationSeconds,
+      maxRewardSecondsReceived: params.maxRewardSecondsReceived ?? null,
     },
     {
       accounts: {

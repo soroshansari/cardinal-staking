@@ -438,6 +438,12 @@ export type CardinalRewardDistributor = {
           {
             name: "rewardDurationSeconds";
             type: "u128";
+          },
+          {
+            name: "maxRewardSecondsReceived";
+            type: {
+              option: "u128";
+            };
           }
         ];
       };
@@ -993,6 +999,12 @@ export const IDL: CardinalRewardDistributor = {
           {
             name: "rewardDurationSeconds",
             type: "u128",
+          },
+          {
+            name: "maxRewardSecondsReceived",
+            type: {
+              option: "u128",
+            },
           },
         ],
       },
