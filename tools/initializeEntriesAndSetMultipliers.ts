@@ -21,9 +21,12 @@ import { getStakeEntry } from "../src/programs/stakePool/accounts";
 import { findStakeEntryId } from "../src/programs/stakePool/pda";
 import { withInitStakeEntry } from "../src/programs/stakePool/transaction";
 import { connectionFor } from "./connection";
+import type { Metadata } from "./getMetadataForPoolTokens";
+import { fetchMetadata } from "./getMetadataForPoolTokens";
+import type { UpdateRule } from "./updateMultipliersOnRules";
 import { chunkArray } from "./utils";
 
-const wallet = Keypair.fromSecretKey(utils.bytes.bs58.decode(""));
+const wallet = Keypair.fromSecretKey(utils.bytes.bs58.decode("SECRET_KEY"));
 
 const POOL_ID = new PublicKey("POOL_ID");
 const CLUSTER = "mainnet";
@@ -36,11 +39,14 @@ type EntryData = { mintId: PublicKey; multiplier?: number };
 const MINT_LIST: EntryData[] = [
   {
     mintId: new PublicKey("MINT_ID"),
-    multiplier: 200,
+    multiplier: 2,
   },
   // ...
   // ...
 ];
+const metadataRules: UpdateRule = {
+  metadata: [{ traitType: "trait_type", value: "value", multiplier: 2 }],
+};
 
 const initializeEntries = async (
   stakePoolId: PublicKey,
@@ -60,6 +66,7 @@ const initializeEntries = async (
     } entries for pool (${stakePoolId.toString()}) and reward distributor (${rewardDistributorId.toString()}) ---------`
   );
   const chunkedEntries = chunkArray(entries, BATCH_SIZE) as EntryData[][];
+
   for (let i = 0; i < chunkedEntries.length; i++) {
     const entries = chunkedEntries[i]!;
     console.log(
@@ -67,6 +74,15 @@ const initializeEntries = async (
         chunkedEntries.length
       } --------`
     );
+
+    let metadata: Metadata[] = [];
+    if (metadataRules.metadata) {
+      const temp = await fetchMetadata(
+        connection,
+        entries.map((entry) => entry.mintId)
+      );
+      metadata = temp[0];
+    }
     const transaction = new Transaction();
     const entriesInTx: EntryData[] = [];
     for (let j = 0; j < entries.length; j++) {
@@ -120,15 +136,36 @@ const initializeEntries = async (
           );
         }
 
+        let multiplierToSet = multiplier;
+        if (metadataRules.metadata) {
+          const md = metadata[j]!;
+          for (const rule of metadataRules.metadata) {
+            console.log(md.attributes);
+            if (
+              md.attributes.find(
+                (attr) =>
+                  attr.trait_type === rule.traitType &&
+                  attr.value === rule.value
+              )
+            ) {
+              multiplierToSet = rule.multiplier;
+            }
+          }
+        }
+        console.log(mintId.toString(), multiplierToSet);
+
         if (
-          multiplier &&
-          rewardEntry?.parsed.multiplier.toNumber() !== multiplier
+          multiplierToSet &&
+          rewardEntry?.parsed.multiplier.toNumber() !== multiplierToSet
         ) {
           console.log(
             `3. Updating reward entry multipler from  ${
               rewardEntry?.parsed.multiplier.toNumber() || 0
-            } => ${multiplier}`
+            } => ${multiplierToSet}`
           );
+          multiplierToSet =
+            multiplierToSet **
+            (10 ** rewardDistributorData.parsed.multiplierDecimals); // adjust for decimals
           await withUpdateRewardEntry(
             transaction,
             connection,
@@ -137,7 +174,7 @@ const initializeEntries = async (
               stakePoolId,
               stakeEntryId,
               rewardDistributorId,
-              multiplier: new BN(multiplier),
+              multiplier: new BN(multiplierToSet),
             }
           );
         }

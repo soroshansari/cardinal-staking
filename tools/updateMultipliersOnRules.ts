@@ -33,7 +33,7 @@ const POOL_ID = new PublicKey("POOL_ID");
 const CLUSTER = "mainnet";
 const BATCH_SIZE = 5;
 
-type UpdateRule = {
+export type UpdateRule = {
   volume?: { volumeUpperBound: number; multiplier: number }[];
   metadata?: { traitType: string; value: string; multiplier: number }[];
   combination?: {

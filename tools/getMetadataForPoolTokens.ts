@@ -6,7 +6,7 @@ import fetch from "node-fetch";
 import { getActiveStakeEntriesForPool } from "../src/programs/stakePool/accounts";
 import { connectionFor } from "./connection";
 
-type Metadata = {
+export type Metadata = {
   name: string;
   symbol: string;
   description: string;
