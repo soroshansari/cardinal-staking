@@ -56,9 +56,9 @@ const UPDATE_RULES: UpdateRule[] = [
   //     { volumeUpperBound: 40, multiplier: 30 },
   //   ],
   // },
-  {
-    // metadata: [{ traitType: "some_trait", value: "value", multiplier: 2 }],
-  },
+  // {
+  // metadata: [{ traitType: "some_trait", value: "value", multiplier: 2 }],
+  // },
 ];
 
 const updateMultipliersOnRules = async (
@@ -111,12 +111,16 @@ const updateMultipliersOnRules = async (
       // Update multiplier of mints
       for (const [multiplierToSet, entries] of Object.entries(metadataLogs)) {
         if (entries.length > 0) {
-          for (const entry of entries) {
+          for (let index = 0; index < entries.length; index++) {
+            const entry = entries[index]!;
             dataToSubmit.push({
               mint: entry,
               multiplier: Number(multiplierToSet),
             });
-            if (dataToSubmit.length > BATCH_SIZE) {
+            if (
+              dataToSubmit.length > BATCH_SIZE ||
+              index === entries.length - 1
+            ) {
               await updateMultipliers(
                 connection,
                 stakePoolId,
