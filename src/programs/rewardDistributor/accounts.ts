@@ -5,7 +5,7 @@ import {
   Program,
   utils,
 } from "@project-serum/anchor";
-import NodeWallet from "@project-serum/anchor/dist/cjs/nodewallet";
+import { SignerWallet } from "@saberhq/solana-contrib";
 import type { Connection, PublicKey } from "@solana/web3.js";
 import { Keypair } from "@solana/web3.js";
 
@@ -16,7 +16,7 @@ import type { RewardDistributorData, RewardEntryData } from "./constants";
 const getProgram = (connection: Connection) => {
   const provider = new AnchorProvider(
     connection,
-    new NodeWallet(Keypair.generate()),
+    new SignerWallet(Keypair.generate()),
     {}
   );
   return new Program<REWARD_DISTRIBUTOR_PROGRAM>(
