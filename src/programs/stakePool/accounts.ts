@@ -5,8 +5,9 @@ import {
   Program,
   utils,
 } from "@project-serum/anchor";
+import NodeWallet from "@project-serum/anchor/dist/cjs/nodewallet";
 import type { Connection } from "@solana/web3.js";
-import { PublicKey } from "@solana/web3.js";
+import { Keypair, PublicKey } from "@solana/web3.js";
 
 import type { STAKE_POOL_PROGRAM, StakePoolData } from ".";
 import { STAKE_POOL_ADDRESS, STAKE_POOL_IDL } from ".";
@@ -18,18 +19,24 @@ import type {
 import { AUTHORITY_OFFSET, POOL_OFFSET, STAKER_OFFSET } from "./constants";
 import { findIdentifierId } from "./pda";
 
-export const getStakePool = async (
-  connection: Connection,
-  stakePoolId: PublicKey
-): Promise<AccountData<StakePoolData>> => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const provider = new AnchorProvider(connection, null, {});
-  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
+const getProgram = (connection: Connection) => {
+  const provider = new AnchorProvider(
+    connection,
+    new NodeWallet(Keypair.generate()),
+    {}
+  );
+  return new Program<STAKE_POOL_PROGRAM>(
     STAKE_POOL_IDL,
     STAKE_POOL_ADDRESS,
     provider
   );
+};
+
+export const getStakePool = async (
+  connection: Connection,
+  stakePoolId: PublicKey
+): Promise<AccountData<StakePoolData>> => {
+  const stakePoolProgram = getProgram(connection);
 
   const parsed = await stakePoolProgram.account.stakePool.fetch(stakePoolId);
   return {
@@ -42,14 +49,7 @@ export const getStakePools = async (
   connection: Connection,
   stakePoolIds: PublicKey[]
 ): Promise<AccountData<StakePoolData>[]> => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const provider = new AnchorProvider(connection, null, {});
-  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
-    STAKE_POOL_IDL,
-    STAKE_POOL_ADDRESS,
-    provider
-  );
+  const stakePoolProgram = getProgram(connection);
 
   const stakePools = (await stakePoolProgram.account.stakePool.fetchMultiple(
     stakePoolIds
@@ -225,14 +225,7 @@ export const getStakeEntry = async (
   connection: Connection,
   stakeEntryId: PublicKey
 ): Promise<AccountData<StakeEntryData>> => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const provider = new AnchorProvider(connection, null, {});
-  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
-    STAKE_POOL_IDL,
-    STAKE_POOL_ADDRESS,
-    provider
-  );
+  const stakePoolProgram = getProgram(connection);
 
   const parsed = await stakePoolProgram.account.stakeEntry.fetch(stakeEntryId);
   return {
@@ -245,14 +238,7 @@ export const getStakeEntries = async (
   connection: Connection,
   stakeEntryIds: PublicKey[]
 ): Promise<AccountData<StakeEntryData>[]> => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const provider = new AnchorProvider(connection, null, {});
-  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
-    STAKE_POOL_IDL,
-    STAKE_POOL_ADDRESS,
-    provider
-  );
+  const stakePoolProgram = getProgram(connection);
 
   const stakeEntries = (await stakePoolProgram.account.stakeEntry.fetchMultiple(
     stakeEntryIds
@@ -266,14 +252,7 @@ export const getStakeEntries = async (
 export const getPoolIdentifier = async (
   connection: Connection
 ): Promise<AccountData<IdentifierData>> => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const provider = new AnchorProvider(connection, null, {});
-  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
-    STAKE_POOL_IDL,
-    STAKE_POOL_ADDRESS,
-    provider
-  );
+  const stakePoolProgram = getProgram(connection);
   const [identifierId] = await findIdentifierId();
   const parsed = await stakePoolProgram.account.identifier.fetch(identifierId);
   return {
@@ -286,14 +265,7 @@ export const getStakeAuthorization = async (
   connection: Connection,
   stakeAuthorizationId: PublicKey
 ): Promise<AccountData<StakeAuthorizationData>> => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const provider = new AnchorProvider(connection, null, {});
-  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
-    STAKE_POOL_IDL,
-    STAKE_POOL_ADDRESS,
-    provider
-  );
+  const stakePoolProgram = getProgram(connection);
   const parsed = await stakePoolProgram.account.stakeAuthorizationRecord.fetch(
     stakeAuthorizationId
   );
@@ -307,14 +279,7 @@ export const getStakeAuthorizations = async (
   connection: Connection,
   stakeAuthorizationIds: PublicKey[]
 ): Promise<AccountData<StakeAuthorizationData>[]> => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const provider = new AnchorProvider(connection, null, {});
-  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
-    STAKE_POOL_IDL,
-    STAKE_POOL_ADDRESS,
-    provider
-  );
+  const stakePoolProgram = getProgram(connection);
 
   const stakeAuthorizations =
     (await stakePoolProgram.account.stakeAuthorizationRecord.fetchMultiple(
