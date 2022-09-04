@@ -1,4 +1,4 @@
-import { connectionFor, tryGetAccount } from "@cardinal/common";
+import { tryGetAccount } from "@cardinal/common";
 import { utils } from "@project-serum/anchor";
 import { SignerWallet } from "@saberhq/solana-contrib";
 import type { Connection } from "@solana/web3.js";
@@ -23,6 +23,7 @@ import {
   getStakeEntries,
 } from "../src/programs/stakePool/accounts";
 import { findStakeEntryId } from "../src/programs/stakePool/pda";
+import { connectionFor } from "./connection";
 import { fetchMetadata } from "./getMetadataForPoolTokens";
 
 const wallet = new SignerWallet(
