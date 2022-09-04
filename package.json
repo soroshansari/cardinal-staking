@@ -45,7 +45,7 @@
   },
   "dependencies": {
     "@cardinal/common": "^2.0.11",
-    "@cardinal/token-manager": "^1.5.12",
+    "@cardinal/token-manager": "^1.5.13",
     "@metaplex-foundation/mpl-token-metadata": "^1.2.5",
     "node-fetch": "2"
   },
