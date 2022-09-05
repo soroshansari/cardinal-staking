@@ -361,7 +361,7 @@ export const stake = async (
     amount: params.amount,
   });
 
-  if (params.receiptType) {
+  if (params.receiptType && params.receiptType !== ReceiptType.None) {
     const receiptMintId =
       params.receiptType === ReceiptType.Receipt
         ? stakeEntryData?.parsed.stakeMint
