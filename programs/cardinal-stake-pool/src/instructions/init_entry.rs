@@ -43,7 +43,10 @@ pub fn handler(ctx: Context<InitEntryCtx>, _user: Pubkey) -> Result<()> {
 
         if !ctx.accounts.original_mint_metadata.data_is_empty() {
             let mint_metadata_data = ctx.accounts.original_mint_metadata.try_borrow_mut_data().expect("Failed to borrow data");
-            let original_mint_metadata = Metadata::deserialize(&mut mint_metadata_data.as_ref())?;
+            if ctx.accounts.original_mint_metadata.to_account_info().owner.key() != mpl_token_metadata::id() {
+                return Err(error!(ErrorCode::InvalidMintMetadataOwner));
+            }
+            let original_mint_metadata = Metadata::deserialize(&mut mint_metadata_data.as_ref()).expect("Failed to deserialize metadata");
             if original_mint_metadata.mint != ctx.accounts.original_mint.key() {
                 return Err(error!(ErrorCode::InvalidMintMetadata));
             }
