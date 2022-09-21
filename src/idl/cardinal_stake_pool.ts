@@ -1,5 +1,5 @@
 export type CardinalStakePool = {
-  version: "1.8.0";
+  version: "1.8.1";
   name: "cardinal_stake_pool";
   instructions: [
     {
@@ -973,12 +973,17 @@ export type CardinalStakePool = {
       code: 6024;
       name: "StakePoolHasEnded";
       msg: "Stake pool has ended";
+    },
+    {
+      code: 6025;
+      name: "InvalidMintMetadataOwner";
+      msg: "Mint metadata is owned by the incorrect program";
     }
   ];
 };
 
 export const IDL: CardinalStakePool = {
-  version: "1.8.0",
+  version: "1.8.1",
   name: "cardinal_stake_pool",
   instructions: [
     {
@@ -1952,6 +1957,11 @@ export const IDL: CardinalStakePool = {
       code: 6024,
       name: "StakePoolHasEnded",
       msg: "Stake pool has ended",
+    },
+    {
+      code: 6025,
+      name: "InvalidMintMetadataOwner",
+      msg: "Mint metadata is owned by the incorrect program",
     },
   ],
 };
