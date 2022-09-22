@@ -978,6 +978,11 @@ export type CardinalStakePool = {
       code: 6025;
       name: "InvalidMintMetadataOwner";
       msg: "Mint metadata is owned by the incorrect program";
+    },
+    {
+      code: 6026;
+      name: "StakeMintAlreadyInitialized";
+      msg: "Stake mint already intialized";
     }
   ];
 };
@@ -1962,6 +1967,11 @@ export const IDL: CardinalStakePool = {
       code: 6025,
       name: "InvalidMintMetadataOwner",
       msg: "Mint metadata is owned by the incorrect program",
+    },
+    {
+      code: 6026,
+      name: "StakeMintAlreadyInitialized",
+      msg: "Stake mint already intialized",
     },
   ],
 };
