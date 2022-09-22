@@ -10,7 +10,7 @@ pub struct UpdateTotalStakeSecondsCtx<'info> {
 
     /// CHECK: This is not dangerous because we don't read or write from this account
     #[account(mut, constraint = last_staker.key() == stake_entry.last_staker @ErrorCode::InvalidLastStaker)]
-    last_staker: UncheckedAccount<'info>,
+    last_staker: Signer<'info>,
 }
 
 pub fn handler(ctx: Context<UpdateTotalStakeSecondsCtx>) -> Result<()> {

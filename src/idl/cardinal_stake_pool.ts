@@ -434,7 +434,7 @@ export type CardinalStakePool = {
         {
           name: "lastStaker";
           isMut: true;
-          isSigner: false;
+          isSigner: true;
         }
       ];
       args: [];
@@ -1418,7 +1418,7 @@ export const IDL: CardinalStakePool = {
         {
           name: "lastStaker",
           isMut: true,
-          isSigner: false,
+          isSigner: true,
         },
       ],
       args: [],
