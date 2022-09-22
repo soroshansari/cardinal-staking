@@ -8,7 +8,6 @@ pub struct UpdateTotalStakeSecondsCtx<'info> {
     #[account(mut)]
     stake_entry: Account<'info, StakeEntry>,
 
-    /// CHECK: This is not dangerous because we don't read or write from this account
     #[account(mut, constraint = last_staker.key() == stake_entry.last_staker @ErrorCode::InvalidLastStaker)]
     last_staker: Signer<'info>,
 }

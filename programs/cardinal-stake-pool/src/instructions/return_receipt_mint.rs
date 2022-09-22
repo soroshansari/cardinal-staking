@@ -18,7 +18,7 @@ pub struct ReturnReceiptMintCtx<'info> {
     token_manager_token_account: Box<Account<'info, TokenAccount>>,
 
     // recipient
-    #[account(mut)]
+    #[account(mut, constraint = user_receipt_mint_token_account.owner == user.key() @ ErrorCode::InvalidUserMintTokenAccount)]
     user_receipt_mint_token_account: Box<Account<'info, TokenAccount>>,
     #[account(mut)]
     user: Signer<'info>,
