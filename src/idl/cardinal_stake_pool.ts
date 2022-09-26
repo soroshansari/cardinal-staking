@@ -542,6 +542,34 @@ export type CardinalStakePool = {
         }
       ];
       args: [];
+    },
+    {
+      name: "reasssignStakeEntry";
+      accounts: [
+        {
+          name: "stakePool";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "stakeEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "lastStaker";
+          isMut: true;
+          isSigner: true;
+        }
+      ];
+      args: [
+        {
+          name: "ix";
+          type: {
+            defined: "ReassignStakeEntryIx";
+          };
+        }
+      ];
     }
   ];
   accounts: [
@@ -783,6 +811,18 @@ export type CardinalStakePool = {
           {
             name: "symbol";
             type: "string";
+          }
+        ];
+      };
+    },
+    {
+      name: "ReassignStakeEntryIx";
+      type: {
+        kind: "struct";
+        fields: [
+          {
+            name: "target";
+            type: "publicKey";
           }
         ];
       };
@@ -1546,6 +1586,34 @@ export const IDL: CardinalStakePool = {
       ],
       args: [],
     },
+    {
+      name: "reasssignStakeEntry",
+      accounts: [
+        {
+          name: "stakePool",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "stakeEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "lastStaker",
+          isMut: true,
+          isSigner: true,
+        },
+      ],
+      args: [
+        {
+          name: "ix",
+          type: {
+            defined: "ReassignStakeEntryIx",
+          },
+        },
+      ],
+    },
   ],
   accounts: [
     {
@@ -1786,6 +1854,18 @@ export const IDL: CardinalStakePool = {
           {
             name: "symbol",
             type: "string",
+          },
+        ],
+      },
+    },
+    {
+      name: "ReassignStakeEntryIx",
+      type: {
+        kind: "struct",
+        fields: [
+          {
+            name: "target",
+            type: "publicKey",
           },
         ],
       },

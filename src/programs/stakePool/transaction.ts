@@ -31,6 +31,7 @@ import {
   initStakeEntry,
   initStakeMint,
   initStakePool,
+  reassignStakeEntry,
   returnReceiptMint,
   stake,
   unstake,
@@ -406,7 +407,9 @@ export const withUnstake = async (
       stakePoolData.parsed.minStakeSeconds === 0 ||
       (stakeEntryData?.parsed.lastStakedAt &&
         Date.now() / 1000 - stakeEntryData.parsed.lastStakedAt.toNumber() >=
-          stakePoolData.parsed.minStakeSeconds))
+          stakePoolData.parsed.minStakeSeconds)) &&
+    (stakeEntryData.parsed.originalMintClaimed ||
+      stakeEntryData.parsed.stakeMintClaimed)
   ) {
     // return receipt mint if its claimed
     await withReturnReceiptMint(transaction, connection, wallet, {
@@ -612,6 +615,26 @@ export const withCloseStakeEntry = (
       stakePoolId: params.stakePoolId,
       stakeEntryId: params.stakeEntryId,
       authority: wallet.publicKey,
+    })
+  );
+  return transaction;
+};
+
+export const withReassignStakeEntry = (
+  transaction: web3.Transaction,
+  connection: web3.Connection,
+  wallet: Wallet,
+  params: {
+    stakePoolId: web3.PublicKey;
+    stakeEntryId: web3.PublicKey;
+    target: web3.PublicKey;
+  }
+): web3.Transaction => {
+  transaction.add(
+    reassignStakeEntry(connection, wallet, {
+      stakePoolId: params.stakePoolId,
+      stakeEntryId: params.stakeEntryId,
+      target: params.target,
     })
   );
   return transaction;
