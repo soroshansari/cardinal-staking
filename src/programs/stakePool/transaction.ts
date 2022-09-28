@@ -375,6 +375,7 @@ export const withUnstake = async (
   params: {
     stakePoolId: web3.PublicKey;
     originalMintId: web3.PublicKey;
+    skipRewardMintTokenAccount?: boolean;
   }
 ): Promise<web3.Transaction> => {
   const [[stakeEntryId], [rewardDistributorId]] = await Promise.all([
@@ -454,6 +455,7 @@ export const withUnstake = async (
       stakePoolId: params.stakePoolId,
       stakeEntryId: stakeEntryId,
       lastStaker: stakeEntryData?.parsed.lastStaker,
+      skipRewardMintTokenAccount: params.skipRewardMintTokenAccount,
     });
   }
 
