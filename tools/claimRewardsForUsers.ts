@@ -24,6 +24,7 @@ import { connectionFor } from "./connection";
 import { chunkArray } from "./utils";
 
 const BATCH_SIZE = 4;
+const PARALLEL_BATCH_SIZE = 5;
 
 const authorityWallet = Keypair.fromSecretKey(
   utils.bytes.bs58.decode("SECRET_KEY")
@@ -40,84 +41,96 @@ const main = async (stakePoolId: PublicKey, cluster = "devnet") => {
     throw "No reward distributor found";
   }
 
-  const activeStakeEntries = await getActiveStakeEntriesForPool(
-    connection,
-    stakePoolId
-  );
+  const activeStakeEntries = (
+    await getActiveStakeEntriesForPool(connection, stakePoolId)
+  ).slice(1, 7);
   console.log(
     `Estimated SOL needed to claim rewards for ${activeStakeEntries.length} staked tokens:`,
     0.002 * activeStakeEntries.length,
     "SOL"
   );
 
-  const chunks = chunkArray(
+  const chunkedEntries = chunkArray(
     activeStakeEntries,
     BATCH_SIZE
   ) as AccountData<StakeEntryData>[][];
+  const batchedChunks = chunkArray(
+    chunkedEntries,
+    PARALLEL_BATCH_SIZE
+  ) as AccountData<StakeEntryData>[][][];
 
-  await Promise.all(
-    chunks.map(async (chunk, index) => {
-      const transaction = new Transaction();
-      for (let j = 0; j < chunk.length; j++) {
-        const stakeEntryData = chunk[j]!;
-        const [rewardEntryId] = await findRewardEntryId(
-          checkRewardDistributorData.pubkey,
-          stakeEntryData.pubkey
-        );
-        const checkRewardEntry = await tryGetAccount(() =>
-          getRewardEntry(connection, rewardEntryId)
-        );
-        if (!checkRewardEntry) {
-          await withInitRewardEntry(
+  for (let i = 0; i < batchedChunks.length; i++) {
+    const chunk = batchedChunks[i]!;
+    console.log(
+      `\n\n\n---------------- Chunk ${i + 1} of ${
+        batchedChunks.length
+      } ----------------`
+    );
+    await Promise.all(
+      chunk.map(async (entries, index) => {
+        const transaction = new Transaction();
+        for (let j = 0; j < entries.length; j++) {
+          const stakeEntryData = entries[j]!;
+          const [rewardEntryId] = await findRewardEntryId(
+            checkRewardDistributorData.pubkey,
+            stakeEntryData.pubkey
+          );
+          const checkRewardEntry = await tryGetAccount(() =>
+            getRewardEntry(connection, rewardEntryId)
+          );
+          if (!checkRewardEntry) {
+            await withInitRewardEntry(
+              transaction,
+              connection,
+              new SignerWallet(authorityWallet),
+              {
+                stakeEntryId: stakeEntryData.pubkey,
+                rewardDistributorId: checkRewardDistributorData.pubkey,
+              }
+            );
+          }
+          withUpdateTotalStakeSeconds(
             transaction,
             connection,
             new SignerWallet(authorityWallet),
             {
               stakeEntryId: stakeEntryData.pubkey,
-              rewardDistributorId: checkRewardDistributorData.pubkey,
+              lastStaker: authorityWallet.publicKey,
+            }
+          );
+          await withClaimRewards(
+            transaction,
+            connection,
+            new SignerWallet(authorityWallet),
+            {
+              stakePoolId: stakePoolId,
+              stakeEntryId: stakeEntryData.pubkey,
+              lastStaker: stakeEntryData.parsed.lastStaker,
+              payer: authorityWallet.publicKey,
             }
           );
         }
-        withUpdateTotalStakeSeconds(
-          transaction,
-          connection,
-          new SignerWallet(authorityWallet),
-          {
-            stakeEntryId: stakeEntryData.pubkey,
-            lastStaker: authorityWallet.publicKey,
+        try {
+          if (transaction.instructions.length > 0) {
+            const txid = await executeTransaction(
+              connection,
+              new SignerWallet(authorityWallet),
+              transaction,
+              {}
+            );
+            console.log(
+              `[${index + 1}/${
+                chunk.length
+              }] Succesfully claimed rewards with transaction ${txid} (https://explorer.solana.com/tx/${txid}?cluster=${cluster})`
+            );
           }
-        );
-        await withClaimRewards(
-          transaction,
-          connection,
-          new SignerWallet(authorityWallet),
-          {
-            stakePoolId: stakePoolId,
-            stakeEntryId: stakeEntryData.pubkey,
-            lastStaker: stakeEntryData.parsed.lastStaker,
-            payer: authorityWallet.publicKey,
-          }
-        );
-      }
-      try {
-        if (transaction.instructions.length > 0) {
-          const txid = await executeTransaction(
-            connection,
-            new SignerWallet(authorityWallet),
-            transaction,
-            {}
-          );
-          console.log(
-            `[${index + 1}/${
-              chunks.length
-            }] Succesfully claimed rewards with transaction ${txid} (https://explorer.solana.com/tx/${txid}?cluster=${cluster})`
-          );
+        } catch (e) {
+          console.log(e);
         }
-      } catch (e) {
-        console.log(e);
-      }
-    })
-  );
+      })
+    );
+  }
+
   console.log(
     `Successfully claimed rewards for ${activeStakeEntries.length} staked tokens`
   );
