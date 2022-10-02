@@ -5,18 +5,9 @@ import { SignerWallet } from "@saberhq/solana-contrib";
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 
 import { executeTransaction } from "../src";
-import {
-  getRewardDistributor,
-  getRewardEntry,
-} from "../src/programs/rewardDistributor/accounts";
-import {
-  findRewardDistributorId,
-  findRewardEntryId,
-} from "../src/programs/rewardDistributor/pda";
-import {
-  withClaimRewards,
-  withInitRewardEntry,
-} from "../src/programs/rewardDistributor/transaction";
+import { getRewardDistributor } from "../src/programs/rewardDistributor/accounts";
+import { findRewardDistributorId } from "../src/programs/rewardDistributor/pda";
+import { withClaimRewards } from "../src/programs/rewardDistributor/transaction";
 import type { StakeEntryData } from "../src/programs/stakePool";
 import { getActiveStakeEntriesForPool } from "../src/programs/stakePool/accounts";
 import { withUpdateTotalStakeSeconds } from "../src/programs/stakePool/transaction";
@@ -41,9 +32,10 @@ const main = async (stakePoolId: PublicKey, cluster = "devnet") => {
     throw "No reward distributor found";
   }
 
-  const activeStakeEntries = (
-    await getActiveStakeEntriesForPool(connection, stakePoolId)
-  ).slice(1, 7);
+  const activeStakeEntries = await getActiveStakeEntriesForPool(
+    connection,
+    stakePoolId
+  );
   console.log(
     `Estimated SOL needed to claim rewards for ${activeStakeEntries.length} staked tokens:`,
     0.002 * activeStakeEntries.length,
@@ -71,24 +63,6 @@ const main = async (stakePoolId: PublicKey, cluster = "devnet") => {
         const transaction = new Transaction();
         for (let j = 0; j < entries.length; j++) {
           const stakeEntryData = entries[j]!;
-          const [rewardEntryId] = await findRewardEntryId(
-            checkRewardDistributorData.pubkey,
-            stakeEntryData.pubkey
-          );
-          const checkRewardEntry = await tryGetAccount(() =>
-            getRewardEntry(connection, rewardEntryId)
-          );
-          if (!checkRewardEntry) {
-            await withInitRewardEntry(
-              transaction,
-              connection,
-              new SignerWallet(authorityWallet),
-              {
-                stakeEntryId: stakeEntryData.pubkey,
-                rewardDistributorId: checkRewardDistributorData.pubkey,
-              }
-            );
-          }
           withUpdateTotalStakeSeconds(
             transaction,
             connection,
