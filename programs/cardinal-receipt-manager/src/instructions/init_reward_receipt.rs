@@ -32,6 +32,7 @@ pub fn handler(ctx: Context<InitRewardReceiptCtx>) -> Result<()> {
     reward_receipt.bump = *ctx.bumps.get("reward_receipt").unwrap();
     reward_receipt.receipt_entry = ctx.accounts.receipt_entry.key();
     reward_receipt.receipt_manager = ctx.accounts.receipt_manager.key();
+    reward_receipt.target = Pubkey::default();
 
     reward_receipt.allowed = true;
     if ctx.accounts.receipt_manager.requires_authorization {

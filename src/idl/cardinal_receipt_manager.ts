@@ -559,6 +559,11 @@ export type CardinalReceiptManager = {
       code: 6015;
       name: "RewardReceiptIsNotAllowed";
       msg: "Reward receipt is not allowed";
+    },
+    {
+      code: 6016;
+      name: "RewardReceiptAlreadyClaimed";
+      msg: "Reward receipt already claimed";
     }
   ];
 };
@@ -1124,6 +1129,11 @@ export const IDL: CardinalReceiptManager = {
       code: 6015,
       name: "RewardReceiptIsNotAllowed",
       msg: "Reward receipt is not allowed",
+    },
+    {
+      code: 6016,
+      name: "RewardReceiptAlreadyClaimed",
+      msg: "Reward receipt already claimed",
     },
   ],
 };

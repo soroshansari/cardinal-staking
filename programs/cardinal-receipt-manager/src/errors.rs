@@ -34,4 +34,6 @@ pub enum ErrorCode {
     InvalidReceiptManager,
     #[msg("Reward receipt is not allowed")]
     RewardReceiptIsNotAllowed,
+    #[msg("Reward receipt already claimed")]
+    RewardReceiptAlreadyClaimed,
 }

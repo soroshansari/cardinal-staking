@@ -536,4 +536,33 @@ describe("Receipt manager claim reward receipt", () => {
       stakeSecondsToUse.toNumber()
     );
   });
+
+  it("Claim reward receipt fail already claimed", async () => {
+    const provider = getProvider();
+    const [stakeEntryId] = await findStakeEntryId(
+      provider.wallet.publicKey,
+      stakePoolId,
+      originalMint.publicKey,
+      false
+    );
+    const transaction = new Transaction();
+    await withClaimRewardReceipt(
+      transaction,
+      provider.connection,
+      provider.wallet,
+      {
+        receiptManagerName: receiptManagerName,
+        stakePoolId: stakePoolId,
+        stakeEntryId: stakeEntryId,
+        claimer: provider.wallet.publicKey,
+        payer: provider.wallet.publicKey,
+      }
+    );
+    await expectTXTable(
+      new TransactionEnvelope(SolanaProvider.init(provider), [
+        ...transaction.instructions,
+      ]),
+      "Claim reward receipt fail already claimed"
+    ).to.be.rejected;
+  });
 });

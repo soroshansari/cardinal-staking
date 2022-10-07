@@ -41,6 +41,11 @@ pub struct CreateRewardReceiptCtx<'info> {
 
 pub fn handler(ctx: Context<CreateRewardReceiptCtx>) -> Result<()> {
     let reward_receipt = &mut ctx.accounts.reward_receipt;
+
+    if reward_receipt.target != Pubkey::default() {
+        return Err(error!(ErrorCode::RewardReceiptAlreadyClaimed));
+    }
+
     reward_receipt.target = ctx.accounts.claimer.key();
     // increment counter
     ctx.accounts.receipt_manager.claimed_receipts_counter = ctx.accounts.receipt_manager.claimed_receipts_counter.checked_add(1).expect("Add error");
