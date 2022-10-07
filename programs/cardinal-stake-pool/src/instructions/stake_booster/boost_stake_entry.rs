@@ -74,6 +74,7 @@ pub fn handler(ctx: Context<BoostStakeEntryCtx>, ix: BoostStakeEntryIx) -> Resul
         .expect("Division error");
 
     // handle payment
+    assert_stake_boost_payment_manager(&ctx.accounts.payment_manager.key())?;
     let cpi_accounts = cardinal_payment_manager::cpi::accounts::HandlePaymentCtx {
         payment_manager: ctx.accounts.payment_manager.to_account_info(),
         payer_token_account: ctx.accounts.payer_token_account.to_account_info(),

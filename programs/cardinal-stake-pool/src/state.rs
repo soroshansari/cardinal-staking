@@ -1,3 +1,4 @@
+use crate::errors::ErrorCode;
 use anchor_lang::prelude::*;
 use std::str::FromStr;
 
@@ -54,8 +55,11 @@ pub struct StakePool {
     pub end_date: Option<i64>,
 }
 
-pub fn assert_stake_boost_payment_manager(pubkey: &Pubkey) -> bool {
-    pubkey.to_string() == Pubkey::from_str("CuEDMUqgkGTVcAaqEDHuVR848XN38MPsD11JrkxcGD6a").unwrap().to_string()
+pub fn assert_stake_boost_payment_manager(pubkey: &Pubkey) -> Result<()> {
+    if pubkey.to_string() != Pubkey::from_str("CuEDMUqgkGTVcAaqEDHuVR848XN38MPsD11JrkxcGD6a").unwrap().to_string() {
+        return Err(error!(ErrorCode::InvalidPaymentManager));
+    }
+    Ok(())
 }
 
 pub const STAKE_BOOSTER_PREFIX: &str = "stake-booster";
