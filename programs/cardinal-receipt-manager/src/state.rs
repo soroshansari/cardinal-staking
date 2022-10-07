@@ -26,10 +26,10 @@ pub fn assert_allowed_payment_manager(payment_manager: &str, payment_recipient: 
 }
 
 pub fn get_payment_mints() -> HashMap<&'static str, u64> {
-    return HashMap::from([
+    HashMap::from([
         ("DUSTawucrTsGU8hcqRdHDCbuYhCPADMLM2VcCb8VnFnQ", 10_u64.pow(9)),
         ("So11111111111111111111111111111111111111112", 2_000_000),
-    ]);
+    ])
 }
 
 pub const RECEIPT_MANAGER_SEED: &str = "receipt-manager";
