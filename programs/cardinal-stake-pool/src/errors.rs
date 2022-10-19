@@ -73,4 +73,12 @@ pub enum ErrorCode {
     InvalidPaymentManager,
     #[msg("Cannot boost a fungible token stake entry")]
     CannotBoostFungibleToken,
+    #[msg("Grouped stake entry")]
+    GroupedStakeEntry,
+    #[msg("Ungrouped stake entry")]
+    UngroupedStakeEntry,
+    #[msg("Minimum group days not satisfied")]
+    MinGroupDaysNotSatisfied,
+    #[msg("Active group entry")]
+    ActiveGroupEntry,
 }

@@ -2,6 +2,16 @@ use crate::errors::ErrorCode;
 use anchor_lang::prelude::*;
 use std::str::FromStr;
 
+pub const GROUP_ENTRY_PREFIX: &str = "group-entry";
+pub const GROUP_ENTRY_SIZE: usize = 8 // Anchor discriminator/sighash
+ + 1 // bump
+ + 32 // id
+ + 32 // authority
+ + 4 + 5 * 32 // stake_entries (5 pubkeys)
+ + 8 // started_at
+ + 4 // min_group_days
+ + 256; // padding
+
 pub const STAKE_ENTRY_PREFIX: &str = "stake-entry";
 pub const STAKE_ENTRY_SIZE: usize = 8 + std::mem::size_of::<StakeEntry>() + 8;
 
@@ -23,6 +33,16 @@ pub enum StakeEntryKind {
 }
 
 #[account]
+pub struct GroupStakeEntry {
+    pub bump: u8,
+    pub id: Pubkey,
+    pub authority: Pubkey,
+    pub stake_entries: Vec<Pubkey>,
+    pub started_at: i64,
+    pub min_group_days: Option<u32>,
+}
+
+#[account]
 pub struct StakeEntry {
     pub bump: u8,
     pub pool: Pubkey,
@@ -37,6 +57,7 @@ pub struct StakeEntry {
     pub stake_mint: Option<Pubkey>,
     pub cooldown_start_seconds: Option<i64>,
     pub last_updated_at: Option<i64>,
+    pub grouped: Option<bool>,
 }
 
 #[account]

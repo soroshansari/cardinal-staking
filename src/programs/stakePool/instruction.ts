@@ -25,15 +25,21 @@ import type {
   TransactionInstruction,
 } from "@solana/web3.js";
 import {
+  Keypair,
   SystemProgram,
   SYSVAR_RENT_PUBKEY,
   SYSVAR_SLOT_HASHES_PUBKEY,
+  Transaction,
 } from "@solana/web3.js";
 
 import type { STAKE_POOL_PROGRAM } from ".";
 import { STAKE_POOL_ADDRESS, STAKE_POOL_IDL } from ".";
 import { ReceiptType, STAKE_BOOSTER_PAYMENT_MANAGER } from "./constants";
-import { findStakeAuthorizationId, findStakeBoosterId } from "./pda";
+import {
+  findGroupEntryId,
+  findStakeAuthorizationId,
+  findStakeBoosterId,
+} from "./pda";
 import { remainingAccountsForInitStakeEntry } from "./utils";
 
 export const initPoolIdentifier = (
@@ -759,4 +765,121 @@ export const boostStakeEntry = async (
       },
     }
   );
+};
+
+export const initGroupStakeEntry = async (
+  connection: Connection,
+  wallet: Wallet,
+  params: {
+    minGroupDays?: number;
+    stakeEntry: PublicKey;
+  }
+): Promise<[Transaction, PublicKey, Keypair[]]> => {
+  const provider = new AnchorProvider(connection, wallet, {});
+  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
+    STAKE_POOL_IDL,
+    STAKE_POOL_ADDRESS,
+    provider
+  );
+
+  const id = Keypair.generate();
+  const [groupEntry] = await findGroupEntryId(id.publicKey);
+
+  const signers = [id];
+
+  const instruction = await stakePoolProgram.methods
+    .initGroupEntry({
+      minGroupDays: params.minGroupDays || null,
+    })
+    .accounts({
+      groupEntry,
+      id: id.publicKey,
+      authority: wallet.publicKey,
+      stakeEntry: params.stakeEntry,
+      systemProgram: SystemProgram.programId,
+    })
+    .instruction();
+
+  instruction.keys
+    .filter((k) => k.pubkey.equals(id.publicKey))
+    .map((k) => (k.isSigner = true));
+
+  const transaction = new Transaction().add(instruction);
+
+  return [transaction, groupEntry, signers];
+};
+
+export const addToGroupEntry = async (
+  connection: Connection,
+  wallet: Wallet,
+  params: {
+    groupEntry: PublicKey;
+    stakeEntry: PublicKey;
+  }
+): Promise<Transaction> => {
+  const provider = new AnchorProvider(connection, wallet, {});
+  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
+    STAKE_POOL_IDL,
+    STAKE_POOL_ADDRESS,
+    provider
+  );
+
+  return stakePoolProgram.methods
+    .addToGroupEntry()
+    .accounts({
+      groupEntry: params.groupEntry,
+      authority: wallet.publicKey,
+      stakeEntry: params.stakeEntry,
+      systemProgram: SystemProgram.programId,
+    })
+    .transaction();
+};
+
+export const removeFromGroupEntry = async (
+  connection: Connection,
+  wallet: Wallet,
+  params: {
+    groupEntry: PublicKey;
+    stakeEntry: PublicKey;
+  }
+): Promise<Transaction> => {
+  const provider = new AnchorProvider(connection, wallet, {});
+  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
+    STAKE_POOL_IDL,
+    STAKE_POOL_ADDRESS,
+    provider
+  );
+
+  return stakePoolProgram.methods
+    .removeFromGroupEntry()
+    .accounts({
+      groupEntry: params.groupEntry,
+      authority: wallet.publicKey,
+      stakeEntry: params.stakeEntry,
+      systemProgram: SystemProgram.programId,
+    })
+    .transaction();
+};
+
+export const closeGroupEntry = async (
+  connection: Connection,
+  wallet: Wallet,
+  params: {
+    groupEntry: PublicKey;
+  }
+): Promise<Transaction> => {
+  const provider = new AnchorProvider(connection, wallet, {});
+  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
+    STAKE_POOL_IDL,
+    STAKE_POOL_ADDRESS,
+    provider
+  );
+
+  return stakePoolProgram.methods
+    .closeGroupEntry()
+    .accounts({
+      groupEntry: params.groupEntry,
+      authority: wallet.publicKey,
+    })
+    .transaction();
 };

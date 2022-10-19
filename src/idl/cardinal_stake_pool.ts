@@ -630,6 +630,112 @@ export type CardinalStakePool = {
       args: [];
     },
     {
+      name: "initGroupEntry";
+      accounts: [
+        {
+          name: "groupEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "id";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "stakeEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [
+        {
+          name: "ix";
+          type: {
+            defined: "InitGroupEntryIx";
+          };
+        }
+      ];
+    },
+    {
+      name: "addToGroupEntry";
+      accounts: [
+        {
+          name: "groupEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "stakeEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [];
+    },
+    {
+      name: "removeFromGroupEntry";
+      accounts: [
+        {
+          name: "groupEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "stakeEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [];
+    },
+    {
+      name: "closeGroupEntry";
+      accounts: [
+        {
+          name: "groupEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        }
+      ];
+      args: [];
+    },
+    {
       name: "initStakeBooster";
       accounts: [
         {
@@ -792,6 +898,42 @@ export type CardinalStakePool = {
   ];
   accounts: [
     {
+      name: "groupStakeEntry";
+      type: {
+        kind: "struct";
+        fields: [
+          {
+            name: "bump";
+            type: "u8";
+          },
+          {
+            name: "id";
+            type: "publicKey";
+          },
+          {
+            name: "authority";
+            type: "publicKey";
+          },
+          {
+            name: "stakeEntries";
+            type: {
+              vec: "publicKey";
+            };
+          },
+          {
+            name: "startedAt";
+            type: "i64";
+          },
+          {
+            name: "minGroupDays";
+            type: {
+              option: "u32";
+            };
+          }
+        ];
+      };
+    },
+    {
       name: "stakeEntry";
       type: {
         kind: "struct";
@@ -852,6 +994,12 @@ export type CardinalStakePool = {
             name: "lastUpdatedAt";
             type: {
               option: "i64";
+            };
+          },
+          {
+            name: "grouped";
+            type: {
+              option: "bool";
             };
           }
         ];
@@ -1015,6 +1163,20 @@ export type CardinalStakePool = {
     }
   ];
   types: [
+    {
+      name: "InitGroupEntryIx";
+      type: {
+        kind: "struct";
+        fields: [
+          {
+            name: "minGroupDays";
+            type: {
+              option: "u32";
+            };
+          }
+        ];
+      };
+    },
     {
       name: "InitPoolIx";
       type: {
@@ -1439,6 +1601,26 @@ export type CardinalStakePool = {
       code: 6034;
       name: "CannotBoostFungibleToken";
       msg: "Cannot boost a fungible token stake entry";
+    },
+    {
+      code: 6035;
+      name: "GroupedStakeEntry";
+      msg: "Grouped stake entry";
+    },
+    {
+      code: 6036;
+      name: "UngroupedStakeEntry";
+      msg: "Ungrouped stake entry";
+    },
+    {
+      code: 6037;
+      name: "MinGroupDaysNotSatisfied";
+      msg: "Minimum group days not satisfied";
+    },
+    {
+      code: 6038;
+      name: "ActiveGroupEntry";
+      msg: "Active group entry";
     }
   ];
 };
@@ -2075,6 +2257,112 @@ export const IDL: CardinalStakePool = {
       args: [],
     },
     {
+      name: "initGroupEntry",
+      accounts: [
+        {
+          name: "groupEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "id",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "stakeEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: "ix",
+          type: {
+            defined: "InitGroupEntryIx",
+          },
+        },
+      ],
+    },
+    {
+      name: "addToGroupEntry",
+      accounts: [
+        {
+          name: "groupEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "stakeEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "removeFromGroupEntry",
+      accounts: [
+        {
+          name: "groupEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "stakeEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "closeGroupEntry",
+      accounts: [
+        {
+          name: "groupEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+      ],
+      args: [],
+    },
+    {
       name: "initStakeBooster",
       accounts: [
         {
@@ -2237,6 +2525,42 @@ export const IDL: CardinalStakePool = {
   ],
   accounts: [
     {
+      name: "groupStakeEntry",
+      type: {
+        kind: "struct",
+        fields: [
+          {
+            name: "bump",
+            type: "u8",
+          },
+          {
+            name: "id",
+            type: "publicKey",
+          },
+          {
+            name: "authority",
+            type: "publicKey",
+          },
+          {
+            name: "stakeEntries",
+            type: {
+              vec: "publicKey",
+            },
+          },
+          {
+            name: "startedAt",
+            type: "i64",
+          },
+          {
+            name: "minGroupDays",
+            type: {
+              option: "u32",
+            },
+          },
+        ],
+      },
+    },
+    {
       name: "stakeEntry",
       type: {
         kind: "struct",
@@ -2297,6 +2621,12 @@ export const IDL: CardinalStakePool = {
             name: "lastUpdatedAt",
             type: {
               option: "i64",
+            },
+          },
+          {
+            name: "grouped",
+            type: {
+              option: "bool",
             },
           },
         ],
@@ -2460,6 +2790,20 @@ export const IDL: CardinalStakePool = {
     },
   ],
   types: [
+    {
+      name: "InitGroupEntryIx",
+      type: {
+        kind: "struct",
+        fields: [
+          {
+            name: "minGroupDays",
+            type: {
+              option: "u32",
+            },
+          },
+        ],
+      },
+    },
     {
       name: "InitPoolIx",
       type: {
@@ -2884,6 +3228,26 @@ export const IDL: CardinalStakePool = {
       code: 6034,
       name: "CannotBoostFungibleToken",
       msg: "Cannot boost a fungible token stake entry",
+    },
+    {
+      code: 6035,
+      name: "GroupedStakeEntry",
+      msg: "Grouped stake entry",
+    },
+    {
+      code: 6036,
+      name: "UngroupedStakeEntry",
+      msg: "Ungrouped stake entry",
+    },
+    {
+      code: 6037,
+      name: "MinGroupDaysNotSatisfied",
+      msg: "Minimum group days not satisfied",
+    },
+    {
+      code: 6038,
+      name: "ActiveGroupEntry",
+      msg: "Active group entry",
     },
   ],
 };

@@ -1,17 +1,17 @@
 {
-  "version": "1.12.0",
-  "name": "cardinal_reward_distributor",
+  "version": "1.10.4",
+  "name": "cardinal_group_reward_distributor",
   "instructions": [
     {
-      "name": "initRewardDistributor",
+      "name": "initGroupRewardDistributor",
       "accounts": [
         {
-          "name": "rewardDistributor",
+          "name": "groupRewardDistributor",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "stakePool",
+          "name": "id",
           "isMut": false,
           "isSigner": false
         },
@@ -45,31 +45,36 @@
         {
           "name": "ix",
           "type": {
-            "defined": "InitRewardDistributorIx"
+            "defined": "InitGroupRewardDistributorIx"
           }
         }
       ]
     },
     {
-      "name": "initRewardEntry",
+      "name": "initGroupRewardEntry",
       "accounts": [
         {
-          "name": "rewardEntry",
+          "name": "groupRewardEntry",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "stakeEntry",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "rewardDistributor",
+          "name": "groupRewardCounter",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "payer",
+          "name": "groupEntry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "groupRewardDistributor",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
           "isMut": true,
           "isSigner": true
         },
@@ -82,26 +87,26 @@
       "args": []
     },
     {
-      "name": "claimRewards",
+      "name": "claimGroupRewards",
       "accounts": [
         {
-          "name": "rewardEntry",
+          "name": "groupEntry",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "rewardDistributor",
+          "name": "groupRewardCounter",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "stakeEntry",
-          "isMut": false,
+          "name": "groupRewardEntry",
+          "isMut": true,
           "isSigner": false
         },
         {
-          "name": "stakePool",
-          "isMut": false,
+          "name": "groupRewardDistributor",
+          "isMut": true,
           "isSigner": false
         },
         {
@@ -120,7 +125,7 @@
           "isSigner": false
         },
         {
-          "name": "user",
+          "name": "authority",
           "isMut": true,
           "isSigner": true
         },
@@ -138,15 +143,15 @@
       "args": []
     },
     {
-      "name": "updateRewardEntry",
+      "name": "updateGroupRewardEntry",
       "accounts": [
         {
-          "name": "rewardEntry",
+          "name": "groupRewardEntry",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "rewardDistributor",
+          "name": "groupRewardDistributor",
           "isMut": false,
           "isSigner": false
         },
@@ -160,22 +165,17 @@
         {
           "name": "ix",
           "type": {
-            "defined": "UpdateRewardEntryIx"
+            "defined": "UpdateGroupRewardEntryIx"
           }
         }
       ]
     },
     {
-      "name": "closeRewardDistributor",
+      "name": "closeGroupRewardDistributor",
       "accounts": [
         {
-          "name": "rewardDistributor",
+          "name": "groupRewardDistributor",
           "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "stakePool",
-          "isMut": false,
           "isSigner": false
         },
         {
@@ -184,7 +184,7 @@
           "isSigner": false
         },
         {
-          "name": "signer",
+          "name": "authority",
           "isMut": true,
           "isSigner": true
         },
@@ -197,15 +197,25 @@
       "args": []
     },
     {
-      "name": "closeRewardEntry",
+      "name": "closeGroupRewardEntry",
       "accounts": [
         {
-          "name": "rewardDistributor",
-          "isMut": false,
+          "name": "groupRewardEntry",
+          "isMut": true,
           "isSigner": false
         },
         {
-          "name": "rewardEntry",
+          "name": "groupRewardCounter",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "groupRewardDistributor",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "groupEntry",
           "isMut": true,
           "isSigner": false
         },
@@ -218,10 +228,10 @@
       "args": []
     },
     {
-      "name": "updateRewardDistributor",
+      "name": "updateGroupRewardDistributor",
       "accounts": [
         {
-          "name": "rewardDistributor",
+          "name": "groupRewardDistributor",
           "isMut": true,
           "isSigner": false
         },
@@ -235,21 +245,21 @@
         {
           "name": "ix",
           "type": {
-            "defined": "UpdateRewardDistributorIx"
+            "defined": "UpdateGroupRewardDistributorIx"
           }
         }
       ]
     },
     {
-      "name": "reclaimFunds",
+      "name": "reclaimGroupFunds",
       "accounts": [
         {
-          "name": "rewardDistributor",
+          "name": "groupRewardDistributor",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "rewardDistributorTokenAccount",
+          "name": "groupRewardDistributorTokenAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -275,11 +285,58 @@
           "type": "u64"
         }
       ]
+    },
+    {
+      "name": "initGroupRewardCounter",
+      "accounts": [
+        {
+          "name": "groupRewardCounter",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "groupRewardDistributor",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "closeGroupRewardCounter",
+      "accounts": [
+        {
+          "name": "groupRewardCounter",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "groupRewardDistributor",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
     {
-      "name": "RewardEntry",
+      "name": "GroupRewardCounter",
       "type": {
         "kind": "struct",
         "fields": [
@@ -288,11 +345,35 @@
             "type": "u8"
           },
           {
-            "name": "stakeEntry",
+            "name": "groupRewardDistributor",
             "type": "publicKey"
           },
           {
-            "name": "rewardDistributor",
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "count",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GroupRewardEntry",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "groupEntry",
+            "type": "publicKey"
+          },
+          {
+            "name": "groupRewardDistributor",
             "type": "publicKey"
           },
           {
@@ -307,7 +388,7 @@
       }
     },
     {
-      "name": "RewardDistributor",
+      "name": "GroupRewardDistributor",
       "type": {
         "kind": "struct",
         "fields": [
@@ -316,11 +397,25 @@
             "type": "u8"
           },
           {
-            "name": "stakePool",
+            "name": "id",
             "type": "publicKey"
           },
           {
-            "name": "kind",
+            "name": "authorizedPools",
+            "type": {
+              "vec": "publicKey"
+            }
+          },
+          {
+            "name": "rewardKind",
+            "type": "u8"
+          },
+          {
+            "name": "metadataKind",
+            "type": "u8"
+          },
+          {
+            "name": "poolKind",
             "type": "u8"
           },
           {
@@ -362,6 +457,32 @@
             "type": {
               "option": "u128"
             }
+          },
+          {
+            "name": "groupDaysMultiplier",
+            "type": "u64"
+          },
+          {
+            "name": "groupDaysMultiplierDecimals",
+            "type": "u8"
+          },
+          {
+            "name": "groupCountMultiplier",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "groupCountMultiplierDecimals",
+            "type": {
+              "option": "u8"
+            }
+          },
+          {
+            "name": "minGroupSize",
+            "type": {
+              "option": "u8"
+            }
           }
         ]
       }
@@ -369,7 +490,7 @@
   ],
   "types": [
     {
-      "name": "InitRewardDistributorIx",
+      "name": "InitGroupRewardDistributorIx",
       "type": {
         "kind": "struct",
         "fields": [
@@ -382,8 +503,22 @@
             "type": "u128"
           },
           {
-            "name": "kind",
+            "name": "rewardKind",
             "type": "u8"
+          },
+          {
+            "name": "metadataKind",
+            "type": "u8"
+          },
+          {
+            "name": "poolKind",
+            "type": "u8"
+          },
+          {
+            "name": "authorizedPools",
+            "type": {
+              "vec": "publicKey"
+            }
           },
           {
             "name": "supply",
@@ -414,23 +549,45 @@
             "type": {
               "option": "u128"
             }
+          },
+          {
+            "name": "groupDaysMultiplier",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "groupDaysMultiplierDecimals",
+            "type": {
+              "option": "u8"
+            }
+          },
+          {
+            "name": "groupCountMultiplier",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "groupCountMultiplierDecimals",
+            "type": {
+              "option": "u8"
+            }
+          },
+          {
+            "name": "minGroupSize",
+            "type": {
+              "option": "u8"
+            }
           }
         ]
       }
     },
     {
-      "name": "UpdateRewardDistributorIx",
+      "name": "UpdateGroupRewardDistributorIx",
       "type": {
         "kind": "struct",
         "fields": [
-          {
-            "name": "defaultMultiplier",
-            "type": "u64"
-          },
-          {
-            "name": "multiplierDecimals",
-            "type": "u8"
-          },
           {
             "name": "rewardAmount",
             "type": "u64"
@@ -440,16 +597,78 @@
             "type": "u128"
           },
           {
+            "name": "metadataKind",
+            "type": "u8"
+          },
+          {
+            "name": "poolKind",
+            "type": "u8"
+          },
+          {
+            "name": "authorizedPools",
+            "type": {
+              "vec": "publicKey"
+            }
+          },
+          {
+            "name": "maxSupply",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "defaultMultiplier",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "multiplierDecimals",
+            "type": {
+              "option": "u8"
+            }
+          },
+          {
             "name": "maxRewardSecondsReceived",
             "type": {
               "option": "u128"
+            }
+          },
+          {
+            "name": "groupDaysMultiplier",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "groupDaysMultiplierDecimals",
+            "type": {
+              "option": "u8"
+            }
+          },
+          {
+            "name": "groupCountMultiplier",
+            "type": {
+              "option": "u64"
+            }
+          },
+          {
+            "name": "groupCountMultiplierDecimals",
+            "type": {
+              "option": "u8"
+            }
+          },
+          {
+            "name": "minGroupSize",
+            "type": {
+              "option": "u8"
             }
           }
         ]
       }
     },
     {
-      "name": "UpdateRewardEntryIx",
+      "name": "UpdateGroupRewardEntryIx",
       "type": {
         "kind": "struct",
         "fields": [
@@ -461,7 +680,7 @@
       }
     },
     {
-      "name": "RewardDistributorKind",
+      "name": "GroupRewardDistributorKind",
       "type": {
         "kind": "enum",
         "variants": [
@@ -473,88 +692,112 @@
           }
         ]
       }
+    },
+    {
+      "name": "GroupRewardDistributorMetadataKind",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "NoRestriction"
+          },
+          {
+            "name": "UniqueNames"
+          },
+          {
+            "name": "UniqueSymbols"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GroupRewardDistributorPoolKind",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "NoRestriction"
+          },
+          {
+            "name": "AllFromSinglePool"
+          },
+          {
+            "name": "EachFromSeparatePool"
+          }
+        ]
+      }
     }
   ],
   "errors": [
     {
       "code": 6000,
-      "name": "InvalidTokenAccount",
-      "msg": "Invalid token account"
-    },
-    {
-      "code": 6001,
       "name": "InvalidRewardMint",
       "msg": "Invalid reward mint"
     },
     {
-      "code": 6002,
+      "code": 6001,
       "name": "InvalidUserRewardMintTokenAccount",
       "msg": "Invalid user reward mint token account"
     },
     {
-      "code": 6003,
+      "code": 6002,
       "name": "InvalidRewardDistributor",
       "msg": "Invalid reward distributor"
     },
     {
-      "code": 6004,
-      "name": "InvalidRewardDistributorAuthority",
-      "msg": "Invalid reward distributor authority"
-    },
-    {
-      "code": 6005,
+      "code": 6003,
       "name": "InvalidRewardDistributorKind",
       "msg": "Invalid reward distributor kind"
     },
     {
-      "code": 6006,
+      "code": 6004,
       "name": "SupplyRequired",
       "msg": "Initial supply required for kind treasury"
     },
     {
-      "code": 6007,
+      "code": 6005,
       "name": "InvalidAuthority",
       "msg": "Invalid authority"
     },
     {
-      "code": 6008,
-      "name": "InvalidPoolDistributor",
-      "msg": "Invalid distributor for pool"
-    },
-    {
-      "code": 6009,
-      "name": "DistributorNotClosed",
-      "msg": "Distributor is already open"
-    },
-    {
-      "code": 6010,
-      "name": "DistributorAlreadyClosed",
-      "msg": "Distributor is already closed"
-    },
-    {
-      "code": 6011,
+      "code": 6006,
       "name": "InvalidStakeEntry",
       "msg": "Invalid stake entry"
     },
     {
-      "code": 6012,
-      "name": "InvalidRewardEntry",
-      "msg": "Invalid reward entry"
-    },
-    {
-      "code": 6013,
+      "code": 6007,
       "name": "InvalidRewardDistributorTokenAccount",
       "msg": "Invalid reward distributor token account"
     },
     {
-      "code": 6014,
+      "code": 6008,
       "name": "InvalidAuthorityTokenAccount",
       "msg": "Invalid authority token account"
     },
     {
-      "code": 6015,
-      "name": "InvalidPayer",
-      "msg": "Invalid payer"
+      "code": 6009,
+      "name": "InvalidGroupSize",
+      "msg": "Invalid group size"
+    },
+    {
+      "code": 6010,
+      "name": "InvalidPool",
+      "msg": "Invalid pool"
+    },
+    {
+      "code": 6011,
+      "name": "InvalidOriginalMint",
+      "msg": "Original mint is invalid"
+    },
+    {
+      "code": 6012,
+      "name": "InvalidMintMetadata",
+      "msg": "Invalid mint metadata"
+    },
+    {
+      "code": 6013,
+      "name": "InvalidMintMetadataOwner",
+      "msg": "Mint metadata is owned by the incorrect program"
     }
   ]
 }

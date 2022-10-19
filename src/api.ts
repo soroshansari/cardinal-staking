@@ -4,6 +4,20 @@ import type { Wallet } from "@saberhq/solana-contrib";
 import type { Connection, PublicKey } from "@solana/web3.js";
 import { Keypair, Transaction } from "@solana/web3.js";
 
+import type {
+  GroupRewardDistributorKind,
+  GroupRewardDistributorMetadataKind,
+  GroupRewardDistributorPoolKind,
+} from "./programs/groupRewardDistributor";
+import { getGroupRewardEntry } from "./programs/groupRewardDistributor/accounts";
+import { findGroupRewardEntryId } from "./programs/groupRewardDistributor/pda";
+import {
+  withClaimGroupRewards,
+  withCloseGroupRewardEntry,
+  withInitGroupRewardDistributor,
+  withInitGroupRewardEntry,
+  withUpdateGroupRewardDistributor,
+} from "./programs/groupRewardDistributor/transaction";
 import type { RewardDistributorKind } from "./programs/rewardDistributor";
 import { findRewardDistributorId } from "./programs/rewardDistributor/pda";
 import {
@@ -13,13 +27,21 @@ import {
   withUpdateRewardEntry,
 } from "./programs/rewardDistributor/transaction";
 import { ReceiptType } from "./programs/stakePool";
-import { getStakeEntry, getStakePool } from "./programs/stakePool/accounts";
 import {
+  getStakeEntries,
+  getStakeEntry,
+  getStakePool,
+} from "./programs/stakePool/accounts";
+import {
+  withAddToGroupEntry,
   withAuthorizeStakeEntry,
   withClaimReceiptMint,
+  withCloseGroupEntry,
+  withInitGroupStakeEntry,
   withInitStakeEntry,
   withInitStakeMint,
   withInitStakePool,
+  withRemoveFromGroupEntry,
   withStake,
   withUnstake,
   withUpdateTotalStakeSeconds,
@@ -420,3 +442,226 @@ export const unstake = async (
   }
 ): Promise<Transaction> =>
   withUnstake(new Transaction(), connection, wallet, params);
+
+/**
+ * Convenience call to create a group entry
+ * @param connection - Connection to use
+ * @param wallet - Wallet to use
+ * @param stakePoolId - Stake pool ID
+ * @param originalMintId - Original mint ID
+ * @param user - (Optional) User pubkey in case the person paying for the transaction and
+ * stake entry owner are different
+ * @returns
+ */
+export const createGroupEntry = async (
+  connection: Connection,
+  wallet: Wallet,
+  params: {
+    stakeEntryIds: PublicKey[];
+    minGroupDays?: number;
+  }
+): Promise<[Transaction, PublicKey, Keypair[]]> => {
+  if (!params.stakeEntryIds.length) throw new Error("No stake entry found");
+  const [transaction, groupEntryId, signers] = await withInitGroupStakeEntry(
+    new Transaction(),
+    connection,
+    wallet,
+    {
+      stakeEntryId: params.stakeEntryIds[0]!,
+      minGroupDays: params.minGroupDays,
+    }
+  );
+
+  await Promise.all(
+    params.stakeEntryIds.slice(1).map((stakeEntryId) =>
+      withAddToGroupEntry(transaction, connection, wallet, {
+        groupEntryId,
+        stakeEntryId,
+      })
+    )
+  );
+
+  return [transaction, groupEntryId, signers];
+};
+
+/**
+ * Convenience call to create a group reward distributor
+ * @param connection - Connection to use
+ * @param wallet - Wallet to use
+ * @param authorizedPools - Authorized stake pool ids
+ * @param rewardMintId - (Optional) Reward mint id
+ * @param rewardAmount - (Optional) Reward amount
+ * @param rewardDurationSeconds - (Optional) Reward duration in seconds
+ * @param rewardKind - (Optional) Reward distributor kind Mint or Treasury
+ * @param poolKind - (Optional) Reward distributor pool validation kind NoRestriction, AllFromSinglePool or EachFromSeparatePool
+ * @param metadataKind - (Optional) Reward distributor metadata validation kind NoRestriction, UniqueNames or UniqueSymbols
+ * @param maxSupply - (Optional) Max supply
+ * @param supply - (Optional) Supply
+ * @param defaultMultiplier - (Optional) default multiplier
+ * @param multiplierDecimals - (Optional) multiplier decimals
+ * @param groupDaysMultiplier - (Optional) group days multiplier
+ * @param groupDaysMultiplierDecimals - (Optional) group days multiplier decimals
+ * @param maxRewardSecondsReceived - (Optional) max reward seconds received
+ * @param minGroupSize - (Optional) min group size
+ * @returns
+ */
+export const createGroupRewardDistributor = async (
+  connection: Connection,
+  wallet: Wallet,
+  params: {
+    authorizedPools: PublicKey[];
+    rewardMintId: PublicKey;
+    rewardAmount?: BN;
+    rewardDurationSeconds?: BN;
+    rewardKind?: GroupRewardDistributorKind;
+    poolKind?: GroupRewardDistributorPoolKind;
+    metadataKind?: GroupRewardDistributorMetadataKind;
+    maxSupply?: BN;
+    supply?: BN;
+    defaultMultiplier?: BN;
+    multiplierDecimals?: number;
+    groupDaysMultiplier?: BN;
+    groupDaysMultiplierDecimals?: number;
+    maxRewardSecondsReceived?: BN;
+    minGroupSize?: number;
+  }
+): Promise<[Transaction, PublicKey, Keypair[]]> =>
+  withInitGroupRewardDistributor(new Transaction(), connection, wallet, params);
+
+/**
+ * Convenience call to update a group reward distributor
+ * @param connection - Connection to use
+ * @param wallet - Wallet to use
+ * @param authorizedPools - Authorized stake pool ids
+ * @param rewardMintId - (Optional) Reward mint id
+ * @param rewardAmount - (Optional) Reward amount
+ * @param rewardDurationSeconds - (Optional) Reward duration in seconds
+ * @param poolKind - (Optional) Reward distributor pool validation kind NoRestriction, AllFromSinglePool or EachFromSeparatePool
+ * @param metadataKind - (Optional) Reward distributor metadata validation kind NoRestriction, UniqueNames or UniqueSymbols
+ * @param maxSupply - (Optional) Max supply
+ * @param defaultMultiplier - (Optional) default multiplier
+ * @param multiplierDecimals - (Optional) multiplier decimals
+ * @param groupDaysMultiplier - (Optional) group days multiplier
+ * @param groupDaysMultiplierDecimals - (Optional) group days multiplier decimals
+ * @param maxRewardSecondsReceived - (Optional) max reward seconds received
+ * @param minGroupSize - (Optional) min group size
+ * @returns
+ */
+export const updateGroupRewardDistributor = async (
+  connection: Connection,
+  wallet: Wallet,
+  params: {
+    groupRewardDistributorId: PublicKey;
+    authorizedPools: PublicKey[];
+    rewardMintId: PublicKey;
+    rewardAmount?: BN;
+    rewardDurationSeconds?: BN;
+    poolKind?: GroupRewardDistributorPoolKind;
+    metadataKind?: GroupRewardDistributorMetadataKind;
+    maxSupply?: BN;
+    defaultMultiplier?: BN;
+    multiplierDecimals?: number;
+    groupDaysMultiplier?: BN;
+    groupDaysMultiplierDecimals?: number;
+    maxRewardSecondsReceived?: BN;
+    minGroupSize?: number;
+  }
+): Promise<Transaction> =>
+  withUpdateGroupRewardDistributor(
+    new Transaction(),
+    connection,
+    wallet,
+    params
+  );
+
+/**
+ * Convenience method to claim rewards
+ * @param connection - Connection to use
+ * @param wallet - Wallet to use
+ * @param groupRewardDistributorId - Group reward distributor ID
+ * @param groupEntryId - Group entry ID
+ * @param stakeEntryIds - Stake entry IDs
+ * @returns
+ */
+export const claimGroupRewards = async (
+  connection: Connection,
+  wallet: Wallet,
+  params: {
+    groupRewardDistributorId: PublicKey;
+    groupEntryId: PublicKey;
+    stakeEntryIds: PublicKey[];
+  }
+): Promise<[Transaction]> => {
+  const transaction = new Transaction();
+
+  const [groupRewardEntryId] = await findGroupRewardEntryId(
+    params.groupRewardDistributorId,
+    params.groupEntryId
+  );
+
+  const groupRewardEntry = await tryGetAccount(() =>
+    getGroupRewardEntry(connection, groupRewardEntryId)
+  );
+  if (!groupRewardEntry) {
+    const stakeEntries = await getStakeEntries(
+      connection,
+      params.stakeEntryIds
+    );
+
+    await withInitGroupRewardEntry(transaction, connection, wallet, {
+      groupRewardDistributorId: params.groupRewardDistributorId,
+      groupEntryId: params.groupEntryId,
+      stakeEntries: stakeEntries.map((stakeEntry) => ({
+        stakeEntryId: stakeEntry.pubkey,
+        originalMint: stakeEntry.parsed.originalMint,
+      })),
+    });
+  }
+
+  await withClaimGroupRewards(transaction, connection, wallet, {
+    groupRewardDistributorId: params.groupRewardDistributorId,
+    groupEntryId: params.groupEntryId,
+  });
+
+  return [transaction];
+};
+
+/**
+ * Convenience method to close group stake entry
+ * @param connection - Connection to use
+ * @param wallet - Wallet to use
+ * @param groupRewardDistributorId - Group reward distributor ID
+ * @param groupEntryId - Group entry ID
+ * @param stakeEntryIds - Stake entry IDs
+ * @returns
+ */
+export const closeGroupEntry = async (
+  connection: Connection,
+  wallet: Wallet,
+  params: {
+    groupRewardDistributorId: PublicKey;
+    groupEntryId: PublicKey;
+    stakeEntryIds: PublicKey[];
+  }
+): Promise<[Transaction]> => {
+  const [transaction] = await claimGroupRewards(connection, wallet, params);
+
+  await withCloseGroupRewardEntry(transaction, connection, wallet, {
+    groupEntryId: params.groupEntryId,
+    groupRewardDistributorId: params.groupRewardDistributorId,
+  });
+
+  await Promise.all(
+    params.stakeEntryIds.map((stakeEntryId) =>
+      withRemoveFromGroupEntry(transaction, connection, wallet, {
+        groupEntryId: params.groupEntryId,
+        stakeEntryId,
+      })
+    )
+  );
+
+  await withCloseGroupEntry(transaction, connection, wallet, {
+    groupEntryId: params.groupEntryId,
+  });
+  return [transaction];
+};

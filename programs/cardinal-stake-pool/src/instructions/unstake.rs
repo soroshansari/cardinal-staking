@@ -46,6 +46,10 @@ pub fn handler(ctx: Context<UnstakeCtx>) -> Result<()> {
     let stake_entry_seed = [STAKE_ENTRY_PREFIX.as_bytes(), stake_pool_key.as_ref(), original_mint.as_ref(), seed.as_ref(), &[stake_entry.bump]];
     let stake_entry_signer = &[&stake_entry_seed[..]];
 
+    if stake_entry.grouped == Some(true) {
+        return Err(error!(ErrorCode::GroupedStakeEntry));
+    }
+
     if stake_pool.min_stake_seconds.is_some()
         && stake_pool.min_stake_seconds.unwrap() > 0
         && ((Clock::get().unwrap().unix_timestamp - stake_entry.last_staked_at) as u32) < stake_pool.min_stake_seconds.unwrap()
