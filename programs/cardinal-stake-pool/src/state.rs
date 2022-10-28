@@ -35,7 +35,6 @@ pub enum StakeEntryKind {
 #[account]
 pub struct GroupStakeEntry {
     pub bump: u8,
-    pub id: Pubkey,
     pub authority: Pubkey,
     pub stake_entries: Vec<Pubkey>,
     pub started_at: i64,

@@ -907,10 +907,6 @@ export type CardinalStakePool = {
             type: "u8";
           },
           {
-            name: "id";
-            type: "publicKey";
-          },
-          {
             name: "authority";
             type: "publicKey";
           },
@@ -2532,10 +2528,6 @@ export const IDL: CardinalStakePool = {
           {
             name: "bump",
             type: "u8",
-          },
-          {
-            name: "id",
-            type: "publicKey",
           },
           {
             name: "authority",
