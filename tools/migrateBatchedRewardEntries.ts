@@ -8,9 +8,9 @@ import type { RewardEntryData } from "../src/programs/rewardDistributor";
 // import type { RewardEntryV0Data } from "../src/programs/rewardDistributor";
 import {
   getAllRewardEntries,
-  getRewardDistributor,
+  // getRewardDistributor,
 } from "../src/programs/rewardDistributor/accounts";
-import { getAllStakeEntries } from "../src/programs/stakePool/accounts";
+// import { getAllStakeEntries } from "../src/programs/stakePool/accounts";
 // import { findStakeEntryIdFromMint } from "../src/programs/stakePool/utils";
 import { connectionFor } from "./connection";
 import { chunkArray } from "./utils";
@@ -27,10 +27,10 @@ const migrateRewardEntries = async (cluster: string) => {
   const connection = connectionFor(cluster);
 
   const allRewardEntries = await getAllRewardEntries(connection);
-  const allStakeEntries = await getAllStakeEntries(connection);
-  const stakeEntryIds = allStakeEntries.map((stakeEntry) =>
-    stakeEntry.pubkey.toString()
-  );
+  // const allStakeEntries = await getAllStakeEntries(connection);
+  // const stakeEntryIds = allStakeEntries.map((stakeEntry) =>
+  //   stakeEntry.pubkey.toString()
+  // );
   // let filteredRewardEntries = allRewardEntries.filter(
   //   (rewardEntry) => !stakeEntryIds.includes(rewardEntry.parsed.mint.toString())
   // );
@@ -65,13 +65,13 @@ const migrateRewardEntries = async (cluster: string) => {
           } --------`
         );
         const rewardEntryData = rewardEntries[j]!;
-        const rewardDistributorData = await getRewardDistributor(
-          connection,
-          rewardEntryData?.parsed.rewardDistributor
-        );
+        // const rewardDistributorData = await getRewardDistributor(
+        //   connection,
+        //   rewardEntryData?.parsed.rewardDistributor
+        // );
 
         // MINT used to be on the rewardEntry
-        const stakeEntryId = rewardEntryData.parsed.stakeEntry;
+        // const stakeEntryId = rewardEntryData.parsed.stakeEntry;
         // const [stakeEntryId] = await findStakeEntryIdFromMint(
         //   connection,
         //   wallet.publicKey,

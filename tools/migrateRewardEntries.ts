@@ -9,7 +9,7 @@ import {
   getRewardEntry,
 } from "../src/programs/rewardDistributor/accounts";
 import { findRewardEntryId } from "../src/programs/rewardDistributor/pda";
-import { getAllStakeEntries } from "../src/programs/stakePool/accounts";
+// import { getAllStakeEntries } from "../src/programs/stakePool/accounts";
 import { connectionFor } from "./connection";
 // import { findStakeEntryIdFromMint } from "../src/programs/stakePool/utils";
 
@@ -21,10 +21,10 @@ const migrateRewardEntries = async (cluster: string) => {
   const connection = connectionFor(cluster);
 
   const allRewardEntries = await getAllRewardEntries(connection);
-  const allStakeEntries = await getAllStakeEntries(connection);
-  const _stakeEntryIds = allStakeEntries.map((stakeEntry) =>
-    stakeEntry.pubkey.toString()
-  );
+  // const allStakeEntries = await getAllStakeEntries(connection);
+  // const _stakeEntryIds = allStakeEntries.map((stakeEntry) =>
+  //   stakeEntry.pubkey.toString()
+  // );
   // const filteredRewardEntries = allRewardEntries.filter(
   //   (rewardEntry) => !stakeEntryIds.includes(rewardEntry.parsed.mint.toString())
   // );
