@@ -2,7 +2,7 @@ import {
   tryGetAccount,
   withFindOrInitAssociatedTokenAccount,
 } from "@cardinal/common";
-import { getPaymentManager } from "@cardinal/token-manager/dist/cjs/programs/paymentManager/accounts";
+import { getPaymentManager } from "@cardinal/payment-manager/dist/cjs/accounts";
 import type { BN, web3 } from "@project-serum/anchor";
 import type { Wallet } from "@saberhq/solana-contrib";
 import type { Connection, PublicKey, Transaction } from "@solana/web3.js";

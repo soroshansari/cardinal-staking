@@ -1,5 +1,5 @@
 import { findAta } from "@cardinal/common";
-import { PAYMENT_MANAGER_ADDRESS } from "@cardinal/token-manager/dist/cjs/programs/paymentManager";
+import { PAYMENT_MANAGER_ADDRESS } from "@cardinal/payment-manager";
 import {
   CRANK_KEY,
   getRemainingAccountsForKind,

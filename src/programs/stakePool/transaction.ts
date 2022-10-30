@@ -3,8 +3,8 @@ import {
   tryGetAccount,
   withFindOrInitAssociatedTokenAccount,
 } from "@cardinal/common";
+import { getPaymentManager } from "@cardinal/payment-manager/dist/cjs/accounts";
 import { tokenManager } from "@cardinal/token-manager/dist/cjs/programs";
-import { getPaymentManager } from "@cardinal/token-manager/dist/cjs/programs/paymentManager/accounts";
 import { withRemainingAccountsForReturn } from "@cardinal/token-manager/dist/cjs/programs/tokenManager";
 import {
   findMintManagerId,

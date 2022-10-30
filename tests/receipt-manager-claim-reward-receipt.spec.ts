@@ -1,7 +1,7 @@
 import { findAta, tryGetAccount, withWrapSol } from "@cardinal/common";
-import { getPaymentManager } from "@cardinal/token-manager/dist/cjs/programs/paymentManager/accounts";
-import { init } from "@cardinal/token-manager/dist/cjs/programs/paymentManager/instruction";
-import { findPaymentManagerAddress } from "@cardinal/token-manager/dist/cjs/programs/paymentManager/pda";
+import { getPaymentManager } from "@cardinal/payment-manager/dist/cjs/accounts";
+import { findPaymentManagerAddress } from "@cardinal/payment-manager/dist/cjs/pda";
+import { withInit } from "@cardinal/payment-manager/dist/cjs/transaction";
 import { BN } from "@project-serum/anchor";
 import { expectTXTable } from "@saberhq/chai-solana";
 import {
@@ -119,23 +119,23 @@ describe("Receipt manager claim reward receipt", () => {
     const provider = getProvider();
     const transaction = new Transaction();
 
-    const [ix, paymentManagerId] = await init(
-      provider.connection,
-      provider.wallet,
-      RECEIPT_MANAGER_PAYMENT_MANAGER_NAME,
-      {
-        feeCollector: feeCollector.publicKey,
-        makerFeeBasisPoints: MAKER_FEE,
-        takerFeeBasisPoints: TAKER_FEE,
-        includeSellerFeeBasisPoints: false,
-      }
+    const [paymentManagerId] = await findPaymentManagerAddress(
+      RECEIPT_MANAGER_PAYMENT_MANAGER_NAME
     );
-
     const checkIfPaymentManagerExists = await tryGetAccount(() =>
       getPaymentManager(provider.connection, paymentManagerId)
     );
     if (!checkIfPaymentManagerExists) {
-      transaction.add(ix);
+      await withInit(
+        transaction,
+        provider.connection,
+        provider.wallet,
+        RECEIPT_MANAGER_PAYMENT_MANAGER_NAME,
+        feeCollector.publicKey,
+        MAKER_FEE,
+        TAKER_FEE,
+        false
+      );
       const txEnvelope = new TransactionEnvelope(
         SolanaProvider.init({
           connection: provider.connection,
@@ -350,7 +350,7 @@ describe("Receipt manager claim reward receipt", () => {
     const checkUserOriginalTokenAccount = await originalMint.getAccountInfo(
       userOriginalMintTokenAccountId
     );
-    expect(checkUserOriginalTokenAccount.amount.toNumber()).to.eq(1);
+    expect(Number(checkUserOriginalTokenAccount.amount)).to.eq(1);
     expect(checkUserOriginalTokenAccount.isFrozen).to.eq(true);
   });
 
@@ -476,9 +476,9 @@ describe("Receipt manager claim reward receipt", () => {
     );
     let beforeBalance = 0;
     try {
-      beforeBalance = (
-        await checkMint.getAccountInfo(paymentTokenAccountId)
-      ).amount.toNumber();
+      beforeBalance = Number(
+        (await checkMint.getAccountInfo(paymentTokenAccountId)).amount
+      );
     } catch (e) {
       beforeBalance = 0;
     }

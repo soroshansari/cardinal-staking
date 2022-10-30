@@ -1,5 +1,5 @@
 import { findAta } from "@cardinal/common";
-import { paymentManager } from "@cardinal/token-manager/dist/cjs/programs";
+import { withInit } from "@cardinal/payment-manager/dist/cjs/transaction";
 import { expectTXTable } from "@saberhq/chai-solana";
 import {
   SignerWallet,
@@ -40,6 +40,8 @@ describe("Stake booster boost", () => {
   const BOOST_SECONDS = new BN(10);
   const SECONDS_TO_BOOST = new BN(3);
   const PAYMENT_SUPPLY = new BN(100);
+  const MAKER_FEE = 50;
+  const TAKER_FEE = 0;
 
   before(async () => {
     const provider = getProvider();
@@ -84,22 +86,23 @@ describe("Stake booster boost", () => {
     );
     if (!stakeBoostPaymentManager) {
       // create payment manager
+
+      const transaction = new Transaction();
+      await withInit(
+        transaction,
+        provider.connection,
+        provider.wallet,
+        STAKE_BOOSTER_PAYMENT_MANAGER_NAME,
+        feeCollector.publicKey,
+        MAKER_FEE,
+        TAKER_FEE,
+        false
+      );
       await expectTXTable(
-        new TransactionEnvelope(SolanaProvider.init(provider), [
-          (
-            await paymentManager.instruction.init(
-              provider.connection,
-              provider.wallet,
-              STAKE_BOOSTER_PAYMENT_MANAGER_NAME,
-              {
-                feeCollector: feeCollector.publicKey,
-                makerFeeBasisPoints: 500,
-                takerFeeBasisPoints: 0,
-                includeSellerFeeBasisPoints: false,
-              }
-            )
-          )[0],
-        ]),
+        new TransactionEnvelope(
+          SolanaProvider.init(provider),
+          transaction.instructions
+        ),
         "before",
         {
           verbosity: "error",
@@ -194,7 +197,7 @@ describe("Stake booster boost", () => {
     const checkUserOriginalTokenAccount = await originalMint.getAccountInfo(
       userOriginalMintTokenAccountId
     );
-    expect(checkUserOriginalTokenAccount.amount.toNumber()).to.eq(1);
+    expect(Number(checkUserOriginalTokenAccount.amount)).to.eq(1);
     expect(checkUserOriginalTokenAccount.isFrozen).to.eq(true);
   });
 
@@ -245,7 +248,7 @@ describe("Stake booster boost", () => {
     const checkUserOriginalTokenAccount = await originalMint.getAccountInfo(
       userOriginalMintTokenAccountId
     );
-    expect(checkUserOriginalTokenAccount.amount.toNumber()).to.eq(1);
+    expect(Number(checkUserOriginalTokenAccount.amount)).to.eq(1);
     expect(checkUserOriginalTokenAccount.isFrozen).to.eq(true);
   });
 
@@ -315,13 +318,13 @@ describe("Stake booster boost", () => {
     const checkUserOriginalTokenAccount = await originalMint.getAccountInfo(
       userOriginalMintTokenAccountId
     );
-    expect(checkUserOriginalTokenAccount.amount.toNumber()).to.eq(1);
+    expect(Number(checkUserOriginalTokenAccount.amount)).to.eq(1);
     expect(checkUserOriginalTokenAccount.isFrozen).to.eq(true);
 
     const checkPaymentMintTokenAccount = await paymentMint.getAccountInfo(
       paymentMintTokenAccount
     );
-    expect(checkPaymentMintTokenAccount.amount.toNumber()).to.eq(
+    expect(Number(checkPaymentMintTokenAccount.amount)).to.eq(
       PAYMENT_SUPPLY.sub(
         SECONDS_TO_BOOST.mul(STAKE_BOOSTER_PAYMENT_AMOUNT).div(BOOST_SECONDS)
       ).toNumber()
@@ -382,7 +385,7 @@ describe("Stake booster boost", () => {
     const checkUserOriginalTokenAccount = await originalMint.getAccountInfo(
       userOriginalMintTokenAccountId
     );
-    expect(checkUserOriginalTokenAccount.amount.toNumber()).to.eq(1);
+    expect(Number(checkUserOriginalTokenAccount.amount)).to.eq(1);
     expect(checkUserOriginalTokenAccount.isFrozen).to.eq(false);
   });
 

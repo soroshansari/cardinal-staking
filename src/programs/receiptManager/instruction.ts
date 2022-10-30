@@ -1,4 +1,4 @@
-import { PAYMENT_MANAGER_ADDRESS } from "@cardinal/token-manager/dist/cjs/programs/paymentManager";
+import { PAYMENT_MANAGER_ADDRESS } from "@cardinal/payment-manager";
 import type { BN } from "@project-serum/anchor";
 import { AnchorProvider, Program } from "@project-serum/anchor";
 import type { Wallet } from "@saberhq/solana-contrib";
