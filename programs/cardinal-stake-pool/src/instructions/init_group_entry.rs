@@ -5,23 +5,21 @@ use {
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct InitGroupEntryIx {
-    min_group_days: Option<u32>,
+    pub id: Pubkey,
+    pub min_group_days: Option<u32>,
 }
 
 #[derive(Accounts)]
+#[instruction(ix: InitGroupEntryIx)]
 pub struct InitGroupEntryCtx<'info> {
     #[account(
         init,
         payer = authority,
         space = GROUP_ENTRY_SIZE,
-        seeds = [GROUP_ENTRY_PREFIX.as_bytes(), id.key().as_ref()],
+        seeds = [GROUP_ENTRY_PREFIX.as_bytes(), ix.id.key().as_ref()],
         bump,
     )]
     group_entry: Box<Account<'info, GroupStakeEntry>>,
-
-    /// CHECK: This is not dangerous because we don't read or write from this account
-    id: AccountInfo<'info>,
-
     #[account(mut, constraint = stake_entry.last_staker == authority.key() @ ErrorCode::InvalidAuthority)]
     stake_entry: Box<Account<'info, StakeEntry>>,
 

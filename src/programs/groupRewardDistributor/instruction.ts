@@ -74,13 +74,14 @@ export const initGroupRewardDistributor = async (
 
   const instruction = await program.methods
     .initGroupRewardDistributor({
+      id: id.publicKey,
       rewardAmount: params.rewardAmount,
       rewardDurationSeconds: params.rewardDurationSeconds,
       maxSupply: params.maxSupply || null,
       supply: params.supply || null,
-      rewardKind: params.rewardKind,
-      poolKind: params.poolKind,
-      metadataKind: params.metadataKind,
+      rewardKind: params.rewardKind as never,
+      poolKind: params.poolKind as never,
+      metadataKind: params.metadataKind as never,
       defaultMultiplier: params.defaultMultiplier || null,
       multiplierDecimals: params.multiplierDecimals || null,
       groupDaysMultiplier: params.groupDaysMultiplier || null,
@@ -93,7 +94,6 @@ export const initGroupRewardDistributor = async (
     })
     .accounts({
       groupRewardDistributor: groupRewardDistributorId,
-      id: id.publicKey,
       rewardMint: params.rewardMintId,
       authority: wallet.publicKey,
       payer: wallet.publicKey,
@@ -341,8 +341,8 @@ export const updateGroupRewardDistributor = (
       rewardAmount: params.rewardAmount,
       rewardDurationSeconds: params.rewardDurationSeconds,
       maxSupply: params.maxSupply || null,
-      poolKind: params.poolKind,
-      metadataKind: params.metadataKind,
+      poolKind: params.poolKind as never,
+      metadataKind: params.metadataKind as never,
       defaultMultiplier: params.defaultMultiplier || null,
       multiplierDecimals: params.multiplierDecimals || null,
       groupDaysMultiplier: params.groupDaysMultiplier || null,

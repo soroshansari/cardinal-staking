@@ -7,7 +7,7 @@ pub fn assert_reward_manager(pubkey: &Pubkey) -> bool {
     pubkey.to_string() == Pubkey::from_str("crkdpVWjHWdggGgBuSyAqSmZUmAjYLzD435tcLDRLXr").unwrap().to_string()
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, AnchorSerialize, AnchorDeserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, AnchorSerialize, AnchorDeserialize, Copy)]
 #[repr(u8)]
 pub enum GroupRewardDistributorKind {
     /// Rewards are distributed by minting new tokens
@@ -15,21 +15,50 @@ pub enum GroupRewardDistributorKind {
     /// Rewards are distributed from a treasury
     Treasury = 2,
 }
+impl From<u8> for GroupRewardDistributorKind {
+    fn from(orig: u8) -> Self {
+        match orig {
+            1 => return GroupRewardDistributorKind::Mint,
+            2 => return GroupRewardDistributorKind::Treasury,
+            _ => return GroupRewardDistributorKind::Treasury,
+        };
+    }
+}
 
-#[derive(Clone, Debug, PartialEq, Eq, AnchorSerialize, AnchorDeserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, AnchorSerialize, AnchorDeserialize, Copy)]
 #[repr(u8)]
 pub enum GroupRewardDistributorMetadataKind {
     NoRestriction = 1,
     UniqueNames = 2,
     UniqueSymbols = 3,
 }
+impl From<u8> for GroupRewardDistributorMetadataKind {
+    fn from(orig: u8) -> Self {
+        match orig {
+            1 => return GroupRewardDistributorMetadataKind::NoRestriction,
+            2 => return GroupRewardDistributorMetadataKind::UniqueNames,
+            3 => return GroupRewardDistributorMetadataKind::UniqueSymbols,
+            _ => return GroupRewardDistributorMetadataKind::NoRestriction,
+        };
+    }
+}
 
-#[derive(Clone, Debug, PartialEq, Eq, AnchorSerialize, AnchorDeserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, AnchorSerialize, AnchorDeserialize, Copy)]
 #[repr(u8)]
 pub enum GroupRewardDistributorPoolKind {
     NoRestriction = 1,
     AllFromSinglePool = 2,
     EachFromSeparatePool = 3,
+}
+impl From<u8> for GroupRewardDistributorPoolKind {
+    fn from(orig: u8) -> Self {
+        match orig {
+            1 => return GroupRewardDistributorPoolKind::NoRestriction,
+            2 => return GroupRewardDistributorPoolKind::AllFromSinglePool,
+            3 => return GroupRewardDistributorPoolKind::EachFromSeparatePool,
+            _ => return GroupRewardDistributorPoolKind::NoRestriction,
+        };
+    }
 }
 
 pub const GROUP_REWARD_COUNTER_SEED: &str = "group-reward-counter";
@@ -81,9 +110,9 @@ pub struct GroupRewardDistributor {
     pub bump: u8,
     pub id: Pubkey,
     pub authorized_pools: Vec<Pubkey>,
-    pub reward_kind: u8,
-    pub metadata_kind: u8,
-    pub pool_kind: u8,
+    pub reward_kind: GroupRewardDistributorKind,
+    pub metadata_kind: GroupRewardDistributorMetadataKind,
+    pub pool_kind: GroupRewardDistributorPoolKind,
     pub authority: Pubkey,
     pub reward_mint: Pubkey,
     pub reward_amount: u64,

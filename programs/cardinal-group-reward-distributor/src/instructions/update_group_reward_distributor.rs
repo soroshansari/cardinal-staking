@@ -4,8 +4,8 @@ use {crate::state::*, anchor_lang::prelude::*};
 pub struct UpdateGroupRewardDistributorIx {
     pub reward_amount: u64,
     pub reward_duration_seconds: u128,
-    pub metadata_kind: u8,
-    pub pool_kind: u8,
+    pub metadata_kind: GroupRewardDistributorMetadataKind,
+    pub pool_kind: GroupRewardDistributorPoolKind,
     pub authorized_pools: Vec<Pubkey>,
     pub max_supply: Option<u64>,
     pub default_multiplier: Option<u64>,

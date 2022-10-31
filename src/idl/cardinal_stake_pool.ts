@@ -638,11 +638,6 @@ export type CardinalStakePool = {
           isSigner: false;
         },
         {
-          name: "id";
-          isMut: false;
-          isSigner: false;
-        },
-        {
           name: "stakeEntry";
           isMut: true;
           isSigner: false;
@@ -1164,6 +1159,10 @@ export type CardinalStakePool = {
       type: {
         kind: "struct";
         fields: [
+          {
+            name: "id";
+            type: "publicKey";
+          },
           {
             name: "minGroupDays";
             type: {
@@ -2261,11 +2260,6 @@ export const IDL: CardinalStakePool = {
           isSigner: false,
         },
         {
-          name: "id",
-          isMut: false,
-          isSigner: false,
-        },
-        {
           name: "stakeEntry",
           isMut: true,
           isSigner: false,
@@ -2787,6 +2781,10 @@ export const IDL: CardinalStakePool = {
       type: {
         kind: "struct",
         fields: [
+          {
+            name: "id",
+            type: "publicKey",
+          },
           {
             name: "minGroupDays",
             type: {

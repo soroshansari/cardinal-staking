@@ -103,7 +103,7 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
         // mint to the user
         let remaining_accs = &mut ctx.remaining_accounts.iter();
         match group_reward_distributor.reward_kind {
-            k if k == GroupRewardDistributorKind::Mint as u8 => {
+            k if k == GroupRewardDistributorKind::Mint => {
                 let cpi_accounts = token::MintTo {
                     mint: ctx.accounts.reward_mint.to_account_info(),
                     to: ctx.accounts.user_reward_mint_token_account.to_account_info(),
@@ -114,7 +114,7 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
                 // todo this could be an issue and get stuck, might need 2 transfers
                 token::mint_to(cpi_context, reward_amount_to_receive.try_into().expect("Too many rewards to receive"))?;
             }
-            k if k == GroupRewardDistributorKind::Treasury as u8 => {
+            k if k == GroupRewardDistributorKind::Treasury => {
                 let group_reward_distributor_token_account_info = next_account_info(remaining_accs)?;
                 let group_reward_distributor_token_account = Account::<TokenAccount>::try_from(group_reward_distributor_token_account_info)?;
 

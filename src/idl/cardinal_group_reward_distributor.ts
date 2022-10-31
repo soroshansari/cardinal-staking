@@ -11,11 +11,6 @@ export type CardinalGroupRewardDistributor = {
           isSigner: false;
         },
         {
-          name: "id";
-          isMut: false;
-          isSigner: false;
-        },
-        {
           name: "rewardMint";
           isMut: true;
           isSigner: false;
@@ -408,15 +403,21 @@ export type CardinalGroupRewardDistributor = {
           },
           {
             name: "rewardKind";
-            type: "u8";
+            type: {
+              defined: "GroupRewardDistributorKind";
+            };
           },
           {
             name: "metadataKind";
-            type: "u8";
+            type: {
+              defined: "GroupRewardDistributorMetadataKind";
+            };
           },
           {
             name: "poolKind";
-            type: "u8";
+            type: {
+              defined: "GroupRewardDistributorPoolKind";
+            };
           },
           {
             name: "authority";
@@ -495,6 +496,10 @@ export type CardinalGroupRewardDistributor = {
         kind: "struct";
         fields: [
           {
+            name: "id";
+            type: "publicKey";
+          },
+          {
             name: "rewardAmount";
             type: "u64";
           },
@@ -504,15 +509,21 @@ export type CardinalGroupRewardDistributor = {
           },
           {
             name: "rewardKind";
-            type: "u8";
+            type: {
+              defined: "GroupRewardDistributorKind";
+            };
           },
           {
             name: "metadataKind";
-            type: "u8";
+            type: {
+              defined: "GroupRewardDistributorMetadataKind";
+            };
           },
           {
             name: "poolKind";
-            type: "u8";
+            type: {
+              defined: "GroupRewardDistributorPoolKind";
+            };
           },
           {
             name: "authorizedPools";
@@ -598,11 +609,15 @@ export type CardinalGroupRewardDistributor = {
           },
           {
             name: "metadataKind";
-            type: "u8";
+            type: {
+              defined: "GroupRewardDistributorMetadataKind";
+            };
           },
           {
             name: "poolKind";
-            type: "u8";
+            type: {
+              defined: "GroupRewardDistributorPoolKind";
+            };
           },
           {
             name: "authorizedPools";
@@ -812,11 +827,6 @@ export const IDL: CardinalGroupRewardDistributor = {
         {
           name: "groupRewardDistributor",
           isMut: true,
-          isSigner: false,
-        },
-        {
-          name: "id",
-          isMut: false,
           isSigner: false,
         },
         {
@@ -1212,15 +1222,21 @@ export const IDL: CardinalGroupRewardDistributor = {
           },
           {
             name: "rewardKind",
-            type: "u8",
+            type: {
+              defined: "GroupRewardDistributorKind",
+            },
           },
           {
             name: "metadataKind",
-            type: "u8",
+            type: {
+              defined: "GroupRewardDistributorMetadataKind",
+            },
           },
           {
             name: "poolKind",
-            type: "u8",
+            type: {
+              defined: "GroupRewardDistributorPoolKind",
+            },
           },
           {
             name: "authority",
@@ -1299,6 +1315,10 @@ export const IDL: CardinalGroupRewardDistributor = {
         kind: "struct",
         fields: [
           {
+            name: "id",
+            type: "publicKey",
+          },
+          {
             name: "rewardAmount",
             type: "u64",
           },
@@ -1308,15 +1328,21 @@ export const IDL: CardinalGroupRewardDistributor = {
           },
           {
             name: "rewardKind",
-            type: "u8",
+            type: {
+              defined: "GroupRewardDistributorKind",
+            },
           },
           {
             name: "metadataKind",
-            type: "u8",
+            type: {
+              defined: "GroupRewardDistributorMetadataKind",
+            },
           },
           {
             name: "poolKind",
-            type: "u8",
+            type: {
+              defined: "GroupRewardDistributorPoolKind",
+            },
           },
           {
             name: "authorizedPools",
@@ -1402,11 +1428,15 @@ export const IDL: CardinalGroupRewardDistributor = {
           },
           {
             name: "metadataKind",
-            type: "u8",
+            type: {
+              defined: "GroupRewardDistributorMetadataKind",
+            },
           },
           {
             name: "poolKind",
-            type: "u8",
+            type: {
+              defined: "GroupRewardDistributorPoolKind",
+            },
           },
           {
             name: "authorizedPools",

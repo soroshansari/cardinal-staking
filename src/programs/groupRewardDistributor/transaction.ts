@@ -171,7 +171,8 @@ export const withClaimGroupRewards = async (
       connection,
       wallet,
       groupRewardDistributorData.pubkey,
-      groupRewardDistributorData.parsed.rewardKind,
+      groupRewardDistributorData.parsed
+        .rewardKind as GroupRewardDistributorKind,
       groupRewardDistributorData.parsed.rewardMint,
       true
     );
@@ -221,7 +222,8 @@ export const withCloseGroupRewardDistributor = async (
       connection,
       wallet,
       groupRewardDistributorData.pubkey,
-      groupRewardDistributorData.parsed.rewardKind,
+      groupRewardDistributorData.parsed
+        .rewardKind as GroupRewardDistributorKind,
       groupRewardDistributorData.parsed.rewardMint
     );
 

@@ -789,11 +789,11 @@ export const initGroupStakeEntry = async (
 
   const instruction = await stakePoolProgram.methods
     .initGroupEntry({
+      id: id.publicKey,
       minGroupDays: params.minGroupDays || null,
     })
     .accounts({
       groupEntry,
-      id: id.publicKey,
       authority: wallet.publicKey,
       stakeEntry: params.stakeEntry,
       systemProgram: SystemProgram.programId,

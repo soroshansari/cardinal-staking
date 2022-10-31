@@ -98,12 +98,12 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
     }
 
     match group_reward_distributor.metadata_kind {
-        k if k == GroupRewardDistributorMetadataKind::UniqueNames as u8 => {
+        k if k == GroupRewardDistributorMetadataKind::UniqueNames => {
             if !has_unique_elements(metadata_names) {
                 return Err(error!(ErrorCode::InvalidStakeEntry));
             }
         }
-        k if k == GroupRewardDistributorMetadataKind::UniqueSymbols as u8 => {
+        k if k == GroupRewardDistributorMetadataKind::UniqueSymbols => {
             if !has_unique_elements(metadata_symbols) {
                 return Err(error!(ErrorCode::InvalidStakeEntry));
             }
@@ -112,12 +112,12 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
     }
 
     match group_reward_distributor.pool_kind {
-        k if k == GroupRewardDistributorPoolKind::AllFromSinglePool as u8 => {
+        k if k == GroupRewardDistributorPoolKind::AllFromSinglePool => {
             if !is_all_same(stake_pools) {
                 return Err(error!(ErrorCode::InvalidStakeEntry));
             }
         }
-        k if k == GroupRewardDistributorPoolKind::EachFromSeparatePool as u8 => {
+        k if k == GroupRewardDistributorPoolKind::EachFromSeparatePool => {
             if !has_unique_elements(stake_pools) {
                 return Err(error!(ErrorCode::InvalidStakeEntry));
             }
