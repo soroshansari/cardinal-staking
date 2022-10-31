@@ -1564,36 +1564,31 @@ export type CardinalStakePool = {
     },
     {
       code: 6028;
-      name: "CannotUpdateUnstakedEntry";
-      msg: "Cannot update unstaked entry";
-    },
-    {
-      code: 6029;
       name: "CannotBoostUnstakedToken";
       msg: "Cannot boost unstaked token";
     },
     {
-      code: 6030;
+      code: 6029;
       name: "CannotBoostMoreThanCurrentTime";
       msg: "Cannot boost past current time less than start time";
     },
     {
-      code: 6031;
+      code: 6030;
       name: "InvalidBoostPayerTokenAccount";
       msg: "Invalid boost payer token account";
     },
     {
-      code: 6032;
+      code: 6031;
       name: "InvalidBoostPaymentRecipientTokenAccount";
       msg: "Invalid boost payment recipient token account";
     },
     {
-      code: 6033;
+      code: 6032;
       name: "InvalidPaymentManager";
       msg: "Invalid payment manager";
     },
     {
-      code: 6034;
+      code: 6033;
       name: "CannotBoostFungibleToken";
       msg: "Cannot boost a fungible token stake entry";
     },
@@ -3186,36 +3181,31 @@ export const IDL: CardinalStakePool = {
     },
     {
       code: 6028,
-      name: "CannotUpdateUnstakedEntry",
-      msg: "Cannot update unstaked entry",
-    },
-    {
-      code: 6029,
       name: "CannotBoostUnstakedToken",
       msg: "Cannot boost unstaked token",
     },
     {
-      code: 6030,
+      code: 6029,
       name: "CannotBoostMoreThanCurrentTime",
       msg: "Cannot boost past current time less than start time",
     },
     {
-      code: 6031,
+      code: 6030,
       name: "InvalidBoostPayerTokenAccount",
       msg: "Invalid boost payer token account",
     },
     {
-      code: 6032,
+      code: 6031,
       name: "InvalidBoostPaymentRecipientTokenAccount",
       msg: "Invalid boost payment recipient token account",
     },
     {
-      code: 6033,
+      code: 6032,
       name: "InvalidPaymentManager",
       msg: "Invalid payment manager",
     },
     {
-      code: 6034,
+      code: 6033,
       name: "CannotBoostFungibleToken",
       msg: "Cannot boost a fungible token stake entry",
     },
