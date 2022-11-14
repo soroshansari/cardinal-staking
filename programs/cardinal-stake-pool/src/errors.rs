@@ -58,6 +58,8 @@ pub enum ErrorCode {
     StakeMintAlreadyInitialized,
     #[msg("Invalid stake entry")]
     InvalidStakeEntry,
+    #[msg("Cannot update unstaked entry")]
+    CannotUpdateUnstakedEntry,
     // boost errors
     #[msg("Cannot boost unstaked token")]
     CannotBoostUnstakedToken,

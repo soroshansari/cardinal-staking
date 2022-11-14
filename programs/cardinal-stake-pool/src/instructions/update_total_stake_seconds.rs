@@ -1,8 +1,8 @@
-use {crate::state::*, anchor_lang::prelude::*};
+use {crate::errors::ErrorCode, crate::state::*, anchor_lang::prelude::*};
 
 #[derive(Accounts)]
 pub struct UpdateTotalStakeSecondsCtx<'info> {
-    #[account(mut)]
+    #[account(mut, constraint = stake_entry.last_staker != Pubkey::default() @ ErrorCode::CannotUpdateUnstakedEntry)]
     stake_entry: Account<'info, StakeEntry>,
 
     #[account(mut)]
