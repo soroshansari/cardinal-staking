@@ -509,21 +509,15 @@ export type CardinalGroupRewardDistributor = {
           },
           {
             name: "rewardKind";
-            type: {
-              defined: "GroupRewardDistributorKind";
-            };
+            type: "u8";
           },
           {
             name: "metadataKind";
-            type: {
-              defined: "GroupRewardDistributorMetadataKind";
-            };
+            type: "u8";
           },
           {
             name: "poolKind";
-            type: {
-              defined: "GroupRewardDistributorPoolKind";
-            };
+            type: "u8";
           },
           {
             name: "authorizedPools";
@@ -609,15 +603,11 @@ export type CardinalGroupRewardDistributor = {
           },
           {
             name: "metadataKind";
-            type: {
-              defined: "GroupRewardDistributorMetadataKind";
-            };
+            type: "u8";
           },
           {
             name: "poolKind";
-            type: {
-              defined: "GroupRewardDistributorPoolKind";
-            };
+            type: "u8";
           },
           {
             name: "authorizedPools";
@@ -1328,21 +1318,15 @@ export const IDL: CardinalGroupRewardDistributor = {
           },
           {
             name: "rewardKind",
-            type: {
-              defined: "GroupRewardDistributorKind",
-            },
+            type: "u8",
           },
           {
             name: "metadataKind",
-            type: {
-              defined: "GroupRewardDistributorMetadataKind",
-            },
+            type: "u8",
           },
           {
             name: "poolKind",
-            type: {
-              defined: "GroupRewardDistributorPoolKind",
-            },
+            type: "u8",
           },
           {
             name: "authorizedPools",
@@ -1428,15 +1412,11 @@ export const IDL: CardinalGroupRewardDistributor = {
           },
           {
             name: "metadataKind",
-            type: {
-              defined: "GroupRewardDistributorMetadataKind",
-            },
+            type: "u8",
           },
           {
             name: "poolKind",
-            type: {
-              defined: "GroupRewardDistributorPoolKind",
-            },
+            type: "u8",
           },
           {
             name: "authorizedPools",

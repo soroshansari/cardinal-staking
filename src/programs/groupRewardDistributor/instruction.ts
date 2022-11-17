@@ -51,7 +51,7 @@ export const initGroupRewardDistributor = async (
     maxRewardSecondsReceived?: BN;
     minGroupSize?: number;
   }
-): Promise<[Transaction, PublicKey, Keypair[]]> => {
+): Promise<[Transaction, PublicKey]> => {
   const program = getProgram(connection, wallet);
   const signers: Keypair[] = [];
   const id = Keypair.generate();
@@ -79,9 +79,9 @@ export const initGroupRewardDistributor = async (
       rewardDurationSeconds: params.rewardDurationSeconds,
       maxSupply: params.maxSupply || null,
       supply: params.supply || null,
-      rewardKind: params.rewardKind as never,
-      poolKind: params.poolKind as never,
-      metadataKind: params.metadataKind as never,
+      rewardKind: params.rewardKind,
+      poolKind: params.poolKind,
+      metadataKind: params.metadataKind,
       defaultMultiplier: params.defaultMultiplier || null,
       multiplierDecimals: params.multiplierDecimals || null,
       groupDaysMultiplier: params.groupDaysMultiplier || null,
@@ -108,7 +108,7 @@ export const initGroupRewardDistributor = async (
     .map((k) => (k.isSigner = true));
 
   transaction.add(instruction);
-  return [transaction, groupRewardDistributorId, signers];
+  return [transaction, groupRewardDistributorId];
 };
 
 export const initGroupRewardCounter = async (
@@ -341,8 +341,8 @@ export const updateGroupRewardDistributor = (
       rewardAmount: params.rewardAmount,
       rewardDurationSeconds: params.rewardDurationSeconds,
       maxSupply: params.maxSupply || null,
-      poolKind: params.poolKind as never,
-      metadataKind: params.metadataKind as never,
+      poolKind: params.poolKind,
+      metadataKind: params.metadataKind,
       defaultMultiplier: params.defaultMultiplier || null,
       multiplierDecimals: params.multiplierDecimals || null,
       groupDaysMultiplier: params.groupDaysMultiplier || null,

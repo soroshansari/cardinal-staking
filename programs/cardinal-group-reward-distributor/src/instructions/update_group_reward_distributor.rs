@@ -4,8 +4,8 @@ use {crate::state::*, anchor_lang::prelude::*};
 pub struct UpdateGroupRewardDistributorIx {
     pub reward_amount: u64,
     pub reward_duration_seconds: u128,
-    pub metadata_kind: GroupRewardDistributorMetadataKind,
-    pub pool_kind: GroupRewardDistributorPoolKind,
+    pub metadata_kind: u8,
+    pub pool_kind: u8,
     pub authorized_pools: Vec<Pubkey>,
     pub max_supply: Option<u64>,
     pub default_multiplier: Option<u64>,
@@ -29,8 +29,8 @@ pub struct UpdateGroupRewardDistributorCtx<'info> {
 
 pub fn handler(ctx: Context<UpdateGroupRewardDistributorCtx>, ix: UpdateGroupRewardDistributorIx) -> Result<()> {
     let group_reward_distributor = &mut ctx.accounts.group_reward_distributor;
-    group_reward_distributor.metadata_kind = ix.metadata_kind;
-    group_reward_distributor.pool_kind = ix.pool_kind;
+    group_reward_distributor.metadata_kind = GroupRewardDistributorMetadataKind::from(ix.metadata_kind);
+    group_reward_distributor.pool_kind = GroupRewardDistributorPoolKind::from(ix.pool_kind);
     group_reward_distributor.authorized_pools = ix.authorized_pools;
     group_reward_distributor.reward_amount = ix.reward_amount;
     group_reward_distributor.reward_duration_seconds = ix.reward_duration_seconds as u128;

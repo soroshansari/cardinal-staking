@@ -460,9 +460,9 @@ export const createGroupEntry = async (
     stakeEntryIds: PublicKey[];
     minGroupDays?: number;
   }
-): Promise<[Transaction, PublicKey, Keypair[]]> => {
+): Promise<[Transaction, PublicKey]> => {
   if (!params.stakeEntryIds.length) throw new Error("No stake entry found");
-  const [transaction, groupEntryId, signers] = await withInitGroupStakeEntry(
+  const [transaction, groupEntryId] = await withInitGroupStakeEntry(
     new Transaction(),
     connection,
     wallet,
@@ -481,7 +481,7 @@ export const createGroupEntry = async (
     )
   );
 
-  return [transaction, groupEntryId, signers];
+  return [transaction, groupEntryId];
 };
 
 /**
@@ -525,7 +525,7 @@ export const createGroupRewardDistributor = async (
     maxRewardSecondsReceived?: BN;
     minGroupSize?: number;
   }
-): Promise<[Transaction, PublicKey, Keypair[]]> =>
+): Promise<[Transaction, PublicKey]> =>
   withInitGroupRewardDistributor(new Transaction(), connection, wallet, params);
 
 /**

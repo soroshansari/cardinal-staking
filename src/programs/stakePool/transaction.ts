@@ -799,20 +799,14 @@ export const withInitGroupStakeEntry = async (
   connection: web3.Connection,
   wallet: Wallet,
   params: {
-    stakeEntryId: web3.PublicKey;
-    minGroupDays?: number;
+    minGroupSeconds?: BN;
   }
-): Promise<[web3.Transaction, web3.PublicKey, web3.Keypair[]]> => {
-  const [tx, groupEntryId, signers] = await initGroupStakeEntry(
-    connection,
-    wallet,
-    {
-      stakeEntry: params.stakeEntryId,
-      minGroupDays: params.minGroupDays,
-    }
-  );
+): Promise<[web3.Transaction, web3.PublicKey]> => {
+  const [tx, groupEntryId] = await initGroupStakeEntry(connection, wallet, {
+    minGroupSeconds: params.minGroupSeconds,
+  });
   transaction.add(tx);
-  return [transaction, groupEntryId, signers];
+  return [transaction, groupEntryId];
 };
 
 /**

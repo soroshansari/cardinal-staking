@@ -10,9 +10,9 @@ pub struct InitGroupRewardDistributorIx {
     pub id: Pubkey,
     pub reward_amount: u64,
     pub reward_duration_seconds: u128,
-    pub reward_kind: GroupRewardDistributorKind,
-    pub metadata_kind: GroupRewardDistributorMetadataKind,
-    pub pool_kind: GroupRewardDistributorPoolKind,
+    pub reward_kind: u8,
+    pub metadata_kind: u8,
+    pub pool_kind: u8,
     pub authorized_pools: Vec<Pubkey>,
     pub supply: Option<u64>,
     pub max_supply: Option<u64>,
@@ -56,9 +56,9 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
     let group_reward_distributor = &mut ctx.accounts.group_reward_distributor;
     group_reward_distributor.bump = *ctx.bumps.get("group_reward_distributor").unwrap();
     group_reward_distributor.id = ix.id;
-    group_reward_distributor.reward_kind = ix.reward_kind;
-    group_reward_distributor.metadata_kind = ix.metadata_kind;
-    group_reward_distributor.pool_kind = ix.pool_kind;
+    group_reward_distributor.reward_kind = GroupRewardDistributorKind::from(ix.reward_kind);
+    group_reward_distributor.metadata_kind = GroupRewardDistributorMetadataKind::from(ix.metadata_kind);
+    group_reward_distributor.pool_kind = GroupRewardDistributorPoolKind::from(ix.pool_kind);
     group_reward_distributor.authorized_pools = ix.authorized_pools;
     group_reward_distributor.authority = ctx.accounts.authority.key();
     group_reward_distributor.reward_mint = ctx.accounts.reward_mint.key();
@@ -76,7 +76,7 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
 
     let remaining_accs = &mut ctx.remaining_accounts.iter();
     match ix.reward_kind {
-        k if k == GroupRewardDistributorKind::Mint => {
+        k if k == GroupRewardDistributorKind::Mint as u8 => {
             let cpi_accounts = SetAuthority {
                 account_or_mint: ctx.accounts.reward_mint.to_account_info(),
                 current_authority: ctx.accounts.authority.to_account_info(),
@@ -85,7 +85,7 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
             let cpi_context = CpiContext::new(cpi_program, cpi_accounts);
             token::set_authority(cpi_context, AuthorityType::MintTokens, Some(group_reward_distributor.key()))?;
         }
-        k if k == GroupRewardDistributorKind::Treasury => {
+        k if k == GroupRewardDistributorKind::Treasury as u8 => {
             if ix.supply.is_none() && ix.max_supply.is_none() {
                 return Err(error!(ErrorCode::SupplyRequired));
             }

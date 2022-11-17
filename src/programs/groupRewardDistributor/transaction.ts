@@ -7,12 +7,7 @@ import * as metaplex from "@metaplex-foundation/mpl-token-metadata";
 import type { web3 } from "@project-serum/anchor";
 import { BN } from "@project-serum/anchor";
 import type { Wallet } from "@saberhq/solana-contrib";
-import type {
-  Connection,
-  Keypair,
-  PublicKey,
-  Transaction,
-} from "@solana/web3.js";
+import type { Connection, PublicKey, Transaction } from "@solana/web3.js";
 
 import { getGroupRewardCounter, getGroupRewardDistributor } from "./accounts";
 import {
@@ -56,9 +51,11 @@ export const withInitGroupRewardDistributor = async (
     maxRewardSecondsReceived?: BN;
     minGroupSize?: number;
   }
-): Promise<[Transaction, web3.PublicKey, Keypair[]]> => {
-  const [tx, groupRewardDistributorId, signers] =
-    await initGroupRewardDistributor(connection, wallet, {
+): Promise<[Transaction, web3.PublicKey]> => {
+  const [tx, groupRewardDistributorId] = await initGroupRewardDistributor(
+    connection,
+    wallet,
+    {
       authorizedPools: params.authorizedPools,
       rewardMintId: params.rewardMintId,
       rewardAmount: params.rewardAmount || new BN(1),
@@ -75,9 +72,10 @@ export const withInitGroupRewardDistributor = async (
       groupDaysMultiplierDecimals: params.groupDaysMultiplierDecimals,
       maxRewardSecondsReceived: params.maxRewardSecondsReceived,
       minGroupSize: params.minGroupSize,
-    });
+    }
+  );
   transaction.add(tx);
-  return [transaction, groupRewardDistributorId, signers];
+  return [transaction, groupRewardDistributorId];
 };
 
 export const withInitGroupRewardEntry = async (
