@@ -638,6 +638,11 @@ export type CardinalStakePool = {
           isSigner: false;
         },
         {
+          name: "stakeEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
           name: "authority";
           isMut: true;
           isSigner: true;
@@ -911,9 +916,9 @@ export type CardinalStakePool = {
             type: "i64";
           },
           {
-            name: "minGroupSeconds";
+            name: "minGroupDays";
             type: {
-              option: "i64";
+              option: "u32";
             };
           }
         ];
@@ -1159,9 +1164,9 @@ export type CardinalStakePool = {
             type: "publicKey";
           },
           {
-            name: "minGroupSeconds";
+            name: "minGroupDays";
             type: {
-              option: "i64";
+              option: "u32";
             };
           }
         ];
@@ -1605,12 +1610,17 @@ export type CardinalStakePool = {
     {
       code: 6037;
 <<<<<<< HEAD
+<<<<<<< HEAD
       name: "MinGroupDaysNotSatisfied";
       msg: "Minimum group days not satisfied";
 =======
       name: "MinGroupSecondsNotSatisfied";
       msg: "Minimum group seconds not satisfied";
 >>>>>>> ea576c6 (bug fixes and adding test for group rewarding)
+=======
+      name: "MinGroupDaysNotSatisfied";
+      msg: "Minimum group days not satisfied";
+>>>>>>> f135341 (Rebase, update tests)
     },
     {
       code: 6038;
@@ -2260,6 +2270,11 @@ export const IDL: CardinalStakePool = {
           isSigner: false,
         },
         {
+          name: "stakeEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
           name: "authority",
           isMut: true,
           isSigner: true,
@@ -2533,9 +2548,9 @@ export const IDL: CardinalStakePool = {
             type: "i64",
           },
           {
-            name: "minGroupSeconds",
+            name: "minGroupDays",
             type: {
-              option: "i64",
+              option: "u32",
             },
           },
         ],
@@ -2781,9 +2796,9 @@ export const IDL: CardinalStakePool = {
             type: "publicKey",
           },
           {
-            name: "minGroupSeconds",
+            name: "minGroupDays",
             type: {
-              option: "i64",
+              option: "u32",
             },
           },
         ],
@@ -3227,12 +3242,17 @@ export const IDL: CardinalStakePool = {
     {
       code: 6037,
 <<<<<<< HEAD
+<<<<<<< HEAD
       name: "MinGroupDaysNotSatisfied",
       msg: "Minimum group days not satisfied",
 =======
       name: "MinGroupSecondsNotSatisfied",
       msg: "Minimum group seconds not satisfied",
 >>>>>>> ea576c6 (bug fixes and adding test for group rewarding)
+=======
+      name: "MinGroupDaysNotSatisfied",
+      msg: "Minimum group days not satisfied",
+>>>>>>> f135341 (Rebase, update tests)
     },
     {
       code: 6038,

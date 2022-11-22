@@ -19,6 +19,7 @@ start:
 		--bpf-program stkBL96RZkjY5ine4TvPihGqW8UHJfch2cokjAPzV8i ./target/deploy/cardinal_stake_pool.so \
 		--bpf-program rwdNPNPS6zNvtF6FMvaxPRjzu2eC51mXaDT9rmWsojp ./target/deploy/cardinal_reward_distributor.so \
 		--bpf-program rrmevmpXMooxn8Qu6u7RWao93BZn4cKgfjtNMURSc2E ./target/deploy/cardinal_receipt_manager.so \
+		--bpf-program grwhjR5CEDPHGC6zPGtdGX5GrN9oxTUNDpbDXaGfC28 ./target/deploy/cardinal_group_reward_distributor.so \
 		--reset --quiet & echo $$!
 	sleep 10
 	solana-keygen pubkey ./tests/test-key.json
