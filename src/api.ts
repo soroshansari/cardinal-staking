@@ -467,13 +467,12 @@ export const createGroupEntry = async (
     connection,
     wallet,
     {
-      stakeEntryId: params.stakeEntryIds[0]!,
       minGroupDays: params.minGroupDays,
     }
   );
 
   await Promise.all(
-    params.stakeEntryIds.slice(1).map((stakeEntryId) =>
+    params.stakeEntryIds.map((stakeEntryId) =>
       withAddToGroupEntry(transaction, connection, wallet, {
         groupEntryId,
         stakeEntryId,

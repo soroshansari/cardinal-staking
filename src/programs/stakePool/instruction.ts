@@ -772,7 +772,6 @@ export const initGroupStakeEntry = async (
   wallet: Wallet,
   params: {
     minGroupDays?: number;
-    stakeEntry: PublicKey;
   }
 ): Promise<[Transaction, PublicKey]> => {
   const provider = new AnchorProvider(connection, wallet, {});
@@ -793,7 +792,6 @@ export const initGroupStakeEntry = async (
     .accounts({
       groupEntry,
       authority: wallet.publicKey,
-      stakeEntry: params.stakeEntry,
       systemProgram: SystemProgram.programId,
     })
     .instruction();
