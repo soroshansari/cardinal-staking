@@ -5,7 +5,7 @@ import * as splToken from "@solana/spl-token";
 import * as web3 from "@solana/web3.js";
 import { BN } from "bn.js";
 
-export const chunkArray = (arr: any[], size: number): any[][] =>
+export const chunkArray = <T>(arr: T[], size: number): T[][] =>
   arr.length > size
     ? [arr.slice(0, size), ...chunkArray(arr.slice(size), size)]
     : [arr];

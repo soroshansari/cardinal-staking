@@ -533,6 +533,17 @@ export type CardinalStakePool = {
       args: [];
     },
     {
+      name: "stakeEntryFillZeros";
+      accounts: [
+        {
+          name: "stakeEntry";
+          isMut: true;
+          isSigner: false;
+        }
+      ];
+      args: [];
+    },
+    {
       name: "stakePoolFillZeros";
       accounts: [
         {
@@ -1891,6 +1902,17 @@ export const IDL: CardinalStakePool = {
           name: "authority",
           isMut: true,
           isSigner: true,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "stakeEntryFillZeros",
+      accounts: [
+        {
+          name: "stakeEntry",
+          isMut: true,
+          isSigner: false,
         },
       ],
       args: [],

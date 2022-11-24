@@ -99,6 +99,6 @@ pub fn handler(ctx: Context<UnstakeCtx>) -> Result<()> {
     stake_entry.cooldown_start_seconds = None;
     stake_pool.total_staked = stake_pool.total_staked.checked_sub(1).expect("Sub error");
     stake_entry.kind = StakeEntryKind::Permissionless as u8;
-
+    stake_entry_fill_zeros(stake_entry)?;
     Ok(())
 }

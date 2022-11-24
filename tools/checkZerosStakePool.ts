@@ -35,7 +35,7 @@ const checkZeros = async (cluster: string) => {
   const coder = new BorshAccountsCoder(REWARD_DISTRIBUTOR_IDL);
   const allRewardDistributors = await getAllRewardDistributors(connection);
   console.log(
-    `--------- Check zeros ${allRewardDistributors.length} reward distributos ---------`
+    `--------- Check zeros ${allRewardDistributors.length} reward distributors ---------`
   );
   for (let i = 0; i < allRewardDistributors.length; i++) {
     const r = allRewardDistributors[i]!;

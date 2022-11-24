@@ -98,3 +98,11 @@ pub fn get_stake_seed(supply: u64, user: Pubkey) -> Pubkey {
         Pubkey::default()
     }
 }
+
+pub fn stake_entry_fill_zeros<'info>(stake_entry: &mut Account<StakeEntry>) -> Result<()> {
+    let stake_entry_account = stake_entry.to_account_info();
+    let mut stake_entry_data = stake_entry_account.data.borrow_mut();
+    let len = stake_entry_data.len();
+    stake_entry_data[stake_entry.try_to_vec()?.len()..len].iter_mut().for_each(|d| *d = 0);
+    Ok(())
+}
