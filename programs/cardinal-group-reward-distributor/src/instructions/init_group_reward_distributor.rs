@@ -19,8 +19,9 @@ pub struct InitGroupRewardDistributorIx {
     pub default_multiplier: Option<u64>,
     pub multiplier_decimals: Option<u8>,
     pub max_reward_seconds_received: Option<u128>,
-    pub group_days_multiplier: Option<u64>,
-    pub group_days_multiplier_decimals: Option<u8>,
+    pub group_duration_multiplier_seconds: Option<u128>,
+    pub group_duration_multiplier: Option<u64>,
+    pub group_duration_multiplier_decimals: Option<u8>,
     pub group_count_multiplier: Option<u64>,
     pub group_count_multiplier_decimals: Option<u8>,
     pub min_group_size: Option<u8>,
@@ -68,8 +69,9 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
     group_reward_distributor.default_multiplier = ix.default_multiplier.unwrap_or(1);
     group_reward_distributor.multiplier_decimals = ix.multiplier_decimals.unwrap_or(0);
     group_reward_distributor.max_reward_seconds_received = ix.max_reward_seconds_received;
-    group_reward_distributor.group_days_multiplier = ix.group_days_multiplier.unwrap_or(1);
-    group_reward_distributor.group_days_multiplier_decimals = ix.group_days_multiplier_decimals.unwrap_or(0);
+    group_reward_distributor.group_duration_multiplier_seconds = ix.group_duration_multiplier_seconds.unwrap_or(1);
+    group_reward_distributor.group_duration_multiplier = ix.group_duration_multiplier.unwrap_or(1);
+    group_reward_distributor.group_duration_multiplier_decimals = ix.group_duration_multiplier_decimals.unwrap_or(0);
     group_reward_distributor.group_count_multiplier = ix.group_count_multiplier;
     group_reward_distributor.group_count_multiplier_decimals = ix.group_count_multiplier_decimals;
     group_reward_distributor.min_group_size = ix.min_group_size;

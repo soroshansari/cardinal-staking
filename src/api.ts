@@ -458,7 +458,7 @@ export const createGroupEntry = async (
   wallet: Wallet,
   params: {
     stakeEntryIds: PublicKey[];
-    minGroupDays?: number;
+    minGroupSeconds?: BN;
   }
 ): Promise<[Transaction, PublicKey]> => {
   if (!params.stakeEntryIds.length) throw new Error("No stake entry found");
@@ -467,7 +467,7 @@ export const createGroupEntry = async (
     connection,
     wallet,
     {
-      minGroupDays: params.minGroupDays,
+      minGroupSeconds: params.minGroupSeconds,
     }
   );
 
@@ -498,8 +498,9 @@ export const createGroupEntry = async (
  * @param supply - (Optional) Supply
  * @param defaultMultiplier - (Optional) default multiplier
  * @param multiplierDecimals - (Optional) multiplier decimals
- * @param groupDaysMultiplier - (Optional) group days multiplier
- * @param groupDaysMultiplierDecimals - (Optional) group days multiplier decimals
+ * @param groupDurationMultiplierSeconds - (Optional) group duration multiplier seconds
+ * @param groupDurationMultiplier - (Optional) group duration multiplier
+ * @param groupDurationMultiplierDecimals - (Optional) group duration multiplier decimals
  * @param maxRewardSecondsReceived - (Optional) max reward seconds received
  * @param minGroupSize - (Optional) min group size
  * @returns
@@ -519,8 +520,9 @@ export const createGroupRewardDistributor = async (
     supply?: BN;
     defaultMultiplier?: BN;
     multiplierDecimals?: number;
-    groupDaysMultiplier?: BN;
-    groupDaysMultiplierDecimals?: number;
+    groupDurationMultiplierSeconds?: BN;
+    groupDurationMultiplier?: BN;
+    groupDurationMultiplierDecimals?: number;
     maxRewardSecondsReceived?: BN;
     minGroupSize?: number;
   }
@@ -540,8 +542,9 @@ export const createGroupRewardDistributor = async (
  * @param maxSupply - (Optional) Max supply
  * @param defaultMultiplier - (Optional) default multiplier
  * @param multiplierDecimals - (Optional) multiplier decimals
- * @param groupDaysMultiplier - (Optional) group days multiplier
- * @param groupDaysMultiplierDecimals - (Optional) group days multiplier decimals
+ * @param groupDurationMultiplierSeconds - (Optional) group duration multiplier seconds
+ * @param groupDurationMultiplier - (Optional) group duration multiplier
+ * @param groupDurationMultiplierDecimals - (Optional) group duration multiplier decimals
  * @param maxRewardSecondsReceived - (Optional) max reward seconds received
  * @param minGroupSize - (Optional) min group size
  * @returns
@@ -560,8 +563,9 @@ export const updateGroupRewardDistributor = async (
     maxSupply?: BN;
     defaultMultiplier?: BN;
     multiplierDecimals?: number;
-    groupDaysMultiplier?: BN;
-    groupDaysMultiplierDecimals?: number;
+    groupDurationMultiplierSeconds?: BN;
+    groupDurationMultiplier?: BN;
+    groupDurationMultiplierDecimals?: number;
     maxRewardSecondsReceived?: BN;
     minGroupSize?: number;
   }

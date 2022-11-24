@@ -454,17 +454,15 @@ export type CardinalGroupRewardDistributor = {
             type: "u8";
           },
           {
-            name: "maxRewardSecondsReceived";
-            type: {
-              option: "u128";
-            };
+            name: "groupDurationMultiplierSeconds";
+            type: "u128";
           },
           {
-            name: "groupDaysMultiplier";
+            name: "groupDurationMultiplier";
             type: "u64";
           },
           {
-            name: "groupDaysMultiplierDecimals";
+            name: "groupDurationMultiplierDecimals";
             type: "u8";
           },
           {
@@ -483,6 +481,12 @@ export type CardinalGroupRewardDistributor = {
             name: "minGroupSize";
             type: {
               option: "u8";
+            };
+          },
+          {
+            name: "maxRewardSecondsReceived";
+            type: {
+              option: "u128";
             };
           }
         ];
@@ -556,13 +560,19 @@ export type CardinalGroupRewardDistributor = {
             };
           },
           {
-            name: "groupDaysMultiplier";
+            name: "groupDurationMultiplierSeconds";
+            type: {
+              option: "u128";
+            };
+          },
+          {
+            name: "groupDurationMultiplier";
             type: {
               option: "u64";
             };
           },
           {
-            name: "groupDaysMultiplierDecimals";
+            name: "groupDurationMultiplierDecimals";
             type: {
               option: "u8";
             };
@@ -640,13 +650,19 @@ export type CardinalGroupRewardDistributor = {
             };
           },
           {
-            name: "groupDaysMultiplier";
+            name: "groupDurationMultiplierSeconds";
+            type: {
+              option: "u128";
+            };
+          },
+          {
+            name: "groupDurationMultiplier";
             type: {
               option: "u64";
             };
           },
           {
-            name: "groupDaysMultiplierDecimals";
+            name: "groupDurationMultiplierDecimals";
             type: {
               option: "u8";
             };
@@ -1263,17 +1279,15 @@ export const IDL: CardinalGroupRewardDistributor = {
             type: "u8",
           },
           {
-            name: "maxRewardSecondsReceived",
-            type: {
-              option: "u128",
-            },
+            name: "groupDurationMultiplierSeconds",
+            type: "u128",
           },
           {
-            name: "groupDaysMultiplier",
+            name: "groupDurationMultiplier",
             type: "u64",
           },
           {
-            name: "groupDaysMultiplierDecimals",
+            name: "groupDurationMultiplierDecimals",
             type: "u8",
           },
           {
@@ -1292,6 +1306,12 @@ export const IDL: CardinalGroupRewardDistributor = {
             name: "minGroupSize",
             type: {
               option: "u8",
+            },
+          },
+          {
+            name: "maxRewardSecondsReceived",
+            type: {
+              option: "u128",
             },
           },
         ],
@@ -1365,13 +1385,19 @@ export const IDL: CardinalGroupRewardDistributor = {
             },
           },
           {
-            name: "groupDaysMultiplier",
+            name: "groupDurationMultiplierSeconds",
+            type: {
+              option: "u128",
+            },
+          },
+          {
+            name: "groupDurationMultiplier",
             type: {
               option: "u64",
             },
           },
           {
-            name: "groupDaysMultiplierDecimals",
+            name: "groupDurationMultiplierDecimals",
             type: {
               option: "u8",
             },
@@ -1449,13 +1475,19 @@ export const IDL: CardinalGroupRewardDistributor = {
             },
           },
           {
-            name: "groupDaysMultiplier",
+            name: "groupDurationMultiplierSeconds",
+            type: {
+              option: "u128",
+            },
+          },
+          {
+            name: "groupDurationMultiplier",
             type: {
               option: "u64",
             },
           },
           {
-            name: "groupDaysMultiplierDecimals",
+            name: "groupDurationMultiplierDecimals",
             type: {
               option: "u8",
             },

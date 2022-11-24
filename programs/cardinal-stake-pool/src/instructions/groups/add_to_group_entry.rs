@@ -38,7 +38,7 @@ pub fn handler(ctx: Context<AddToGroupEntryCtx>) -> Result<()> {
         authority: group_entry.authority,
         stake_entries: stake_entries.to_vec(),
         changed_at: Clock::get().unwrap().unix_timestamp,
-        min_group_days: group_entry.min_group_days,
+        min_group_seconds: group_entry.min_group_seconds,
     };
     let new_space = new_group_entry.try_to_vec()?.len() + 8;
     group_entry.set_inner(new_group_entry);

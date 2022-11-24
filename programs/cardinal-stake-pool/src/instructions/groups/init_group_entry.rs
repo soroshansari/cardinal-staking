@@ -3,7 +3,7 @@ use {crate::state::*, anchor_lang::prelude::*};
 #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct InitGroupEntryIx {
     pub group_id: Pubkey,
-    pub min_group_days: Option<u32>,
+    pub min_group_seconds: Option<u128>,
 }
 
 #[derive(Accounts)]
@@ -29,6 +29,6 @@ pub fn handler(ctx: Context<InitGroupEntryCtx>, ix: InitGroupEntryIx) -> Result<
     group_entry.group_id = ix.group_id;
     group_entry.authority = authority.key();
     group_entry.changed_at = Clock::get().unwrap().unix_timestamp;
-    group_entry.min_group_days = ix.min_group_days;
+    group_entry.min_group_seconds = ix.min_group_seconds;
     Ok(())
 }

@@ -44,8 +44,9 @@ export const initGroupRewardDistributor = async (
     supply?: BN;
     defaultMultiplier?: BN;
     multiplierDecimals?: number;
-    groupDaysMultiplier?: BN;
-    groupDaysMultiplierDecimals?: number;
+    groupDurationMultiplierSeconds?: BN;
+    groupDurationMultiplier?: BN;
+    groupDurationMultiplierDecimals?: number;
     groupCountMultiplier?: BN;
     groupCountMultiplierDecimals?: number;
     maxRewardSecondsReceived?: BN;
@@ -84,8 +85,11 @@ export const initGroupRewardDistributor = async (
       metadataKind: params.metadataKind,
       defaultMultiplier: params.defaultMultiplier || null,
       multiplierDecimals: params.multiplierDecimals || null,
-      groupDaysMultiplier: params.groupDaysMultiplier || null,
-      groupDaysMultiplierDecimals: params.groupDaysMultiplierDecimals || null,
+      groupDurationMultiplierSeconds:
+        params.groupDurationMultiplierSeconds || null,
+      groupDurationMultiplier: params.groupDurationMultiplier || null,
+      groupDurationMultiplierDecimals:
+        params.groupDurationMultiplierDecimals || null,
       groupCountMultiplier: params.groupCountMultiplier || null,
       groupCountMultiplierDecimals: params.groupCountMultiplierDecimals || null,
       maxRewardSecondsReceived: params.maxRewardSecondsReceived || null,
@@ -102,10 +106,6 @@ export const initGroupRewardDistributor = async (
     })
     .remainingAccounts(remainingAccountsForKind)
     .instruction();
-
-  instruction.keys
-    .filter((k) => k.pubkey.equals(id.publicKey))
-    .map((k) => (k.isSigner = true));
 
   transaction.add(instruction);
   return [transaction, groupRewardDistributorId];
@@ -326,8 +326,9 @@ export const updateGroupRewardDistributor = (
     maxSupply?: BN;
     defaultMultiplier?: BN;
     multiplierDecimals?: number;
-    groupDaysMultiplier?: BN;
-    groupDaysMultiplierDecimals?: number;
+    groupDurationMultiplierSeconds?: BN;
+    groupDurationMultiplier?: BN;
+    groupDurationMultiplierDecimals?: number;
     groupCountMultiplier?: BN;
     groupCountMultiplierDecimals?: number;
     maxRewardSecondsReceived?: BN;
@@ -345,8 +346,11 @@ export const updateGroupRewardDistributor = (
       metadataKind: params.metadataKind,
       defaultMultiplier: params.defaultMultiplier || null,
       multiplierDecimals: params.multiplierDecimals || null,
-      groupDaysMultiplier: params.groupDaysMultiplier || null,
-      groupDaysMultiplierDecimals: params.groupDaysMultiplierDecimals || null,
+      groupDurationMultiplierSeconds:
+        params.groupDurationMultiplierSeconds || null,
+      groupDurationMultiplier: params.groupDurationMultiplier || null,
+      groupDurationMultiplierDecimals:
+        params.groupDurationMultiplierDecimals || null,
       groupCountMultiplier: params.groupCountMultiplier || null,
       groupCountMultiplierDecimals: params.groupCountMultiplierDecimals || null,
       maxRewardSecondsReceived: params.maxRewardSecondsReceived || null,

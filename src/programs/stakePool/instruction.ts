@@ -771,7 +771,7 @@ export const initGroupStakeEntry = async (
   connection: Connection,
   wallet: Wallet,
   params: {
-    minGroupDays?: number;
+    minGroupSeconds?: BN;
   }
 ): Promise<[Transaction, PublicKey]> => {
   const provider = new AnchorProvider(connection, wallet, {});
@@ -787,7 +787,7 @@ export const initGroupStakeEntry = async (
   const instruction = await stakePoolProgram.methods
     .initGroupEntry({
       groupId: id.publicKey,
-      minGroupDays: params.minGroupDays || null,
+      minGroupSeconds: params.minGroupSeconds || null,
     })
     .accounts({
       groupEntry,
@@ -795,13 +795,7 @@ export const initGroupStakeEntry = async (
       systemProgram: SystemProgram.programId,
     })
     .instruction();
-
-  instruction.keys
-    .filter((k) => k.pubkey.equals(id.publicKey))
-    .map((k) => (k.isSigner = true));
-
   const transaction = new Transaction().add(instruction);
-
   return [transaction, groupEntry];
 };
 

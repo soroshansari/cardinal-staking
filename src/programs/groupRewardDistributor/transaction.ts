@@ -46,8 +46,9 @@ export const withInitGroupRewardDistributor = async (
     supply?: BN;
     defaultMultiplier?: BN;
     multiplierDecimals?: number;
-    groupDaysMultiplier?: BN;
-    groupDaysMultiplierDecimals?: number;
+    groupDurationMultiplierSeconds?: BN;
+    groupDurationMultiplier?: BN;
+    groupDurationMultiplierDecimals?: number;
     maxRewardSecondsReceived?: BN;
     minGroupSize?: number;
   }
@@ -68,8 +69,9 @@ export const withInitGroupRewardDistributor = async (
       supply: params.supply,
       defaultMultiplier: params.defaultMultiplier,
       multiplierDecimals: params.multiplierDecimals,
-      groupDaysMultiplier: params.groupDaysMultiplier,
-      groupDaysMultiplierDecimals: params.groupDaysMultiplierDecimals,
+      groupDurationMultiplierSeconds: params.groupDurationMultiplierSeconds,
+      groupDurationMultiplier: params.groupDurationMultiplier,
+      groupDurationMultiplierDecimals: params.groupDurationMultiplierDecimals,
       maxRewardSecondsReceived: params.maxRewardSecondsReceived,
       minGroupSize: params.minGroupSize,
     }
@@ -297,8 +299,9 @@ export const withUpdateGroupRewardDistributor = async (
     maxSupply?: BN;
     defaultMultiplier?: BN;
     multiplierDecimals?: number;
-    groupDaysMultiplier?: BN;
-    groupDaysMultiplierDecimals?: number;
+    groupDurationMultiplierSeconds?: BN;
+    groupDurationMultiplier?: BN;
+    groupDurationMultiplierDecimals?: number;
     maxRewardSecondsReceived?: BN;
     minGroupSize?: number;
   }
@@ -316,8 +319,9 @@ export const withUpdateGroupRewardDistributor = async (
       maxSupply: params.maxSupply,
       defaultMultiplier: params.defaultMultiplier || new BN(1),
       multiplierDecimals: params.multiplierDecimals || 0,
-      groupDaysMultiplier: params.groupDaysMultiplier,
-      groupDaysMultiplierDecimals: params.groupDaysMultiplierDecimals,
+      groupDurationMultiplierSeconds: params.groupDurationMultiplierSeconds,
+      groupDurationMultiplier: params.groupDurationMultiplier,
+      groupDurationMultiplierDecimals: params.groupDurationMultiplierDecimals,
       maxRewardSecondsReceived: params.maxRewardSecondsReceived,
       minGroupSize: params.minGroupSize,
     })

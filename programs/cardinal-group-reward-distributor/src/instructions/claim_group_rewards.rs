@@ -73,13 +73,15 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
             .checked_div((10_u128).checked_pow(group_reward_distributor.multiplier_decimals as u32).unwrap())
             .unwrap();
 
-        if group_entry.min_group_days.is_some() {
+        if group_entry.min_group_seconds.is_some() {
             reward_amount_to_receive = reward_amount_to_receive
-                .checked_mul(group_entry.min_group_days.unwrap() as u128)
+                .checked_mul(group_entry.min_group_seconds.unwrap() as u128)
                 .unwrap()
-                .checked_mul(group_reward_distributor.group_days_multiplier as u128)
+                .checked_div(group_reward_distributor.group_duration_multiplier_seconds)
                 .unwrap()
-                .checked_div((10_u128).checked_pow(group_reward_distributor.group_days_multiplier_decimals as u32).unwrap())
+                .checked_mul(group_reward_distributor.group_duration_multiplier as u128)
+                .unwrap()
+                .checked_div((10_u128).checked_pow(group_reward_distributor.group_duration_multiplier_decimals as u32).unwrap())
                 .unwrap()
         }
 
@@ -150,13 +152,15 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
                 .checked_div(group_reward_counter.count as u128)
                 .unwrap();
         }
-        if group_entry.min_group_days.is_some() && group_entry.min_group_days != Some(0) && group_reward_distributor.group_days_multiplier != 0 {
+        if group_entry.min_group_seconds.is_some() && group_entry.min_group_seconds != Some(0) && group_reward_distributor.group_duration_multiplier != 0 {
             reward_time_to_receive = reward_time_to_receive
-                .checked_mul((10_u128).checked_pow(group_reward_distributor.group_days_multiplier_decimals as u32).unwrap())
+                .checked_mul((10_u128).checked_pow(group_reward_distributor.group_duration_multiplier_decimals as u32).unwrap())
                 .unwrap()
-                .checked_div(group_reward_distributor.group_days_multiplier as u128)
+                .checked_div(group_reward_distributor.group_duration_multiplier as u128)
                 .unwrap()
-                .checked_div(group_entry.min_group_days.unwrap() as u128)
+                .checked_mul(group_reward_distributor.group_duration_multiplier_seconds)
+                .unwrap()
+                .checked_div(group_entry.min_group_seconds.unwrap() as u128)
                 .unwrap();
         }
         if group_reward_entry.multiplier != 0 {

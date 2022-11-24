@@ -929,9 +929,9 @@ export type CardinalStakePool = {
             type: "i64";
           },
           {
-            name: "minGroupDays";
+            name: "minGroupSeconds";
             type: {
-              option: "u32";
+              option: "u128";
             };
           }
         ];
@@ -1177,9 +1177,9 @@ export type CardinalStakePool = {
             type: "publicKey";
           },
           {
-            name: "minGroupDays";
+            name: "minGroupSeconds";
             type: {
-              option: "u32";
+              option: "u128";
             };
           }
         ];
@@ -2583,9 +2583,9 @@ export const IDL: CardinalStakePool = {
             type: "i64",
           },
           {
-            name: "minGroupDays",
+            name: "minGroupSeconds",
             type: {
-              option: "u32",
+              option: "u128",
             },
           },
         ],
@@ -2831,9 +2831,9 @@ export const IDL: CardinalStakePool = {
             type: "publicKey",
           },
           {
-            name: "minGroupDays",
+            name: "minGroupSeconds",
             type: {
-              option: "u32",
+              option: "u128",
             },
           },
         ],

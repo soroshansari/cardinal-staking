@@ -22,7 +22,7 @@ pub const GROUP_ENTRY_DEFAULT_SIZE: usize = 8 // Anchor discriminator/sighash
  + 32 // authority
  + 4 + 1 * 32 // stake_entries (1 pubkeys)
  + 8 // changed_at
- + 4; // min_group_days
+ + 16; // min_group_seconds
 
 #[derive(Clone, Debug, PartialEq, Eq, AnchorSerialize, AnchorDeserialize)]
 #[repr(u8)]
@@ -38,7 +38,7 @@ pub struct GroupStakeEntry {
     pub authority: Pubkey,
     pub stake_entries: Vec<Pubkey>,
     pub changed_at: i64,
-    pub min_group_days: Option<u32>,
+    pub min_group_seconds: Option<u128>,
 }
 
 #[account]
