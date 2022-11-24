@@ -12,7 +12,7 @@ pub struct InitGroupEntryCtx<'info> {
     #[account(
         init,
         payer = authority,
-        space = GROUP_ENTRY_SIZE,
+        space = GROUP_ENTRY_DEFAULT_SIZE,
         seeds = [GROUP_ENTRY_PREFIX.as_bytes(), ix.id.key().as_ref()],
         bump,
     )]

@@ -811,6 +811,7 @@ export const addToGroupEntry = async (
   params: {
     groupEntry: PublicKey;
     stakeEntry: PublicKey;
+    payer?: PublicKey;
   }
 ): Promise<Transaction> => {
   const provider = new AnchorProvider(connection, wallet, {});
@@ -826,6 +827,7 @@ export const addToGroupEntry = async (
       groupEntry: params.groupEntry,
       authority: wallet.publicKey,
       stakeEntry: params.stakeEntry,
+      payer: params.payer ?? wallet.publicKey,
       systemProgram: SystemProgram.programId,
     })
     .transaction();
@@ -837,6 +839,7 @@ export const removeFromGroupEntry = async (
   params: {
     groupEntry: PublicKey;
     stakeEntry: PublicKey;
+    payer?: PublicKey;
   }
 ): Promise<Transaction> => {
   const provider = new AnchorProvider(connection, wallet, {});
@@ -852,6 +855,7 @@ export const removeFromGroupEntry = async (
       groupEntry: params.groupEntry,
       authority: wallet.publicKey,
       stakeEntry: params.stakeEntry,
+      payer: params.payer ?? wallet.publicKey,
       systemProgram: SystemProgram.programId,
     })
     .transaction();

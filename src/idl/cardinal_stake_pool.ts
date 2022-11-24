@@ -840,6 +840,11 @@ export type CardinalStakePool = {
           isSigner: true;
         },
         {
+          name: "payer";
+          isMut: true;
+          isSigner: true;
+        },
+        {
           name: "systemProgram";
           isMut: false;
           isSigner: false;
@@ -862,6 +867,11 @@ export type CardinalStakePool = {
         },
         {
           name: "authority";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "payer";
           isMut: true;
           isSigner: true;
         },
@@ -1567,46 +1577,47 @@ export type CardinalStakePool = {
       msg: "Cannot update unstaked entry";
     },
     {
-      code: 6029;
+      code: 6100;
       name: "CannotBoostUnstakedToken";
       msg: "Cannot boost unstaked token";
     },
     {
-      code: 6030;
+      code: 6101;
       name: "CannotBoostMoreThanCurrentTime";
       msg: "Cannot boost past current time less than start time";
     },
     {
-      code: 6031;
+      code: 6102;
       name: "InvalidBoostPayerTokenAccount";
       msg: "Invalid boost payer token account";
     },
     {
-      code: 6032;
+      code: 6103;
       name: "InvalidBoostPaymentRecipientTokenAccount";
       msg: "Invalid boost payment recipient token account";
     },
     {
-      code: 6033;
+      code: 6104;
       name: "InvalidPaymentManager";
       msg: "Invalid payment manager";
     },
     {
-      code: 6034;
+      code: 6105;
       name: "CannotBoostFungibleToken";
       msg: "Cannot boost a fungible token stake entry";
     },
     {
-      code: 6035;
+      code: 6120;
       name: "GroupedStakeEntry";
       msg: "Grouped stake entry";
     },
     {
-      code: 6036;
+      code: 6121;
       name: "UngroupedStakeEntry";
       msg: "Ungrouped stake entry";
     },
     {
+<<<<<<< HEAD
       code: 6037;
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -1617,14 +1628,22 @@ export type CardinalStakePool = {
       msg: "Minimum group seconds not satisfied";
 >>>>>>> ea576c6 (bug fixes and adding test for group rewarding)
 =======
+=======
+      code: 6122;
+>>>>>>> 7db98b6 (Resize group entries)
       name: "MinGroupDaysNotSatisfied";
       msg: "Minimum group days not satisfied";
 >>>>>>> f135341 (Rebase, update tests)
     },
     {
-      code: 6038;
+      code: 6123;
       name: "ActiveGroupEntry";
       msg: "Active group entry";
+    },
+    {
+      code: 6124;
+      name: "StakeEntryNotFoundInGroup";
+      msg: "Stake entry not found in group";
     }
   ];
 };
@@ -2471,6 +2490,11 @@ export const IDL: CardinalStakePool = {
           isSigner: true,
         },
         {
+          name: "payer",
+          isMut: true,
+          isSigner: true,
+        },
+        {
           name: "systemProgram",
           isMut: false,
           isSigner: false,
@@ -2493,6 +2517,11 @@ export const IDL: CardinalStakePool = {
         },
         {
           name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "payer",
           isMut: true,
           isSigner: true,
         },
@@ -3198,46 +3227,47 @@ export const IDL: CardinalStakePool = {
       msg: "Cannot update unstaked entry",
     },
     {
-      code: 6029,
+      code: 6100,
       name: "CannotBoostUnstakedToken",
       msg: "Cannot boost unstaked token",
     },
     {
-      code: 6030,
+      code: 6101,
       name: "CannotBoostMoreThanCurrentTime",
       msg: "Cannot boost past current time less than start time",
     },
     {
-      code: 6031,
+      code: 6102,
       name: "InvalidBoostPayerTokenAccount",
       msg: "Invalid boost payer token account",
     },
     {
-      code: 6032,
+      code: 6103,
       name: "InvalidBoostPaymentRecipientTokenAccount",
       msg: "Invalid boost payment recipient token account",
     },
     {
-      code: 6033,
+      code: 6104,
       name: "InvalidPaymentManager",
       msg: "Invalid payment manager",
     },
     {
-      code: 6034,
+      code: 6105,
       name: "CannotBoostFungibleToken",
       msg: "Cannot boost a fungible token stake entry",
     },
     {
-      code: 6035,
+      code: 6120,
       name: "GroupedStakeEntry",
       msg: "Grouped stake entry",
     },
     {
-      code: 6036,
+      code: 6121,
       name: "UngroupedStakeEntry",
       msg: "Ungrouped stake entry",
     },
     {
+<<<<<<< HEAD
       code: 6037,
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -3248,14 +3278,22 @@ export const IDL: CardinalStakePool = {
       msg: "Minimum group seconds not satisfied",
 >>>>>>> ea576c6 (bug fixes and adding test for group rewarding)
 =======
+=======
+      code: 6122,
+>>>>>>> 7db98b6 (Resize group entries)
       name: "MinGroupDaysNotSatisfied",
       msg: "Minimum group days not satisfied",
 >>>>>>> f135341 (Rebase, update tests)
     },
     {
-      code: 6038,
+      code: 6123,
       name: "ActiveGroupEntry",
       msg: "Active group entry",
+    },
+    {
+      code: 6124,
+      name: "StakeEntryNotFoundInGroup",
+      msg: "Stake entry not found in group",
     },
   ],
 };

@@ -16,14 +16,13 @@ pub const STAKE_AUTHORIZATION_PREFIX: &str = "stake-authorization";
 pub const STAKE_AUTHORIZATION_SIZE: usize = 8 + std::mem::size_of::<StakeAuthorizationRecord>() + 8;
 
 pub const GROUP_ENTRY_PREFIX: &str = "group-entry";
-pub const GROUP_ENTRY_SIZE: usize = 8 // Anchor discriminator/sighash
+pub const GROUP_ENTRY_DEFAULT_SIZE: usize = 8 // Anchor discriminator/sighash
  + 1 // bump
  + 32 // id
  + 32 // authority
  + 4 + 5 * 32 // stake_entries (5 pubkeys)
  + 8 // changed_at
- + 4 // min_group_days
- + 256; // padding
+ + 4; // min_group_days
 
 #[derive(Clone, Debug, PartialEq, Eq, AnchorSerialize, AnchorDeserialize)]
 #[repr(u8)]
