@@ -786,7 +786,7 @@ export const initGroupStakeEntry = async (
 
   const instruction = await stakePoolProgram.methods
     .initGroupEntry({
-      id: id.publicKey,
+      groupId: id.publicKey,
       minGroupDays: params.minGroupDays || null,
     })
     .accounts({

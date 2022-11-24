@@ -34,6 +34,7 @@ pub fn handler(ctx: Context<AddToGroupEntryCtx>) -> Result<()> {
 
     let new_group_entry = GroupStakeEntry {
         bump: group_entry.bump,
+        group_id: group_entry.group_id,
         authority: group_entry.authority,
         stake_entries: stake_entries.to_vec(),
         changed_at: Clock::get().unwrap().unix_timestamp,

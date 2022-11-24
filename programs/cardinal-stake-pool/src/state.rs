@@ -18,9 +18,9 @@ pub const STAKE_AUTHORIZATION_SIZE: usize = 8 + std::mem::size_of::<StakeAuthori
 pub const GROUP_ENTRY_PREFIX: &str = "group-entry";
 pub const GROUP_ENTRY_DEFAULT_SIZE: usize = 8 // Anchor discriminator/sighash
  + 1 // bump
- + 32 // id
+ + 32 // group_id
  + 32 // authority
- + 4 + 5 * 32 // stake_entries (5 pubkeys)
+ + 4 + 1 * 32 // stake_entries (1 pubkeys)
  + 8 // changed_at
  + 4; // min_group_days
 
@@ -34,6 +34,7 @@ pub enum StakeEntryKind {
 #[account]
 pub struct GroupStakeEntry {
     pub bump: u8,
+    pub group_id: Pubkey,
     pub authority: Pubkey,
     pub stake_entries: Vec<Pubkey>,
     pub changed_at: i64,

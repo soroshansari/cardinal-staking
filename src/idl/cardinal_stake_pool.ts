@@ -911,6 +911,10 @@ export type CardinalStakePool = {
             type: "u8";
           },
           {
+            name: "groupId";
+            type: "publicKey";
+          },
+          {
             name: "authority";
             type: "publicKey";
           },
@@ -1169,7 +1173,7 @@ export type CardinalStakePool = {
         kind: "struct";
         fields: [
           {
-            name: "id";
+            name: "groupId";
             type: "publicKey";
           },
           {
@@ -2561,6 +2565,10 @@ export const IDL: CardinalStakePool = {
             type: "u8",
           },
           {
+            name: "groupId",
+            type: "publicKey",
+          },
+          {
             name: "authority",
             type: "publicKey",
           },
@@ -2819,7 +2827,7 @@ export const IDL: CardinalStakePool = {
         kind: "struct",
         fields: [
           {
-            name: "id",
+            name: "groupId",
             type: "publicKey",
           },
           {
