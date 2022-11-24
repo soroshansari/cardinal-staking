@@ -119,4 +119,21 @@ pub mod cardinal_stake_pool {
     pub fn close_stake_booster(ctx: Context<CloseStakeBoosterCtx>) -> Result<()> {
         stake_booster::close_stake_booster::handler(ctx)
     }
+
+    //// groups ////
+    pub fn init_group_entry(ctx: Context<InitGroupEntryCtx>, ix: InitGroupEntryIx) -> Result<()> {
+        groups::init_group_entry::handler(ctx, ix)
+    }
+
+    pub fn add_to_group_entry(ctx: Context<AddToGroupEntryCtx>) -> Result<()> {
+        groups::add_to_group_entry::handler(ctx)
+    }
+
+    pub fn remove_from_group_entry(ctx: Context<RemoveFromGroupEntryCtx>) -> Result<()> {
+        groups::remove_from_group_entry::handler(ctx)
+    }
+
+    pub fn close_group_entry(ctx: Context<CloseGroupEntryCtx>) -> Result<()> {
+        groups::close_group_entry::handler(ctx)
+    }
 }

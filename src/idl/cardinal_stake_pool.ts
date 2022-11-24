@@ -604,6 +604,7 @@ export type CardinalStakePool = {
       ];
     },
     {
+<<<<<<< HEAD
       name: "doubleOrResetTotalStakeSeconds";
       accounts: [
         {
@@ -631,102 +632,9 @@ export type CardinalStakePool = {
     },
     {
       name: "initGroupEntry";
-      accounts: [
-        {
-          name: "groupEntry";
-          isMut: true;
-          isSigner: false;
-        },
-        {
-          name: "authority";
-          isMut: true;
-          isSigner: true;
-        },
-        {
-          name: "systemProgram";
-          isMut: false;
-          isSigner: false;
-        }
-      ];
-      args: [
-        {
-          name: "ix";
-          type: {
-            defined: "InitGroupEntryIx";
-          };
-        }
-      ];
-    },
-    {
-      name: "addToGroupEntry";
-      accounts: [
-        {
-          name: "groupEntry";
-          isMut: true;
-          isSigner: false;
-        },
-        {
-          name: "stakeEntry";
-          isMut: true;
-          isSigner: false;
-        },
-        {
-          name: "authority";
-          isMut: true;
-          isSigner: true;
-        },
-        {
-          name: "systemProgram";
-          isMut: false;
-          isSigner: false;
-        }
-      ];
-      args: [];
-    },
-    {
-      name: "removeFromGroupEntry";
-      accounts: [
-        {
-          name: "groupEntry";
-          isMut: true;
-          isSigner: false;
-        },
-        {
-          name: "stakeEntry";
-          isMut: true;
-          isSigner: false;
-        },
-        {
-          name: "authority";
-          isMut: true;
-          isSigner: true;
-        },
-        {
-          name: "systemProgram";
-          isMut: false;
-          isSigner: false;
-        }
-      ];
-      args: [];
-    },
-    {
-      name: "closeGroupEntry";
-      accounts: [
-        {
-          name: "groupEntry";
-          isMut: true;
-          isSigner: false;
-        },
-        {
-          name: "authority";
-          isMut: true;
-          isSigner: true;
-        }
-      ];
-      args: [];
-    },
-    {
+=======
       name: "initStakeBooster";
+>>>>>>> c5db778 (Rearrange code)
       accounts: [
         {
           name: "stakeBooster";
@@ -874,6 +782,102 @@ export type CardinalStakePool = {
         },
         {
           name: "stakePool";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        }
+      ];
+      args: [];
+    },
+    {
+      name: "initGroupEntry";
+      accounts: [
+        {
+          name: "groupEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [
+        {
+          name: "ix";
+          type: {
+            defined: "InitGroupEntryIx";
+          };
+        }
+      ];
+    },
+    {
+      name: "addToGroupEntry";
+      accounts: [
+        {
+          name: "groupEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "stakeEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [];
+    },
+    {
+      name: "removeFromGroupEntry";
+      accounts: [
+        {
+          name: "groupEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "stakeEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [];
+    },
+    {
+      name: "closeGroupEntry";
+      accounts: [
+        {
+          name: "groupEntry";
           isMut: true;
           isSigner: false;
         },
@@ -2231,6 +2235,7 @@ export const IDL: CardinalStakePool = {
       ],
     },
     {
+<<<<<<< HEAD
       name: "doubleOrResetTotalStakeSeconds",
       accounts: [
         {
@@ -2258,102 +2263,9 @@ export const IDL: CardinalStakePool = {
     },
     {
       name: "initGroupEntry",
-      accounts: [
-        {
-          name: "groupEntry",
-          isMut: true,
-          isSigner: false,
-        },
-        {
-          name: "authority",
-          isMut: true,
-          isSigner: true,
-        },
-        {
-          name: "systemProgram",
-          isMut: false,
-          isSigner: false,
-        },
-      ],
-      args: [
-        {
-          name: "ix",
-          type: {
-            defined: "InitGroupEntryIx",
-          },
-        },
-      ],
-    },
-    {
-      name: "addToGroupEntry",
-      accounts: [
-        {
-          name: "groupEntry",
-          isMut: true,
-          isSigner: false,
-        },
-        {
-          name: "stakeEntry",
-          isMut: true,
-          isSigner: false,
-        },
-        {
-          name: "authority",
-          isMut: true,
-          isSigner: true,
-        },
-        {
-          name: "systemProgram",
-          isMut: false,
-          isSigner: false,
-        },
-      ],
-      args: [],
-    },
-    {
-      name: "removeFromGroupEntry",
-      accounts: [
-        {
-          name: "groupEntry",
-          isMut: true,
-          isSigner: false,
-        },
-        {
-          name: "stakeEntry",
-          isMut: true,
-          isSigner: false,
-        },
-        {
-          name: "authority",
-          isMut: true,
-          isSigner: true,
-        },
-        {
-          name: "systemProgram",
-          isMut: false,
-          isSigner: false,
-        },
-      ],
-      args: [],
-    },
-    {
-      name: "closeGroupEntry",
-      accounts: [
-        {
-          name: "groupEntry",
-          isMut: true,
-          isSigner: false,
-        },
-        {
-          name: "authority",
-          isMut: true,
-          isSigner: true,
-        },
-      ],
-      args: [],
-    },
-    {
+=======
       name: "initStakeBooster",
+>>>>>>> c5db778 (Rearrange code)
       accounts: [
         {
           name: "stakeBooster",
@@ -2501,6 +2413,102 @@ export const IDL: CardinalStakePool = {
         },
         {
           name: "stakePool",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "initGroupEntry",
+      accounts: [
+        {
+          name: "groupEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: "ix",
+          type: {
+            defined: "InitGroupEntryIx",
+          },
+        },
+      ],
+    },
+    {
+      name: "addToGroupEntry",
+      accounts: [
+        {
+          name: "groupEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "stakeEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "removeFromGroupEntry",
+      accounts: [
+        {
+          name: "groupEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "stakeEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "closeGroupEntry",
+      accounts: [
+        {
+          name: "groupEntry",
           isMut: true,
           isSigner: false,
         },
