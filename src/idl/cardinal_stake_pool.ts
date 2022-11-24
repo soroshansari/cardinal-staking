@@ -912,7 +912,7 @@ export type CardinalStakePool = {
             };
           },
           {
-            name: "startedAt";
+            name: "changedAt";
             type: "i64";
           },
           {
@@ -2544,7 +2544,7 @@ export const IDL: CardinalStakePool = {
             },
           },
           {
-            name: "startedAt",
+            name: "changedAt",
             type: "i64",
           },
           {

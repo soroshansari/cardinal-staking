@@ -2,16 +2,6 @@ use crate::errors::ErrorCode;
 use anchor_lang::prelude::*;
 use std::str::FromStr;
 
-pub const GROUP_ENTRY_PREFIX: &str = "group-entry";
-pub const GROUP_ENTRY_SIZE: usize = 8 // Anchor discriminator/sighash
- + 1 // bump
- + 32 // id
- + 32 // authority
- + 4 + 5 * 32 // stake_entries (5 pubkeys)
- + 8 // started_at
- + 4 // min_group_days
- + 256; // padding
-
 pub const STAKE_ENTRY_PREFIX: &str = "stake-entry";
 pub const STAKE_ENTRY_SIZE: usize = 8 + std::mem::size_of::<StakeEntry>() + 8;
 
@@ -25,6 +15,16 @@ pub const IDENTIFIER_SIZE: usize = 8 + std::mem::size_of::<Identifier>() + 8;
 pub const STAKE_AUTHORIZATION_PREFIX: &str = "stake-authorization";
 pub const STAKE_AUTHORIZATION_SIZE: usize = 8 + std::mem::size_of::<StakeAuthorizationRecord>() + 8;
 
+pub const GROUP_ENTRY_PREFIX: &str = "group-entry";
+pub const GROUP_ENTRY_SIZE: usize = 8 // Anchor discriminator/sighash
+ + 1 // bump
+ + 32 // id
+ + 32 // authority
+ + 4 + 5 * 32 // stake_entries (5 pubkeys)
+ + 8 // changed_at
+ + 4 // min_group_days
+ + 256; // padding
+
 #[derive(Clone, Debug, PartialEq, Eq, AnchorSerialize, AnchorDeserialize)]
 #[repr(u8)]
 pub enum StakeEntryKind {
@@ -37,7 +37,7 @@ pub struct GroupStakeEntry {
     pub bump: u8,
     pub authority: Pubkey,
     pub stake_entries: Vec<Pubkey>,
-    pub started_at: i64,
+    pub changed_at: i64,
     pub min_group_days: Option<u32>,
 }
 

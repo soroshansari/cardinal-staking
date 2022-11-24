@@ -24,7 +24,7 @@ pub fn handler(ctx: Context<RemoveFromGroupEntryCtx>) -> Result<()> {
         return Err(error!(ErrorCode::UngroupedStakeEntry));
     }
 
-    if group_entry.min_group_days.is_some() && (Clock::get().unwrap().unix_timestamp - group_entry.started_at) < (group_entry.min_group_days.unwrap() * 24 * 60 * 60) as i64 {
+    if group_entry.min_group_days.is_some() && (Clock::get().unwrap().unix_timestamp - group_entry.changed_at) < (group_entry.min_group_days.unwrap() * 24 * 60 * 60) as i64 {
         return Err(error!(ErrorCode::MinGroupDaysNotSatisfied));
     }
 

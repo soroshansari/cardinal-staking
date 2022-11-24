@@ -19,7 +19,7 @@ pub struct AddToGroupEntryCtx<'info> {
 pub fn handler(ctx: Context<AddToGroupEntryCtx>) -> Result<()> {
     let group_entry = &mut ctx.accounts.group_entry;
     let stake_entry = &mut ctx.accounts.stake_entry;
-    group_entry.started_at = Clock::get().unwrap().unix_timestamp;
+    group_entry.changed_at = Clock::get().unwrap().unix_timestamp;
     group_entry.stake_entries.push(stake_entry.key());
 
     if stake_entry.grouped == Some(true) {

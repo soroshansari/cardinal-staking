@@ -507,8 +507,8 @@ describe("Group stake and claim rewards", () => {
       groupRewardEntryId
     );
 
-    expect(newGroupStakeEntryData.parsed.startedAt.toNumber()).to.eq(
-      oldGroupStakeEntryData.parsed.startedAt.toNumber()
+    expect(newGroupStakeEntryData.parsed.changedAt.toNumber()).to.eq(
+      oldGroupStakeEntryData.parsed.changedAt.toNumber()
     );
     expect(
       groupRewardEntryData.parsed.rewardSecondsReceived.toNumber()

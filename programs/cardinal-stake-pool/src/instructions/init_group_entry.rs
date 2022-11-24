@@ -34,7 +34,7 @@ pub fn handler(ctx: Context<InitGroupEntryCtx>, ix: InitGroupEntryIx) -> Result<
     let authority = &mut ctx.accounts.authority;
     group_entry.bump = *ctx.bumps.get("group_entry").unwrap();
     group_entry.authority = authority.key();
-    group_entry.started_at = Clock::get().unwrap().unix_timestamp;
+    group_entry.changed_at = Clock::get().unwrap().unix_timestamp;
     group_entry.min_group_days = ix.min_group_days;
 
     let mut stake_entries = Vec::new();
