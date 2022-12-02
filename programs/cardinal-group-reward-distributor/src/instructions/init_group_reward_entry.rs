@@ -57,7 +57,7 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
     let mut metadata_names = Vec::new();
     let mut metadata_symbols = Vec::new();
     let mut stake_pools = Vec::new();
-    let mut total_multipliers = 0;
+    let mut total_multipliers = 0_u64;
 
     let remaining_accounts = &mut ctx.remaining_accounts.iter();
     for i in 0..group_size {
@@ -113,7 +113,7 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
         metadata_names.push(original_mint_metadata.data.name);
         metadata_symbols.push(original_mint_metadata.data.symbol);
         stake_pools.push(stake_entry.pool);
-        total_multipliers += reward_entry.multiplier;
+        total_multipliers = total_multipliers.checked_add(reward_entry.multiplier).expect("Add error");
     }
 
     match group_reward_distributor.metadata_kind {
