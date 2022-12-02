@@ -440,30 +440,38 @@ export type CardinalGroupRewardDistributor = {
             type: "u128";
           },
           {
-            name: "maxSupply";
-            type: {
-              option: "u64";
-            };
+            name: "baseAdder";
+            type: "u64";
           },
           {
-            name: "defaultMultiplier";
+            name: "baseAdderDecimals";
+            type: "u8";
+          },
+          {
+            name: "baseMultiplier";
             type: "u64";
+          },
+          {
+            name: "baseMultiplierDecimals";
+            type: "u8";
           },
           {
             name: "multiplierDecimals";
             type: "u8";
           },
           {
-            name: "groupDurationMultiplierSeconds";
-            type: "u128";
+            name: "minCooldownSeconds";
+            type: "u32";
           },
           {
-            name: "groupDurationMultiplier";
-            type: "u64";
+            name: "minStakeSeconds";
+            type: "u32";
           },
           {
-            name: "groupDurationMultiplierDecimals";
-            type: "u8";
+            name: "maxSupply";
+            type: {
+              option: "u64";
+            };
           },
           {
             name: "groupCountMultiplier";
@@ -536,15 +544,27 @@ export type CardinalGroupRewardDistributor = {
             };
           },
           {
-            name: "maxSupply";
+            name: "baseAdder";
             type: {
               option: "u64";
             };
           },
           {
-            name: "defaultMultiplier";
+            name: "baseAdderDecimals";
+            type: {
+              option: "u8";
+            };
+          },
+          {
+            name: "baseMultiplier";
             type: {
               option: "u64";
+            };
+          },
+          {
+            name: "baseMultiplierDecimals";
+            type: {
+              option: "u8";
             };
           },
           {
@@ -554,27 +574,21 @@ export type CardinalGroupRewardDistributor = {
             };
           },
           {
-            name: "maxRewardSecondsReceived";
-            type: {
-              option: "u128";
-            };
-          },
-          {
-            name: "groupDurationMultiplierSeconds";
-            type: {
-              option: "u128";
-            };
-          },
-          {
-            name: "groupDurationMultiplier";
+            name: "maxSupply";
             type: {
               option: "u64";
             };
           },
           {
-            name: "groupDurationMultiplierDecimals";
+            name: "minCooldownSeconds";
             type: {
-              option: "u8";
+              option: "u32";
+            };
+          },
+          {
+            name: "minStakeSeconds";
+            type: {
+              option: "u32";
             };
           },
           {
@@ -593,6 +607,12 @@ export type CardinalGroupRewardDistributor = {
             name: "minGroupSize";
             type: {
               option: "u8";
+            };
+          },
+          {
+            name: "maxRewardSecondsReceived";
+            type: {
+              option: "u128";
             };
           }
         ];
@@ -626,15 +646,27 @@ export type CardinalGroupRewardDistributor = {
             };
           },
           {
-            name: "maxSupply";
+            name: "baseAdder";
             type: {
               option: "u64";
             };
           },
           {
-            name: "defaultMultiplier";
+            name: "baseAdderDecimals";
+            type: {
+              option: "u8";
+            };
+          },
+          {
+            name: "baseMultiplier";
             type: {
               option: "u64";
+            };
+          },
+          {
+            name: "baseMultiplierDecimals";
+            type: {
+              option: "u8";
             };
           },
           {
@@ -644,27 +676,21 @@ export type CardinalGroupRewardDistributor = {
             };
           },
           {
-            name: "maxRewardSecondsReceived";
-            type: {
-              option: "u128";
-            };
-          },
-          {
-            name: "groupDurationMultiplierSeconds";
-            type: {
-              option: "u128";
-            };
-          },
-          {
-            name: "groupDurationMultiplier";
+            name: "maxSupply";
             type: {
               option: "u64";
             };
           },
           {
-            name: "groupDurationMultiplierDecimals";
+            name: "minCooldownSeconds";
             type: {
-              option: "u8";
+              option: "u32";
+            };
+          },
+          {
+            name: "minStakeSeconds";
+            type: {
+              option: "u32";
             };
           },
           {
@@ -683,6 +709,12 @@ export type CardinalGroupRewardDistributor = {
             name: "minGroupSize";
             type: {
               option: "u8";
+            };
+          },
+          {
+            name: "maxRewardSecondsReceived";
+            type: {
+              option: "u128";
             };
           }
         ];
@@ -819,6 +851,21 @@ export type CardinalGroupRewardDistributor = {
       code: 6013;
       name: "InvalidMintMetadataOwner";
       msg: "Mint metadata is owned by the incorrect program";
+    },
+    {
+      code: 6014;
+      name: "InvalidRewardEntry";
+      msg: "Invalid reward entry";
+    },
+    {
+      code: 6015;
+      name: "InvalidGroupSeconds";
+      msg: "Invalid group seconds";
+    },
+    {
+      code: 6016;
+      name: "InvalidCooldownSeconds";
+      msg: "Invalid cooldown seconds";
     }
   ];
 };
@@ -1265,30 +1312,38 @@ export const IDL: CardinalGroupRewardDistributor = {
             type: "u128",
           },
           {
-            name: "maxSupply",
-            type: {
-              option: "u64",
-            },
+            name: "baseAdder",
+            type: "u64",
           },
           {
-            name: "defaultMultiplier",
+            name: "baseAdderDecimals",
+            type: "u8",
+          },
+          {
+            name: "baseMultiplier",
             type: "u64",
+          },
+          {
+            name: "baseMultiplierDecimals",
+            type: "u8",
           },
           {
             name: "multiplierDecimals",
             type: "u8",
           },
           {
-            name: "groupDurationMultiplierSeconds",
-            type: "u128",
+            name: "minCooldownSeconds",
+            type: "u32",
           },
           {
-            name: "groupDurationMultiplier",
-            type: "u64",
+            name: "minStakeSeconds",
+            type: "u32",
           },
           {
-            name: "groupDurationMultiplierDecimals",
-            type: "u8",
+            name: "maxSupply",
+            type: {
+              option: "u64",
+            },
           },
           {
             name: "groupCountMultiplier",
@@ -1361,15 +1416,27 @@ export const IDL: CardinalGroupRewardDistributor = {
             },
           },
           {
-            name: "maxSupply",
+            name: "baseAdder",
             type: {
               option: "u64",
             },
           },
           {
-            name: "defaultMultiplier",
+            name: "baseAdderDecimals",
+            type: {
+              option: "u8",
+            },
+          },
+          {
+            name: "baseMultiplier",
             type: {
               option: "u64",
+            },
+          },
+          {
+            name: "baseMultiplierDecimals",
+            type: {
+              option: "u8",
             },
           },
           {
@@ -1379,27 +1446,21 @@ export const IDL: CardinalGroupRewardDistributor = {
             },
           },
           {
-            name: "maxRewardSecondsReceived",
-            type: {
-              option: "u128",
-            },
-          },
-          {
-            name: "groupDurationMultiplierSeconds",
-            type: {
-              option: "u128",
-            },
-          },
-          {
-            name: "groupDurationMultiplier",
+            name: "maxSupply",
             type: {
               option: "u64",
             },
           },
           {
-            name: "groupDurationMultiplierDecimals",
+            name: "minCooldownSeconds",
             type: {
-              option: "u8",
+              option: "u32",
+            },
+          },
+          {
+            name: "minStakeSeconds",
+            type: {
+              option: "u32",
             },
           },
           {
@@ -1418,6 +1479,12 @@ export const IDL: CardinalGroupRewardDistributor = {
             name: "minGroupSize",
             type: {
               option: "u8",
+            },
+          },
+          {
+            name: "maxRewardSecondsReceived",
+            type: {
+              option: "u128",
             },
           },
         ],
@@ -1451,15 +1518,27 @@ export const IDL: CardinalGroupRewardDistributor = {
             },
           },
           {
-            name: "maxSupply",
+            name: "baseAdder",
             type: {
               option: "u64",
             },
           },
           {
-            name: "defaultMultiplier",
+            name: "baseAdderDecimals",
+            type: {
+              option: "u8",
+            },
+          },
+          {
+            name: "baseMultiplier",
             type: {
               option: "u64",
+            },
+          },
+          {
+            name: "baseMultiplierDecimals",
+            type: {
+              option: "u8",
             },
           },
           {
@@ -1469,27 +1548,21 @@ export const IDL: CardinalGroupRewardDistributor = {
             },
           },
           {
-            name: "maxRewardSecondsReceived",
-            type: {
-              option: "u128",
-            },
-          },
-          {
-            name: "groupDurationMultiplierSeconds",
-            type: {
-              option: "u128",
-            },
-          },
-          {
-            name: "groupDurationMultiplier",
+            name: "maxSupply",
             type: {
               option: "u64",
             },
           },
           {
-            name: "groupDurationMultiplierDecimals",
+            name: "minCooldownSeconds",
             type: {
-              option: "u8",
+              option: "u32",
+            },
+          },
+          {
+            name: "minStakeSeconds",
+            type: {
+              option: "u32",
             },
           },
           {
@@ -1508,6 +1581,12 @@ export const IDL: CardinalGroupRewardDistributor = {
             name: "minGroupSize",
             type: {
               option: "u8",
+            },
+          },
+          {
+            name: "maxRewardSecondsReceived",
+            type: {
+              option: "u128",
             },
           },
         ],
@@ -1644,6 +1723,21 @@ export const IDL: CardinalGroupRewardDistributor = {
       code: 6013,
       name: "InvalidMintMetadataOwner",
       msg: "Mint metadata is owned by the incorrect program",
+    },
+    {
+      code: 6014,
+      name: "InvalidRewardEntry",
+      msg: "Invalid reward entry",
+    },
+    {
+      code: 6015,
+      name: "InvalidGroupSeconds",
+      msg: "Invalid group seconds",
+    },
+    {
+      code: 6016,
+      name: "InvalidCooldownSeconds",
+      msg: "Invalid cooldown seconds",
     },
   ],
 };

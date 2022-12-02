@@ -33,24 +33,27 @@ export const initGroupRewardDistributor = async (
   connection: Connection,
   wallet: Wallet,
   params: {
-    authorizedPools: PublicKey[];
-    rewardMintId: PublicKey;
     rewardAmount: BN;
     rewardDurationSeconds: BN;
     rewardKind: GroupRewardDistributorKind;
-    poolKind: GroupRewardDistributorPoolKind;
     metadataKind: GroupRewardDistributorMetadataKind;
-    maxSupply?: BN;
+    poolKind: GroupRewardDistributorPoolKind;
+    authorizedPools: PublicKey[];
     supply?: BN;
-    defaultMultiplier?: BN;
+    baseAdder?: BN;
+    baseAdderDecimals?: number;
+    baseMultiplier?: BN;
+    baseMultiplierDecimals?: number;
     multiplierDecimals?: number;
-    groupDurationMultiplierSeconds?: BN;
-    groupDurationMultiplier?: BN;
-    groupDurationMultiplierDecimals?: number;
+    maxSupply?: BN;
+    minCooldownSeconds?: number;
+    minStakeSeconds?: number;
     groupCountMultiplier?: BN;
     groupCountMultiplierDecimals?: number;
-    maxRewardSecondsReceived?: BN;
     minGroupSize?: number;
+    maxRewardSecondsReceived?: BN;
+
+    rewardMintId: PublicKey;
   }
 ): Promise<[Transaction, PublicKey]> => {
   const program = getProgram(connection, wallet);
@@ -78,23 +81,23 @@ export const initGroupRewardDistributor = async (
       id: id.publicKey,
       rewardAmount: params.rewardAmount,
       rewardDurationSeconds: params.rewardDurationSeconds,
-      maxSupply: params.maxSupply || null,
-      supply: params.supply || null,
       rewardKind: params.rewardKind,
-      poolKind: params.poolKind,
       metadataKind: params.metadataKind,
-      defaultMultiplier: params.defaultMultiplier || null,
+      poolKind: params.poolKind,
+      authorizedPools: params.authorizedPools,
+      supply: params.supply || null,
+      baseAdder: params.baseAdder || null,
+      baseAdderDecimals: params.baseAdderDecimals || null,
+      baseMultiplier: params.baseMultiplier || null,
+      baseMultiplierDecimals: params.baseMultiplierDecimals || null,
       multiplierDecimals: params.multiplierDecimals || null,
-      groupDurationMultiplierSeconds:
-        params.groupDurationMultiplierSeconds || null,
-      groupDurationMultiplier: params.groupDurationMultiplier || null,
-      groupDurationMultiplierDecimals:
-        params.groupDurationMultiplierDecimals || null,
+      maxSupply: params.maxSupply || null,
+      minCooldownSeconds: params.minCooldownSeconds || null,
+      minStakeSeconds: params.minStakeSeconds || null,
       groupCountMultiplier: params.groupCountMultiplier || null,
       groupCountMultiplierDecimals: params.groupCountMultiplierDecimals || null,
-      maxRewardSecondsReceived: params.maxRewardSecondsReceived || null,
-      authorizedPools: params.authorizedPools,
       minGroupSize: params.minGroupSize || null,
+      maxRewardSecondsReceived: params.maxRewardSecondsReceived || null,
     })
     .accounts({
       groupRewardDistributor: groupRewardDistributorId,
@@ -146,13 +149,14 @@ export const initGroupRewardEntry = (
       stakeEntryId: PublicKey;
       originalMint: PublicKey;
       originalMintMetadata: PublicKey;
+      rewardEntryId: PublicKey;
     }[];
   }
 ): Promise<Transaction> => {
   const program = getProgram(connection, wallet);
   const remainingAccounts: AccountMeta[] = [];
   params.stakeEntries.forEach(
-    ({ stakeEntryId, originalMint, originalMintMetadata }) => {
+    ({ stakeEntryId, originalMint, originalMintMetadata, rewardEntryId }) => {
       remainingAccounts.push(
         {
           pubkey: stakeEntryId,
@@ -166,6 +170,11 @@ export const initGroupRewardEntry = (
         },
         {
           pubkey: originalMintMetadata,
+          isSigner: false,
+          isWritable: false,
+        },
+        {
+          pubkey: rewardEntryId,
           isSigner: false,
           isWritable: false,
         }
@@ -317,22 +326,23 @@ export const updateGroupRewardDistributor = (
   wallet: Wallet,
   params: {
     groupRewardDistributorId: PublicKey;
-    authorizedPools: PublicKey[];
-    rewardMintId: PublicKey;
     rewardAmount: BN;
     rewardDurationSeconds: BN;
-    poolKind: GroupRewardDistributorPoolKind;
     metadataKind: GroupRewardDistributorMetadataKind;
-    maxSupply?: BN;
-    defaultMultiplier?: BN;
+    poolKind: GroupRewardDistributorPoolKind;
+    authorizedPools: PublicKey[];
+    baseAdder?: BN;
+    baseAdderDecimals?: number;
+    baseMultiplier?: BN;
+    baseMultiplierDecimals?: number;
     multiplierDecimals?: number;
-    groupDurationMultiplierSeconds?: BN;
-    groupDurationMultiplier?: BN;
-    groupDurationMultiplierDecimals?: number;
+    maxSupply?: BN;
+    minCooldownSeconds?: number;
+    minStakeSeconds?: number;
     groupCountMultiplier?: BN;
     groupCountMultiplierDecimals?: number;
-    maxRewardSecondsReceived?: BN;
     minGroupSize?: number;
+    maxRewardSecondsReceived?: BN;
   }
 ): Promise<Transaction> => {
   const program = getProgram(connection, wallet);
@@ -341,21 +351,21 @@ export const updateGroupRewardDistributor = (
     .updateGroupRewardDistributor({
       rewardAmount: params.rewardAmount,
       rewardDurationSeconds: params.rewardDurationSeconds,
-      maxSupply: params.maxSupply || null,
-      poolKind: params.poolKind,
       metadataKind: params.metadataKind,
-      defaultMultiplier: params.defaultMultiplier || null,
+      poolKind: params.poolKind,
+      authorizedPools: params.authorizedPools,
+      baseAdder: params.baseAdder || null,
+      baseAdderDecimals: params.baseAdderDecimals || null,
+      baseMultiplier: params.baseMultiplier || null,
+      baseMultiplierDecimals: params.baseMultiplierDecimals || null,
       multiplierDecimals: params.multiplierDecimals || null,
-      groupDurationMultiplierSeconds:
-        params.groupDurationMultiplierSeconds || null,
-      groupDurationMultiplier: params.groupDurationMultiplier || null,
-      groupDurationMultiplierDecimals:
-        params.groupDurationMultiplierDecimals || null,
+      maxSupply: params.maxSupply || null,
+      minCooldownSeconds: params.minCooldownSeconds || null,
+      minStakeSeconds: params.minStakeSeconds || null,
       groupCountMultiplier: params.groupCountMultiplier || null,
       groupCountMultiplierDecimals: params.groupCountMultiplierDecimals || null,
-      maxRewardSecondsReceived: params.maxRewardSecondsReceived || null,
-      authorizedPools: params.authorizedPools,
       minGroupSize: params.minGroupSize || null,
+      maxRewardSecondsReceived: params.maxRewardSecondsReceived || null,
     })
     .accounts({
       groupRewardDistributor: params.groupRewardDistributorId,

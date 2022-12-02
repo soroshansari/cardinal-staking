@@ -416,6 +416,7 @@ version = "1.10.8"
 dependencies = [
  "anchor-lang",
  "anchor-spl",
+ "cardinal-reward-distributor",
  "cardinal-stake-pool",
  "mpl-token-metadata",
  "proptest",

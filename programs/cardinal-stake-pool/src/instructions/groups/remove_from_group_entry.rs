@@ -28,8 +28,19 @@ pub fn handler(ctx: Context<RemoveFromGroupEntryCtx>) -> Result<()> {
         return Err(error!(ErrorCode::UngroupedStakeEntry));
     }
 
-    if group_entry.min_group_seconds.is_some() && (Clock::get().unwrap().unix_timestamp - group_entry.changed_at) < (group_entry.min_group_seconds.unwrap()) as i64 {
-        return Err(error!(ErrorCode::MinGroupDaysNotSatisfied));
+    if group_entry.group_cooldown_seconds > 0 {
+        if group_entry.group_cooldown_start_seconds.is_none() {
+            group_entry.group_cooldown_start_seconds = Some(Clock::get().unwrap().unix_timestamp);
+            return Ok(());
+        } else if group_entry.group_cooldown_start_seconds.is_some()
+            && ((Clock::get().unwrap().unix_timestamp - group_entry.group_cooldown_start_seconds.unwrap()) as u32) < group_entry.group_cooldown_seconds
+        {
+            return Err(error!(ErrorCode::CooldownSecondRemaining));
+        }
+    }
+
+    if group_entry.group_stake_seconds > 0 && (Clock::get().unwrap().unix_timestamp - group_entry.changed_at) < group_entry.group_stake_seconds as i64 {
+        return Err(error!(ErrorCode::MinGroupSecondsNotSatisfied));
     }
 
     stake_entry.grouped = Some(false);
@@ -46,7 +57,9 @@ pub fn handler(ctx: Context<RemoveFromGroupEntryCtx>) -> Result<()> {
         authority: group_entry.authority,
         stake_entries: stake_entries.to_vec(),
         changed_at: Clock::get().unwrap().unix_timestamp,
-        min_group_seconds: group_entry.min_group_seconds,
+        group_cooldown_seconds: group_entry.group_cooldown_seconds,
+        group_stake_seconds: group_entry.group_stake_seconds,
+        group_cooldown_start_seconds: group_entry.group_cooldown_start_seconds,
     };
     let new_space = new_group_entry.try_to_vec()?.len() + 8;
     group_entry.set_inner(new_group_entry);

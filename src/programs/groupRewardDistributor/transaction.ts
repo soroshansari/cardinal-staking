@@ -9,6 +9,7 @@ import { BN } from "@project-serum/anchor";
 import type { Wallet } from "@saberhq/solana-contrib";
 import type { Connection, PublicKey, Transaction } from "@solana/web3.js";
 
+import { findRewardEntryId } from "../rewardDistributor/pda";
 import { getGroupRewardCounter, getGroupRewardDistributor } from "./accounts";
 import {
   GroupRewardDistributorKind,
@@ -35,45 +36,54 @@ export const withInitGroupRewardDistributor = async (
   connection: Connection,
   wallet: Wallet,
   params: {
-    authorizedPools: PublicKey[];
     rewardMintId: PublicKey;
+    authorizedPools: PublicKey[];
     rewardAmount?: BN;
     rewardDurationSeconds?: BN;
     rewardKind?: GroupRewardDistributorKind;
     poolKind?: GroupRewardDistributorPoolKind;
     metadataKind?: GroupRewardDistributorMetadataKind;
-    maxSupply?: BN;
     supply?: BN;
-    defaultMultiplier?: BN;
+    baseAdder?: BN;
+    baseAdderDecimals?: number;
+    baseMultiplier?: BN;
+    baseMultiplierDecimals?: number;
     multiplierDecimals?: number;
-    groupDurationMultiplierSeconds?: BN;
-    groupDurationMultiplier?: BN;
-    groupDurationMultiplierDecimals?: number;
-    maxRewardSecondsReceived?: BN;
+    maxSupply?: BN;
+    minCooldownSeconds?: number;
+    minStakeSeconds?: number;
+    groupCountMultiplier?: BN;
+    groupCountMultiplierDecimals?: number;
     minGroupSize?: number;
+    maxRewardSecondsReceived?: BN;
   }
 ): Promise<[Transaction, web3.PublicKey]> => {
   const [tx, groupRewardDistributorId] = await initGroupRewardDistributor(
     connection,
     wallet,
     {
-      authorizedPools: params.authorizedPools,
-      rewardMintId: params.rewardMintId,
       rewardAmount: params.rewardAmount || new BN(1),
       rewardDurationSeconds: params.rewardDurationSeconds || new BN(1),
       rewardKind: params.rewardKind || GroupRewardDistributorKind.Mint,
-      poolKind: params.poolKind || GroupRewardDistributorPoolKind.NoRestriction,
       metadataKind:
         params.metadataKind || GroupRewardDistributorMetadataKind.NoRestriction,
-      maxSupply: params.maxSupply,
+      poolKind: params.poolKind || GroupRewardDistributorPoolKind.NoRestriction,
+      authorizedPools: params.authorizedPools,
       supply: params.supply,
-      defaultMultiplier: params.defaultMultiplier,
+      baseAdder: params.baseAdder,
+      baseAdderDecimals: params.baseAdderDecimals,
+      baseMultiplier: params.baseMultiplier,
+      baseMultiplierDecimals: params.baseMultiplierDecimals,
       multiplierDecimals: params.multiplierDecimals,
-      groupDurationMultiplierSeconds: params.groupDurationMultiplierSeconds,
-      groupDurationMultiplier: params.groupDurationMultiplier,
-      groupDurationMultiplierDecimals: params.groupDurationMultiplierDecimals,
-      maxRewardSecondsReceived: params.maxRewardSecondsReceived,
+      maxSupply: params.maxSupply,
+      minCooldownSeconds: params.minCooldownSeconds,
+      minStakeSeconds: params.minStakeSeconds,
+      groupCountMultiplier: params.groupCountMultiplier,
+      groupCountMultiplierDecimals: params.groupCountMultiplierDecimals,
       minGroupSize: params.minGroupSize,
+      maxRewardSecondsReceived: params.maxRewardSecondsReceived,
+
+      rewardMintId: params.rewardMintId,
     }
   );
   transaction.add(tx);
@@ -87,6 +97,7 @@ export const withInitGroupRewardEntry = async (
   params: {
     groupRewardDistributorId: PublicKey;
     groupEntryId: PublicKey;
+    rewardDistributorId: PublicKey;
     stakeEntries: {
       stakeEntryId: PublicKey;
       originalMint: PublicKey;
@@ -116,11 +127,15 @@ export const withInitGroupRewardEntry = async (
 
   const stakeEntries = await Promise.all(
     params.stakeEntries.map(async ({ stakeEntryId, originalMint }) => {
-      const originalMintMetadata = await metaplex.Metadata.getPDA(originalMint);
+      const [[rewardEntryId], originalMintMetadata] = await Promise.all([
+        findRewardEntryId(params.rewardDistributorId, stakeEntryId),
+        metaplex.Metadata.getPDA(originalMint),
+      ]);
       return {
         stakeEntryId,
         originalMint,
         originalMintMetadata,
+        rewardEntryId,
       };
     })
   );
@@ -291,39 +306,45 @@ export const withUpdateGroupRewardDistributor = async (
   params: {
     groupRewardDistributorId: PublicKey;
     authorizedPools: PublicKey[];
-    rewardMintId: PublicKey;
     rewardAmount?: BN;
     rewardDurationSeconds?: BN;
     poolKind?: GroupRewardDistributorPoolKind;
     metadataKind?: GroupRewardDistributorMetadataKind;
-    maxSupply?: BN;
-    defaultMultiplier?: BN;
+    baseAdder?: BN;
+    baseAdderDecimals?: number;
+    baseMultiplier?: BN;
+    baseMultiplierDecimals?: number;
     multiplierDecimals?: number;
-    groupDurationMultiplierSeconds?: BN;
-    groupDurationMultiplier?: BN;
-    groupDurationMultiplierDecimals?: number;
-    maxRewardSecondsReceived?: BN;
+    maxSupply?: BN;
+    minCooldownSeconds?: number;
+    minStakeSeconds?: number;
+    groupCountMultiplier?: BN;
+    groupCountMultiplierDecimals?: number;
     minGroupSize?: number;
+    maxRewardSecondsReceived?: BN;
   }
 ): Promise<Transaction> => {
   return transaction.add(
     await updateGroupRewardDistributor(connection, wallet, {
       groupRewardDistributorId: params.groupRewardDistributorId,
-      authorizedPools: params.authorizedPools,
-      rewardMintId: params.rewardMintId,
       rewardAmount: params.rewardAmount || new BN(1),
       rewardDurationSeconds: params.rewardDurationSeconds || new BN(1),
-      poolKind: params.poolKind || GroupRewardDistributorPoolKind.NoRestriction,
       metadataKind:
         params.metadataKind || GroupRewardDistributorMetadataKind.NoRestriction,
+      poolKind: params.poolKind || GroupRewardDistributorPoolKind.NoRestriction,
+      authorizedPools: params.authorizedPools,
+      baseAdder: params.baseAdder,
+      baseAdderDecimals: params.baseAdderDecimals,
+      baseMultiplier: params.baseMultiplier,
+      baseMultiplierDecimals: params.baseMultiplierDecimals,
+      multiplierDecimals: params.multiplierDecimals,
       maxSupply: params.maxSupply,
-      defaultMultiplier: params.defaultMultiplier || new BN(1),
-      multiplierDecimals: params.multiplierDecimals || 0,
-      groupDurationMultiplierSeconds: params.groupDurationMultiplierSeconds,
-      groupDurationMultiplier: params.groupDurationMultiplier,
-      groupDurationMultiplierDecimals: params.groupDurationMultiplierDecimals,
-      maxRewardSecondsReceived: params.maxRewardSecondsReceived,
+      minCooldownSeconds: params.minCooldownSeconds,
+      minStakeSeconds: params.minStakeSeconds,
+      groupCountMultiplier: params.groupCountMultiplier,
+      groupCountMultiplierDecimals: params.groupCountMultiplierDecimals,
       minGroupSize: params.minGroupSize,
+      maxRewardSecondsReceived: params.maxRewardSecondsReceived,
     })
   );
 };

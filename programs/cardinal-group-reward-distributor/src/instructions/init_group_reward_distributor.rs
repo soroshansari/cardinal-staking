@@ -15,16 +15,18 @@ pub struct InitGroupRewardDistributorIx {
     pub pool_kind: u8,
     pub authorized_pools: Vec<Pubkey>,
     pub supply: Option<u64>,
-    pub max_supply: Option<u64>,
-    pub default_multiplier: Option<u64>,
+    pub base_adder: Option<u64>,
+    pub base_adder_decimals: Option<u8>,
+    pub base_multiplier: Option<u64>,
+    pub base_multiplier_decimals: Option<u8>,
     pub multiplier_decimals: Option<u8>,
-    pub max_reward_seconds_received: Option<u128>,
-    pub group_duration_multiplier_seconds: Option<u128>,
-    pub group_duration_multiplier: Option<u64>,
-    pub group_duration_multiplier_decimals: Option<u8>,
+    pub max_supply: Option<u64>,
+    pub min_cooldown_seconds: Option<u32>,
+    pub min_stake_seconds: Option<u32>,
     pub group_count_multiplier: Option<u64>,
     pub group_count_multiplier_decimals: Option<u8>,
     pub min_group_size: Option<u8>,
+    pub max_reward_seconds_received: Option<u128>,
 }
 
 #[derive(Accounts)]
@@ -65,16 +67,18 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
     group_reward_distributor.reward_mint = ctx.accounts.reward_mint.key();
     group_reward_distributor.reward_amount = ix.reward_amount;
     group_reward_distributor.reward_duration_seconds = ix.reward_duration_seconds as u128;
-    group_reward_distributor.max_supply = ix.max_supply;
-    group_reward_distributor.default_multiplier = ix.default_multiplier.unwrap_or(1);
+    group_reward_distributor.base_adder = ix.base_adder.unwrap_or(0);
+    group_reward_distributor.base_adder_decimals = ix.base_adder_decimals.unwrap_or(0);
+    group_reward_distributor.base_multiplier = ix.base_multiplier.unwrap_or(1);
+    group_reward_distributor.base_multiplier_decimals = ix.base_multiplier_decimals.unwrap_or(0);
     group_reward_distributor.multiplier_decimals = ix.multiplier_decimals.unwrap_or(0);
-    group_reward_distributor.max_reward_seconds_received = ix.max_reward_seconds_received;
-    group_reward_distributor.group_duration_multiplier_seconds = ix.group_duration_multiplier_seconds.unwrap_or(1);
-    group_reward_distributor.group_duration_multiplier = ix.group_duration_multiplier.unwrap_or(1);
-    group_reward_distributor.group_duration_multiplier_decimals = ix.group_duration_multiplier_decimals.unwrap_or(0);
+    group_reward_distributor.min_cooldown_seconds = ix.min_cooldown_seconds.unwrap_or(0);
+    group_reward_distributor.min_stake_seconds = ix.min_stake_seconds.unwrap_or(0);
+    group_reward_distributor.max_supply = ix.max_supply;
     group_reward_distributor.group_count_multiplier = ix.group_count_multiplier;
     group_reward_distributor.group_count_multiplier_decimals = ix.group_count_multiplier_decimals;
     group_reward_distributor.min_group_size = ix.min_group_size;
+    group_reward_distributor.max_reward_seconds_received = ix.max_reward_seconds_received;
 
     let remaining_accs = &mut ctx.remaining_accounts.iter();
     match ix.reward_kind {

@@ -1,6 +1,7 @@
 use {
     crate::{errors::ErrorCode, state::*},
     anchor_lang::prelude::*,
+    cardinal_reward_distributor::state::RewardEntry,
     cardinal_stake_pool::state::{GroupStakeEntry, StakeEntry},
     core::hash::Hash,
     mpl_token_metadata::{state::Metadata, utils::assert_derivation},
@@ -38,27 +39,34 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
     let group_reward_distributor = &mut ctx.accounts.group_reward_distributor;
     let group_reward_entry = &mut ctx.accounts.group_reward_entry;
     let group_entry = &mut ctx.accounts.group_entry;
-    group_reward_entry.bump = *ctx.bumps.get("group_reward_entry").unwrap();
-    group_reward_entry.group_reward_distributor = group_reward_distributor.key();
-    group_reward_entry.group_entry = group_entry.key();
-    group_reward_entry.reward_seconds_received = 0;
-    group_reward_entry.multiplier = group_reward_distributor.default_multiplier;
-    group_reward_counter.count += 1;
 
-    if group_reward_distributor.min_group_size.is_some() && Some(group_entry.stake_entries.len() as u8) < group_reward_distributor.min_group_size {
+    let group_size = group_entry.stake_entries.len();
+
+    if group_reward_distributor.min_group_size.is_some() && (group_size as u8) < group_reward_distributor.min_group_size.unwrap() {
         return Err(error!(ErrorCode::InvalidGroupSize));
+    }
+
+    if group_entry.group_stake_seconds < group_reward_distributor.min_stake_seconds {
+        return Err(error!(ErrorCode::InvalidGroupSeconds));
+    }
+
+    if group_entry.group_cooldown_seconds < group_reward_distributor.min_cooldown_seconds {
+        return Err(error!(ErrorCode::InvalidGroupSeconds));
     }
 
     let mut metadata_names = Vec::new();
     let mut metadata_symbols = Vec::new();
     let mut stake_pools = Vec::new();
+    let mut total_multipliers = 0;
 
     let remaining_accounts = &mut ctx.remaining_accounts.iter();
-    for i in 0..group_entry.stake_entries.len() {
+    for i in 0..group_size {
         let stake_entry = next_account_info(remaining_accounts)?;
         if stake_entry.data_is_empty() || group_entry.stake_entries[i] != stake_entry.key() {
             return Err(error!(ErrorCode::InvalidStakeEntry));
         }
+
+        let stake_entry_id = stake_entry.key();
 
         let stake_entry_data = stake_entry.try_borrow_mut_data().expect("Failed to borrow data");
         let stake_entry = StakeEntry::deserialize(&mut stake_entry_data[8..].as_ref())?;
@@ -92,9 +100,20 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
             return Err(error!(ErrorCode::InvalidMintMetadata));
         }
 
+        let reward_entry = next_account_info(remaining_accounts)?;
+        if reward_entry.data_is_empty() {
+            return Err(error!(ErrorCode::InvalidRewardEntry));
+        }
+        let reward_entry_data = reward_entry.try_borrow_mut_data().expect("Failed to borrow data");
+        let reward_entry = RewardEntry::deserialize(&mut reward_entry_data[8..].as_ref())?;
+        if stake_entry_id != reward_entry.stake_entry {
+            return Err(error!(ErrorCode::InvalidRewardEntry));
+        }
+
         metadata_names.push(original_mint_metadata.data.name);
         metadata_symbols.push(original_mint_metadata.data.symbol);
         stake_pools.push(stake_entry.pool);
+        total_multipliers += reward_entry.multiplier;
     }
 
     match group_reward_distributor.metadata_kind {
@@ -124,6 +143,13 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
         }
         _ => {}
     }
+
+    group_reward_entry.bump = *ctx.bumps.get("group_reward_entry").unwrap();
+    group_reward_entry.group_reward_distributor = group_reward_distributor.key();
+    group_reward_entry.group_entry = group_entry.key();
+    group_reward_entry.reward_seconds_received = 0;
+    group_reward_entry.multiplier = total_multipliers / group_size as u64;
+    group_reward_counter.count += 1;
 
     Ok(())
 }

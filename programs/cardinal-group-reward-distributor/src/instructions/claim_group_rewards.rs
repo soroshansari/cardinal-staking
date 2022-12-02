@@ -71,19 +71,17 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
             .checked_mul(group_reward_entry.multiplier as u128)
             .unwrap()
             .checked_div((10_u128).checked_pow(group_reward_distributor.multiplier_decimals as u32).unwrap())
+            .unwrap()
+            .checked_mul(group_reward_distributor.base_multiplier as u128)
+            .unwrap()
+            .checked_div((10_u128).checked_pow(group_reward_distributor.base_multiplier_decimals as u32).unwrap())
+            .unwrap()
+            .checked_add(
+                (group_reward_distributor.base_adder as u128)
+                    .checked_div((10_u128).checked_pow(group_reward_distributor.base_multiplier_decimals as u32).unwrap())
+                    .unwrap(),
+            )
             .unwrap();
-
-        if group_entry.min_group_seconds.is_some() {
-            reward_amount_to_receive = reward_amount_to_receive
-                .checked_mul(group_entry.min_group_seconds.unwrap() as u128)
-                .unwrap()
-                .checked_div(group_reward_distributor.group_duration_multiplier_seconds)
-                .unwrap()
-                .checked_mul(group_reward_distributor.group_duration_multiplier as u128)
-                .unwrap()
-                .checked_div((10_u128).checked_pow(group_reward_distributor.group_duration_multiplier_decimals as u32).unwrap())
-                .unwrap()
-        }
 
         if group_reward_distributor.group_count_multiplier.is_some() && group_reward_distributor.group_count_multiplier_decimals.is_some() {
             reward_amount_to_receive = reward_amount_to_receive
@@ -152,19 +150,18 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
                 .checked_div(group_reward_counter.count as u128)
                 .unwrap();
         }
-        if group_entry.min_group_seconds.is_some() && group_entry.min_group_seconds != Some(0) && group_reward_distributor.group_duration_multiplier != 0 {
+        if group_reward_entry.multiplier != 0 && group_reward_distributor.base_multiplier != 0 {
             reward_time_to_receive = reward_time_to_receive
-                .checked_mul((10_u128).checked_pow(group_reward_distributor.group_duration_multiplier_decimals as u32).unwrap())
+                .checked_sub(
+                    (group_reward_distributor.base_adder as u128)
+                        .checked_div((10_u128).checked_pow(group_reward_distributor.base_multiplier_decimals as u32).unwrap())
+                        .unwrap(),
+                )
                 .unwrap()
-                .checked_div(group_reward_distributor.group_duration_multiplier as u128)
+                .checked_mul((10_u128).checked_pow(group_reward_distributor.base_multiplier_decimals as u32).unwrap())
                 .unwrap()
-                .checked_mul(group_reward_distributor.group_duration_multiplier_seconds)
+                .checked_div(group_reward_distributor.base_multiplier as u128)
                 .unwrap()
-                .checked_div(group_entry.min_group_seconds.unwrap() as u128)
-                .unwrap();
-        }
-        if group_reward_entry.multiplier != 0 {
-            reward_time_to_receive = reward_time_to_receive
                 .checked_mul((10_u128).checked_pow(group_reward_distributor.multiplier_decimals as u32).unwrap())
                 .unwrap()
                 .checked_div(group_reward_entry.multiplier as u128)

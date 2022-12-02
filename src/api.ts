@@ -447,9 +447,10 @@ export const unstake = async (
  * Convenience call to create a group entry
  * @param connection - Connection to use
  * @param wallet - Wallet to use
- * @param stakePoolId - Stake pool ID
- * @param originalMintId - Original mint ID
- * @param user - (Optional) User pubkey in case the person paying for the transaction and
+ * @param params
+ * stakePoolId - Stake pool ID
+ * originalMintId - Original mint ID
+ * user - (Optional) User pubkey in case the person paying for the transaction and
  * stake entry owner are different
  * @returns
  */
@@ -458,7 +459,8 @@ export const createGroupEntry = async (
   wallet: Wallet,
   params: {
     stakeEntryIds: PublicKey[];
-    minGroupSeconds?: BN;
+    groupCooldownSeconds?: number;
+    groupStakeSeconds?: number;
   }
 ): Promise<[Transaction, PublicKey]> => {
   if (!params.stakeEntryIds.length) throw new Error("No stake entry found");
@@ -467,7 +469,8 @@ export const createGroupEntry = async (
     connection,
     wallet,
     {
-      minGroupSeconds: params.minGroupSeconds,
+      groupCooldownSeconds: params.groupCooldownSeconds,
+      groupStakeSeconds: params.groupStakeSeconds,
     }
   );
 
@@ -487,44 +490,53 @@ export const createGroupEntry = async (
  * Convenience call to create a group reward distributor
  * @param connection - Connection to use
  * @param wallet - Wallet to use
- * @param authorizedPools - Authorized stake pool ids
- * @param rewardMintId - (Optional) Reward mint id
- * @param rewardAmount - (Optional) Reward amount
- * @param rewardDurationSeconds - (Optional) Reward duration in seconds
- * @param rewardKind - (Optional) Reward distributor kind Mint or Treasury
- * @param poolKind - (Optional) Reward distributor pool validation kind NoRestriction, AllFromSinglePool or EachFromSeparatePool
- * @param metadataKind - (Optional) Reward distributor metadata validation kind NoRestriction, UniqueNames or UniqueSymbols
- * @param maxSupply - (Optional) Max supply
- * @param supply - (Optional) Supply
- * @param defaultMultiplier - (Optional) default multiplier
- * @param multiplierDecimals - (Optional) multiplier decimals
- * @param groupDurationMultiplierSeconds - (Optional) group duration multiplier seconds
- * @param groupDurationMultiplier - (Optional) group duration multiplier
- * @param groupDurationMultiplierDecimals - (Optional) group duration multiplier decimals
- * @param maxRewardSecondsReceived - (Optional) max reward seconds received
- * @param minGroupSize - (Optional) min group size
+ * @param params
+ *  rewardMintId - (Optional) Reward mint id
+ *  authorizedPools - Authorized stake pool ids
+ *  rewardAmount - (Optional) Reward amount
+ *  rewardDurationSeconds - (Optional) Reward duration in seconds
+ *  rewardKind - (Optional) Reward distributor kind Mint or Treasury
+ *  poolKind - (Optional) Reward distributor pool validation kind NoRestriction, AllFromSinglePool or EachFromSeparatePool
+ *  metadataKind - (Optional) Reward distributor metadata validation kind NoRestriction, UniqueNames or UniqueSymbols
+ *  supply - (Optional) Supply
+ *  baseAdder - (Optional) Base adder value that will be add to the calculated multiplier
+ *  baseAdderDecimals - (Optional) Base adder decimals
+ *  baseMultiplier - (Optional) Base multiplier value that will be multiplied by the calculated multiplier
+ *  baseMultiplierDecimals - (Optional) Base multiplier decimals
+ *  multiplierDecimals - (Optional) Multiplier decimals
+ *  maxSupply - (Optional) Max supply
+ *  minCooldownSeconds - (Optional) number;
+ *  minStakeSeconds - (Optional) number;
+ *  groupCountMultiplier - (Optional) Group Count Multiplier if provided will multiplied the total reward to this number and total groups that this user has
+ *  groupCountMultiplierDecimals - (Optional) Group Count Multiplier decimals
+ *  minGroupSize - (Optional) min group size
+ *  maxRewardSecondsReceived - (Optional) max reward seconds received
  * @returns
  */
 export const createGroupRewardDistributor = async (
   connection: Connection,
   wallet: Wallet,
   params: {
-    authorizedPools: PublicKey[];
     rewardMintId: PublicKey;
+    authorizedPools: PublicKey[];
     rewardAmount?: BN;
     rewardDurationSeconds?: BN;
     rewardKind?: GroupRewardDistributorKind;
     poolKind?: GroupRewardDistributorPoolKind;
     metadataKind?: GroupRewardDistributorMetadataKind;
-    maxSupply?: BN;
     supply?: BN;
-    defaultMultiplier?: BN;
+    baseAdder?: BN;
+    baseAdderDecimals?: number;
+    baseMultiplier?: BN;
+    baseMultiplierDecimals?: number;
     multiplierDecimals?: number;
-    groupDurationMultiplierSeconds?: BN;
-    groupDurationMultiplier?: BN;
-    groupDurationMultiplierDecimals?: number;
-    maxRewardSecondsReceived?: BN;
+    maxSupply?: BN;
+    minCooldownSeconds?: number;
+    minStakeSeconds?: number;
+    groupCountMultiplier?: BN;
+    groupCountMultiplierDecimals?: number;
     minGroupSize?: number;
+    maxRewardSecondsReceived?: BN;
   }
 ): Promise<[Transaction, PublicKey]> =>
   withInitGroupRewardDistributor(new Transaction(), connection, wallet, params);
@@ -533,20 +545,25 @@ export const createGroupRewardDistributor = async (
  * Convenience call to update a group reward distributor
  * @param connection - Connection to use
  * @param wallet - Wallet to use
- * @param authorizedPools - Authorized stake pool ids
- * @param rewardMintId - (Optional) Reward mint id
- * @param rewardAmount - (Optional) Reward amount
- * @param rewardDurationSeconds - (Optional) Reward duration in seconds
- * @param poolKind - (Optional) Reward distributor pool validation kind NoRestriction, AllFromSinglePool or EachFromSeparatePool
- * @param metadataKind - (Optional) Reward distributor metadata validation kind NoRestriction, UniqueNames or UniqueSymbols
- * @param maxSupply - (Optional) Max supply
- * @param defaultMultiplier - (Optional) default multiplier
- * @param multiplierDecimals - (Optional) multiplier decimals
- * @param groupDurationMultiplierSeconds - (Optional) group duration multiplier seconds
- * @param groupDurationMultiplier - (Optional) group duration multiplier
- * @param groupDurationMultiplierDecimals - (Optional) group duration multiplier decimals
- * @param maxRewardSecondsReceived - (Optional) max reward seconds received
- * @param minGroupSize - (Optional) min group size
+ * @param params
+ * groupRewardDistributorId - Group reward distributor id
+ * authorizedPools - Authorized stake pool ids
+ * rewardAmount - (Optional) Reward amount
+ * rewardDurationSeconds - (Optional) Reward duration in seconds
+ * poolKind - (Optional) Reward distributor pool validation kind NoRestriction, AllFromSinglePool or EachFromSeparatePool
+ * metadataKind - (Optional) Reward distributor metadata validation kind NoRestriction, UniqueNames or UniqueSymbols
+ * baseAdder - (Optional) Base adder value that will be add to the calculated multiplier
+ * baseAdderDecimals - (Optional) Base adder decimals
+ * baseMultiplier - (Optional) Base multiplier value that will be multiplied by the calculated multiplier
+ * baseMultiplierDecimals - (Optional) Base multiplier decimals
+ * multiplierDecimals - (Optional) Multiplier decimals
+ * maxSupply - (Optional) Max supply
+ * minCooldownSeconds - (Optional) number;
+ * minStakeSeconds - (Optional) number;
+ * groupCountMultiplier - (Optional) Group Count Multiplier if provided will multiplied the total reward to this number and total groups that this user has
+ * groupCountMultiplierDecimals - (Optional) Group Count Multiplier decimals
+ * minGroupSize - (Optional) min group size
+ * maxRewardSecondsReceived - (Optional) max reward seconds received
  * @returns
  */
 export const updateGroupRewardDistributor = async (
@@ -555,19 +572,22 @@ export const updateGroupRewardDistributor = async (
   params: {
     groupRewardDistributorId: PublicKey;
     authorizedPools: PublicKey[];
-    rewardMintId: PublicKey;
     rewardAmount?: BN;
     rewardDurationSeconds?: BN;
     poolKind?: GroupRewardDistributorPoolKind;
     metadataKind?: GroupRewardDistributorMetadataKind;
-    maxSupply?: BN;
-    defaultMultiplier?: BN;
+    baseAdder?: BN;
+    baseAdderDecimals?: number;
+    baseMultiplier?: BN;
+    baseMultiplierDecimals?: number;
     multiplierDecimals?: number;
-    groupDurationMultiplierSeconds?: BN;
-    groupDurationMultiplier?: BN;
-    groupDurationMultiplierDecimals?: number;
-    maxRewardSecondsReceived?: BN;
+    maxSupply?: BN;
+    minCooldownSeconds?: number;
+    minStakeSeconds?: number;
+    groupCountMultiplier?: BN;
+    groupCountMultiplierDecimals?: number;
     minGroupSize?: number;
+    maxRewardSecondsReceived?: BN;
   }
 ): Promise<Transaction> =>
   withUpdateGroupRewardDistributor(
@@ -581,9 +601,11 @@ export const updateGroupRewardDistributor = async (
  * Convenience method to claim rewards
  * @param connection - Connection to use
  * @param wallet - Wallet to use
- * @param groupRewardDistributorId - Group reward distributor ID
- * @param groupEntryId - Group entry ID
- * @param stakeEntryIds - Stake entry IDs
+ * @param params
+ * groupRewardDistributorId - Group reward distributor ID
+ * groupEntryId - Group entry ID
+ * rewardDistributorId - Reward distributor ID
+ * stakeEntryIds - Stake entry IDs
  * @returns
  */
 export const claimGroupRewards = async (
@@ -592,6 +614,7 @@ export const claimGroupRewards = async (
   params: {
     groupRewardDistributorId: PublicKey;
     groupEntryId: PublicKey;
+    rewardDistributorId: PublicKey;
     stakeEntryIds: PublicKey[];
   }
 ): Promise<[Transaction]> => {
@@ -614,6 +637,7 @@ export const claimGroupRewards = async (
     await withInitGroupRewardEntry(transaction, connection, wallet, {
       groupRewardDistributorId: params.groupRewardDistributorId,
       groupEntryId: params.groupEntryId,
+      rewardDistributorId: params.rewardDistributorId,
       stakeEntries: stakeEntries.map((stakeEntry) => ({
         stakeEntryId: stakeEntry.pubkey,
         originalMint: stakeEntry.parsed.originalMint,
@@ -633,9 +657,11 @@ export const claimGroupRewards = async (
  * Convenience method to close group stake entry
  * @param connection - Connection to use
  * @param wallet - Wallet to use
- * @param groupRewardDistributorId - Group reward distributor ID
- * @param groupEntryId - Group entry ID
- * @param stakeEntryIds - Stake entry IDs
+ * @param params
+ * groupRewardDistributorId - Group reward distributor ID
+ * groupEntryId - Group entry ID
+ * rewardDistributorId - Reward distributor ID
+ * stakeEntryIds - Stake entry IDs
  * @returns
  */
 export const closeGroupEntry = async (
@@ -644,6 +670,7 @@ export const closeGroupEntry = async (
   params: {
     groupRewardDistributorId: PublicKey;
     groupEntryId: PublicKey;
+    rewardDistributorId: PublicKey;
     stakeEntryIds: PublicKey[];
   }
 ): Promise<[Transaction]> => {

@@ -929,9 +929,17 @@ export type CardinalStakePool = {
             type: "i64";
           },
           {
-            name: "minGroupSeconds";
+            name: "groupCooldownSeconds";
+            type: "u32";
+          },
+          {
+            name: "groupStakeSeconds";
+            type: "u32";
+          },
+          {
+            name: "groupCooldownStartSeconds";
             type: {
-              option: "u128";
+              option: "i64";
             };
           }
         ];
@@ -1177,9 +1185,15 @@ export type CardinalStakePool = {
             type: "publicKey";
           },
           {
-            name: "minGroupSeconds";
+            name: "groupCooldownSeconds";
             type: {
-              option: "u128";
+              option: "u32";
+            };
+          },
+          {
+            name: "groupStakeSeconds";
+            type: {
+              option: "u32";
             };
           }
         ];
@@ -1634,10 +1648,15 @@ export type CardinalStakePool = {
 =======
 =======
       code: 6122;
+<<<<<<< HEAD
 >>>>>>> 7db98b6 (Resize group entries)
       name: "MinGroupDaysNotSatisfied";
       msg: "Minimum group days not satisfied";
 >>>>>>> f135341 (Rebase, update tests)
+=======
+      name: "MinGroupSecondsNotSatisfied";
+      msg: "Minimum group seconds not satisfied";
+>>>>>>> 8267383 (feat(group-staking): reward calculation system modified)
     },
     {
       code: 6123;
@@ -2583,9 +2602,17 @@ export const IDL: CardinalStakePool = {
             type: "i64",
           },
           {
-            name: "minGroupSeconds",
+            name: "groupCooldownSeconds",
+            type: "u32",
+          },
+          {
+            name: "groupStakeSeconds",
+            type: "u32",
+          },
+          {
+            name: "groupCooldownStartSeconds",
             type: {
-              option: "u128",
+              option: "i64",
             },
           },
         ],
@@ -2831,9 +2858,15 @@ export const IDL: CardinalStakePool = {
             type: "publicKey",
           },
           {
-            name: "minGroupSeconds",
+            name: "groupCooldownSeconds",
             type: {
-              option: "u128",
+              option: "u32",
+            },
+          },
+          {
+            name: "groupStakeSeconds",
+            type: {
+              option: "u32",
             },
           },
         ],
@@ -3288,10 +3321,15 @@ export const IDL: CardinalStakePool = {
 =======
 =======
       code: 6122,
+<<<<<<< HEAD
 >>>>>>> 7db98b6 (Resize group entries)
       name: "MinGroupDaysNotSatisfied",
       msg: "Minimum group days not satisfied",
 >>>>>>> f135341 (Rebase, update tests)
+=======
+      name: "MinGroupSecondsNotSatisfied",
+      msg: "Minimum group seconds not satisfied",
+>>>>>>> 8267383 (feat(group-staking): reward calculation system modified)
     },
     {
       code: 6123,

@@ -96,13 +96,18 @@ pub const GROUP_REWARD_DISTRIBUTOR_SIZE: usize = 8 // Anchor discriminator/sigha
  + 8 // reward_amount
  + 16 // reward_duration_seconds
  + 16 // rewards_issued
- + 8 // max_supply
- + 8 // default_multiplier
+ + 8 // base_adder
+ + 1 // base_adder_decimals
+ + 8 // base_multiplier
+ + 1 // base_multiplier_decimals
  + 1 // multiplier_decimals
- + 16 // max_reward_seconds_received
- + 8 // group_days_multiplier
- + 1 // group_days_multiplier_decimals
+ + 4 // min_cooldown_seconds
+ + 4 // min_stake_seconds
+ + 8 // max_supply
+ + 8 // group_count_multiplier
+ + 1 // group_count_multiplier_decimals
  + 1 // min_group_size
+ + 16 // max_reward_seconds_received
  + 256 // padding
 ;
 #[account]
@@ -118,12 +123,14 @@ pub struct GroupRewardDistributor {
     pub reward_amount: u64,
     pub reward_duration_seconds: u128,
     pub rewards_issued: u128,
-    pub max_supply: Option<u64>,
-    pub default_multiplier: u64,
+    pub base_adder: u64,
+    pub base_adder_decimals: u8,
+    pub base_multiplier: u64,
+    pub base_multiplier_decimals: u8,
     pub multiplier_decimals: u8,
-    pub group_duration_multiplier_seconds: u128,
-    pub group_duration_multiplier: u64,
-    pub group_duration_multiplier_decimals: u8,
+    pub min_cooldown_seconds: u32,
+    pub min_stake_seconds: u32,
+    pub max_supply: Option<u64>,
     pub group_count_multiplier: Option<u64>,
     pub group_count_multiplier_decimals: Option<u8>,
     pub min_group_size: Option<u8>,

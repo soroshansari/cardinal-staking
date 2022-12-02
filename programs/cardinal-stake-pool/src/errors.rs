@@ -80,8 +80,8 @@ pub enum ErrorCode {
     GroupedStakeEntry = 120,
     #[msg("Ungrouped stake entry")]
     UngroupedStakeEntry,
-    #[msg("Minimum group days not satisfied")]
-    MinGroupDaysNotSatisfied,
+    #[msg("Minimum group seconds not satisfied")]
+    MinGroupSecondsNotSatisfied,
     #[msg("Active group entry")]
     ActiveGroupEntry,
     #[msg("Stake entry not found in group")]

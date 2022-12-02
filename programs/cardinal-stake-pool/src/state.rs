@@ -38,7 +38,9 @@ pub struct GroupStakeEntry {
     pub authority: Pubkey,
     pub stake_entries: Vec<Pubkey>,
     pub changed_at: i64,
-    pub min_group_seconds: Option<u128>,
+    pub group_cooldown_seconds: u32,
+    pub group_stake_seconds: u32,
+    pub group_cooldown_start_seconds: Option<i64>,
 }
 
 #[account]

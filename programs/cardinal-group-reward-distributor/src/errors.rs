@@ -30,4 +30,10 @@ pub enum ErrorCode {
     InvalidMintMetadata,
     #[msg("Mint metadata is owned by the incorrect program")]
     InvalidMintMetadataOwner,
+    #[msg("Invalid reward entry")]
+    InvalidRewardEntry,
+    #[msg("Invalid group seconds")]
+    InvalidGroupSeconds,
+    #[msg("Invalid cooldown seconds")]
+    InvalidCooldownSeconds,
 }
