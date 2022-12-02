@@ -800,6 +800,12 @@ export type CardinalStakePool = {
             type: {
               option: "i64";
             };
+          },
+          {
+            name: "lockdownStartSeconds";
+            type: {
+              option: "i64";
+            };
           }
         ];
       };
@@ -2171,6 +2177,12 @@ export const IDL: CardinalStakePool = {
           },
           {
             name: "cooldownStartSeconds",
+            type: {
+              option: "i64",
+            },
+          },
+          {
+            name: "lockdownStartSeconds",
             type: {
               option: "i64",
             },

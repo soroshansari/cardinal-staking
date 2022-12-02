@@ -75,5 +75,9 @@ pub fn handler(ctx: Context<StakeCtx>, amount: u64) -> Result<()> {
     stake_entry.amount = stake_entry.amount.checked_add(amount).unwrap();
     stake_pool.total_staked = stake_pool.total_staked.checked_add(1).expect("Add error");
 
+    if stake_pool.min_stake_seconds.is_some() && stake_pool.min_stake_seconds.unwrap() > 0 {
+        stake_entry.lockdown_start_seconds = Some(Clock::get().unwrap().unix_timestamp);
+    }
+
     Ok(())
 }
