@@ -11,7 +11,7 @@ import {
 } from "../src/programs/stakePool";
 import { connectionFor } from "./connection";
 
-const CLUSTER = "mainnet-beta";
+const CLUSTER = "devnet";
 // const MAX_SIZE = 400;
 
 export const getAllStakeEntries = async (connection: Connection) => {
@@ -41,6 +41,7 @@ const checkZeros = async (cluster: string) => {
     `--------- Check zeros ${allStakeEntries.length} stake entries ---------`
   );
   const poolCounts: { [poolId: string]: number } = {};
+  let minPadding = 9999999;
   for (let i = 0; i < allStakeEntries.length; i++) {
     const a = allStakeEntries[i]!;
     try {
@@ -49,6 +50,19 @@ const checkZeros = async (cluster: string) => {
         a.account.data
       );
       const encoded = await coder.encode("stakeEntry", stakeEntryData);
+      if (
+        stakeEntryData.cooldownStartSeconds !== null &&
+        stakeEntryData.stakeMint !== null
+      ) {
+        console.log("--------", a.pubkey.toString());
+      }
+      if (a.account.data.slice(encoded.length).length <= minPadding) {
+        console.log(
+          a.account.data.slice(encoded.length).length,
+          a.pubkey.toString()
+        );
+        minPadding = a.account.data.slice(encoded.length).length;
+      }
       if (a.account.data.slice(encoded.length).some((b) => b !== 0)) {
         const poolId = stakeEntryData.pool.toString();
         const c = poolCounts[poolId] ?? 0;
@@ -63,6 +77,7 @@ const checkZeros = async (cluster: string) => {
       console.log(`[error] ${a.pubkey.toString()}`, e);
     }
   }
+  console.log(minPadding);
   console.log(poolCounts);
 };
 

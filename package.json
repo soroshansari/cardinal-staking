@@ -35,12 +35,10 @@
   "scripts": {
     "build": "rm -fr dist/ && tsc -P tsconfig.cjs.json && tsc -P tsconfig.esm.json",
     "clean": "rm -fr dist/",
-    "idl:generate": "./scripts/generate-idls-types.sh",
-    "typecheck": "tsc",
-    "lint": "eslint . --cache",
-    "lint:ci": "eslint . --max-warnings=0",
-    "test:e2e": "anchor test --skip-build 'tests/**/*.ts'",
+    "idl:generate": "./generate-idls.sh",
     "docs:generate": "typedoc --excludePrivate --includeVersion --out site/ src/index.ts",
+    "typecheck": "tsc",
+    "lint": "eslint 'src/**/*.{js,ts}' --fix",
     "prepare": "husky install"
   },
   "dependencies": {
