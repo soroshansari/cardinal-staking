@@ -1,6 +1,7 @@
 pub mod errors;
 pub mod instructions;
 pub mod state;
+pub mod utils;
 
 use {anchor_lang::prelude::*, instructions::*};
 
@@ -68,6 +69,10 @@ pub mod cardinal_stake_pool {
 
     pub fn stake_entry_fill_zeros(ctx: Context<StakeEntryFillZeros>) -> Result<()> {
         stake_entry_fill_zeros::handler(ctx)
+    }
+
+    pub fn stake_entry_resize(ctx: Context<StakeEntryResize>) -> Result<()> {
+        stake_entry_resize::handler(ctx)
     }
 
     pub fn stake_pool_fill_zeros(ctx: Context<StakePoolFillZeros>) -> Result<()> {
