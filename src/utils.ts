@@ -254,7 +254,7 @@ export const calculatePendingRewards = (
     rewardDistributor.parsed.defaultMultiplier;
 
   let rewardSeconds = (stakeEntry.parsed.cooldownStartSeconds || new BN(UTCNow))
-    .sub(stakeEntry.parsed.lastStakedAt)
+    .sub(stakeEntry.parsed.lastUpdatedAt ?? stakeEntry.parsed.lastStakedAt)
     .mul(stakeEntry.parsed.amount)
     .add(stakeEntry.parsed.totalStakeSeconds);
   if (rewardDistributor.parsed.maxRewardSecondsReceived) {
@@ -287,7 +287,7 @@ export const calculatePendingRewards = (
 
   const nextRewardsIn = rewardDistributor.parsed.rewardDurationSeconds.sub(
     (stakeEntry.parsed.cooldownStartSeconds || new BN(UTCNow))
-      .sub(stakeEntry.parsed.lastStakedAt)
+      .sub(stakeEntry.parsed.lastUpdatedAt ?? stakeEntry.parsed.lastStakedAt)
       .add(stakeEntry.parsed.totalStakeSeconds)
       .mod(rewardDistributor.parsed.rewardDurationSeconds)
   );

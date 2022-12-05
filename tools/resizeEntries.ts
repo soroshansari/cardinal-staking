@@ -28,11 +28,11 @@ import { chunkArray } from "./utils";
 const wallet = Keypair.fromSecretKey(
   utils.bytes.bs58.decode(process.env.WALLET || "")
 );
-const CLUSTER = "devnet";
+const CLUSTER = "mainnet-beta";
 const BATCH_SIZE = 20;
 const PARALLEL_TRANSACTIONS = 100;
 const MAX_RETRIES = 3;
-const DRY_RUN = false;
+const DRY_RUN = true;
 const ALLOWED_ENTRY_IDS: string[] = [];
 
 export const getAllStakeEntries = async (connection: Connection) => {
