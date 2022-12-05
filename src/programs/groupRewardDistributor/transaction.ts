@@ -97,10 +97,10 @@ export const withInitGroupRewardEntry = async (
   params: {
     groupRewardDistributorId: PublicKey;
     groupEntryId: PublicKey;
-    rewardDistributorId: PublicKey;
     stakeEntries: {
       stakeEntryId: PublicKey;
       originalMint: PublicKey;
+      rewardDistributorId: PublicKey;
     }[];
   }
 ): Promise<[Transaction, PublicKey]> => {
@@ -126,18 +126,20 @@ export const withInitGroupRewardEntry = async (
   }
 
   const stakeEntries = await Promise.all(
-    params.stakeEntries.map(async ({ stakeEntryId, originalMint }) => {
-      const [[rewardEntryId], originalMintMetadata] = await Promise.all([
-        findRewardEntryId(params.rewardDistributorId, stakeEntryId),
-        metaplex.Metadata.getPDA(originalMint),
-      ]);
-      return {
-        stakeEntryId,
-        originalMint,
-        originalMintMetadata,
-        rewardEntryId,
-      };
-    })
+    params.stakeEntries.map(
+      async ({ stakeEntryId, originalMint, rewardDistributorId }) => {
+        const [[rewardEntryId], originalMintMetadata] = await Promise.all([
+          findRewardEntryId(rewardDistributorId, stakeEntryId),
+          metaplex.Metadata.getPDA(originalMint),
+        ]);
+        return {
+          stakeEntryId,
+          originalMint,
+          originalMintMetadata,
+          rewardEntryId,
+        };
+      }
+    )
   );
 
   transaction.add(

@@ -484,7 +484,6 @@ describe("Group stake and claim rewards", () => {
       groupRewardDistributorId,
       groupStakeEntryId
     );
-    const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
 
     await expectTXTable(
       new TransactionEnvelope(SolanaProvider.init(provider), [
@@ -493,7 +492,6 @@ describe("Group stake and claim rewards", () => {
             groupRewardDistributorId,
             groupEntryId: groupStakeEntryId,
             stakeEntryIds: [stakeEntryId, stakeEntryId2],
-            rewardDistributorId: rewardDistributorId,
           })
         )[0].instructions,
       ]),
@@ -543,7 +541,6 @@ describe("Group stake and claim rewards", () => {
       stakePoolId,
       originalMint2.publicKey
     );
-    const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
 
     const [transaction] = await closeGroupEntry(
       provider.connection,
@@ -552,7 +549,6 @@ describe("Group stake and claim rewards", () => {
         groupEntryId: groupStakeEntryId,
         groupRewardDistributorId,
         stakeEntryIds: [stakeEntryId, stakeEntryId2],
-        rewardDistributorId,
       }
     );
 

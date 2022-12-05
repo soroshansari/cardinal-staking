@@ -604,7 +604,6 @@ export const updateGroupRewardDistributor = async (
  * @param params
  * groupRewardDistributorId - Group reward distributor ID
  * groupEntryId - Group entry ID
- * rewardDistributorId - Reward distributor ID
  * stakeEntryIds - Stake entry IDs
  * @returns
  */
@@ -614,7 +613,6 @@ export const claimGroupRewards = async (
   params: {
     groupRewardDistributorId: PublicKey;
     groupEntryId: PublicKey;
-    rewardDistributorId: PublicKey;
     stakeEntryIds: PublicKey[];
   }
 ): Promise<[Transaction]> => {
@@ -629,19 +627,28 @@ export const claimGroupRewards = async (
     getGroupRewardEntry(connection, groupRewardEntryId)
   );
   if (!groupRewardEntry) {
-    const stakeEntries = await getStakeEntries(
+    const stakeEntriesData = await getStakeEntries(
       connection,
       params.stakeEntryIds
+    );
+
+    const stakeEntries = await Promise.all(
+      stakeEntriesData.map(async (stakeEntry) => {
+        const [rewardDistributorId] = await findRewardDistributorId(
+          stakeEntry.parsed.pool
+        );
+        return {
+          stakeEntryId: stakeEntry.pubkey,
+          originalMint: stakeEntry.parsed.originalMint,
+          rewardDistributorId,
+        };
+      })
     );
 
     await withInitGroupRewardEntry(transaction, connection, wallet, {
       groupRewardDistributorId: params.groupRewardDistributorId,
       groupEntryId: params.groupEntryId,
-      rewardDistributorId: params.rewardDistributorId,
-      stakeEntries: stakeEntries.map((stakeEntry) => ({
-        stakeEntryId: stakeEntry.pubkey,
-        originalMint: stakeEntry.parsed.originalMint,
-      })),
+      stakeEntries,
     });
   }
 
@@ -660,7 +667,6 @@ export const claimGroupRewards = async (
  * @param params
  * groupRewardDistributorId - Group reward distributor ID
  * groupEntryId - Group entry ID
- * rewardDistributorId - Reward distributor ID
  * stakeEntryIds - Stake entry IDs
  * @returns
  */
@@ -670,7 +676,6 @@ export const closeGroupEntry = async (
   params: {
     groupRewardDistributorId: PublicKey;
     groupEntryId: PublicKey;
-    rewardDistributorId: PublicKey;
     stakeEntryIds: PublicKey[];
   }
 ): Promise<[Transaction]> => {
