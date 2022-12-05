@@ -11,7 +11,7 @@ import {
 } from "../src/programs/stakePool";
 import { connectionFor } from "./connection";
 
-const CLUSTER = "devnet";
+const CLUSTER = "mainnet-beta";
 // const MAX_SIZE = 400;
 
 export const getAllStakeEntries = async (connection: Connection) => {

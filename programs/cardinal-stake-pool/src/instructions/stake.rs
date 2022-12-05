@@ -48,7 +48,7 @@ pub fn handler(ctx: Context<StakeCtx>, amount: u64) -> Result<()> {
         stake_entry.total_stake_seconds = stake_entry.total_stake_seconds.saturating_add(
             (u128::try_from(stake_entry.cooldown_start_seconds.unwrap_or(Clock::get().unwrap().unix_timestamp))
                 .unwrap()
-                .saturating_sub(u128::try_from(stake_entry.last_staked_at).unwrap()))
+                .saturating_sub(u128::try_from(stake_entry.last_updated_at.unwrap_or(stake_entry.last_staked_at)).unwrap()))
             .checked_mul(u128::try_from(stake_entry.amount).unwrap())
             .unwrap(),
         );
@@ -71,6 +71,7 @@ pub fn handler(ctx: Context<StakeCtx>, amount: u64) -> Result<()> {
 
     // update stake entry
     stake_entry.last_staked_at = Clock::get().unwrap().unix_timestamp;
+    stake_entry.last_updated_at = Some(Clock::get().unwrap().unix_timestamp);
     stake_entry.last_staker = ctx.accounts.user.key();
     stake_entry.amount = stake_entry.amount.checked_add(amount).unwrap();
     stake_pool.total_staked = stake_pool.total_staked.checked_add(1).expect("Add error");

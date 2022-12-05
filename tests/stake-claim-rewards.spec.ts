@@ -261,11 +261,16 @@ describe("Stake and claim rewards", () => {
       provider.connection,
       stakeEntryId
     );
+    expect(newStakeEntryData.parsed.lastUpdatedAt).to.not.eq(null);
+    expect(oldStakeEntryData.parsed.lastUpdatedAt).to.not.eq(null);
+    expect(newStakeEntryData.parsed.lastUpdatedAt?.toNumber()).to.gt(
+      oldStakeEntryData.parsed.lastUpdatedAt?.toNumber() ?? 0
+    );
     expect(newStakeEntryData.parsed.lastStaker.toString()).to.eq(
       provider.wallet.publicKey.toString()
     );
-    expect(newStakeEntryData.parsed.lastStakedAt.toNumber()).to.gt(
-      oldStakeEntryData.parsed.lastStakedAt.toNumber()
+    expect(newStakeEntryData.parsed.lastStaker.toString()).to.eq(
+      provider.wallet.publicKey.toString()
     );
     expect(newStakeEntryData.parsed.totalStakeSeconds.toNumber()).to.gt(
       oldStakeEntryData.parsed.totalStakeSeconds.toNumber()

@@ -230,8 +230,10 @@ describe("Stake booster boost", () => {
       provider.connection,
       stakeEntryId
     );
-    expect(stakeEntryData.parsed.lastStakedAt.toNumber()).to.gt(
-      oldStakeEntryData.parsed.lastStakedAt.toNumber()
+    expect(stakeEntryData.parsed.lastUpdatedAt).to.not.eq(null);
+    expect(oldStakeEntryData.parsed.lastUpdatedAt).to.not.eq(null);
+    expect(stakeEntryData.parsed.lastUpdatedAt?.toNumber()).to.gt(
+      oldStakeEntryData.parsed.lastUpdatedAt?.toNumber() ?? 0
     );
     expect(stakeEntryData.parsed.lastStaker.toString()).to.eq(
       provider.wallet.publicKey.toString()
