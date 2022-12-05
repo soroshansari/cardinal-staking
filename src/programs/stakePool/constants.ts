@@ -1,6 +1,5 @@
-import { Program } from "@project-serum/anchor";
+import { AnchorProvider, Program } from "@project-serum/anchor";
 import type { Wallet } from "@project-serum/anchor/dist/cjs/provider";
-import { AnchorProvider } from "@project-serum/anchor/dist/cjs/provider";
 import type { AnchorTypes } from "@saberhq/anchor-contrib";
 import type { ConfirmOptions, Connection } from "@solana/web3.js";
 import { PublicKey } from "@solana/web3.js";
