@@ -93,7 +93,7 @@ Reset_on_stake, cooldown_period and min_stake_seconds are three additional funct
 - min_stake_seconds.
   - Number of seconds a mint has to stay in the pool once staked before being able to be unstaked.
 
-**Stake Entry**
+## Stake Entry
 
 Stake pools are a collection of stake entries. Each stake entry stores information related to a specific NFT and how long it has been staked.
 
@@ -122,7 +122,7 @@ pub struct StakeEntry {
 }
 ```
 
-**Stake Receipts**
+## Stake Receipts
 
 Stake pool is designed to support general staking as well as a enable the concept of stake receipts.
 
@@ -142,7 +142,7 @@ Stake pool is designed to support general staking as well as a enable the concep
   - The current staker can unstake at any time which increments the stake timer for that mint.
   - Any unstaking requires returning the receipt before the unstake instruction can be called. This can be done via the Cardinal Token Manager with 'InvalidationType::Return'. Similar to how returning locked tokens works, this will is handled automatically by the client unstake api.
 
-**Reward Distributors**
+## Reward Distributors
 
 While just using the `stake_pool` can be sufficient to keep track of total stake duration and lock the NFT in the user's wallet, a reward distributor can be optionally added to distribute rewards to staked NFTs.
 
@@ -193,7 +193,7 @@ In both kinds of reward distributors, if the `max_supply` is hit, or the treasur
 
 Because reward distributor is modeled separately from the stake_pool, a user can optionally claim their rewards at any time for the amount of time they have staked. Typically, this is done automatically when calling `unstake` by the client.
 
-**Reward Distributor Multipliers**
+## Reward Distributor Multipliers
 
 Multipliers is a feature that can set a given token (via its reward_entry) to receive more rewards than the others. A reward distributor has two fields one for the `default_multiplier`, defaults to `1`, and another for the `multiplier_decimals`, defaults to `0`. Every time a reward entry is initialized, its multiplier gets set to the `default_multiplier` of its reward distributor. Only the authority of the pool can change the multiplier by calling `update_reward_entry` instruction. In the calculation of the claimable rewards for an entry, the `multiplier` is divided by ten to the power of the distributor's `multiplier_decimals`, achieving the outcome of decimal multipliers.
 
