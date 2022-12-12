@@ -54,6 +54,7 @@ pub struct StakePool {
     pub cooldown_seconds: Option<u32>,
     pub min_stake_seconds: Option<u32>,
     pub end_date: Option<i64>,
+    pub double_or_reset_enabled: Option<bool>,
 }
 
 pub fn assert_stake_boost_payment_manager(pubkey: &Pubkey) -> Result<()> {

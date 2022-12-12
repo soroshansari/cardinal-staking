@@ -576,7 +576,7 @@ export type CardinalStakePool = {
       args: [];
     },
     {
-      name: "reasssignStakeEntry";
+      name: "reassignStakeEntry";
       accounts: [
         {
           name: "stakePool";
@@ -602,6 +602,32 @@ export type CardinalStakePool = {
           };
         }
       ];
+    },
+    {
+      name: "doubleOrResetTotalStakeSeconds";
+      accounts: [
+        {
+          name: "stakeEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "stakePool";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "lastStaker";
+          isMut: false;
+          isSigner: true;
+        },
+        {
+          name: "recentSlothashes";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [];
     },
     {
       name: "initStakeBooster";
@@ -897,6 +923,12 @@ export type CardinalStakePool = {
             type: {
               option: "i64";
             };
+          },
+          {
+            name: "doubleOrResetEnabled";
+            type: {
+              option: "bool";
+            };
           }
         ];
       };
@@ -1036,6 +1068,12 @@ export type CardinalStakePool = {
             name: "endDate";
             type: {
               option: "i64";
+            };
+          },
+          {
+            name: "doubleOrResetEnabled";
+            type: {
+              option: "bool";
             };
           }
         ];
@@ -1200,6 +1238,12 @@ export type CardinalStakePool = {
             name: "endDate";
             type: {
               option: "i64";
+            };
+          },
+          {
+            name: "doubleOrResetEnabled";
+            type: {
+              option: "bool";
             };
           }
         ];
@@ -1977,7 +2021,7 @@ export const IDL: CardinalStakePool = {
       args: [],
     },
     {
-      name: "reasssignStakeEntry",
+      name: "reassignStakeEntry",
       accounts: [
         {
           name: "stakePool",
@@ -2003,6 +2047,32 @@ export const IDL: CardinalStakePool = {
           },
         },
       ],
+    },
+    {
+      name: "doubleOrResetTotalStakeSeconds",
+      accounts: [
+        {
+          name: "stakeEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "stakePool",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "lastStaker",
+          isMut: false,
+          isSigner: true,
+        },
+        {
+          name: "recentSlothashes",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
     },
     {
       name: "initStakeBooster",
@@ -2299,6 +2369,12 @@ export const IDL: CardinalStakePool = {
               option: "i64",
             },
           },
+          {
+            name: "doubleOrResetEnabled",
+            type: {
+              option: "bool",
+            },
+          },
         ],
       },
     },
@@ -2437,6 +2513,12 @@ export const IDL: CardinalStakePool = {
             name: "endDate",
             type: {
               option: "i64",
+            },
+          },
+          {
+            name: "doubleOrResetEnabled",
+            type: {
+              option: "bool",
             },
           },
         ],
@@ -2601,6 +2683,12 @@ export const IDL: CardinalStakePool = {
             name: "endDate",
             type: {
               option: "i64",
+            },
+          },
+          {
+            name: "doubleOrResetEnabled",
+            type: {
+              option: "bool",
             },
           },
         ],

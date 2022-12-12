@@ -455,6 +455,7 @@ version = "1.11.0"
 dependencies = [
  "anchor-lang",
  "anchor-spl",
+ "arrayref",
  "cardinal-payment-manager",
  "cardinal-token-manager",
  "mpl-token-metadata",

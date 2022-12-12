@@ -79,8 +79,12 @@ pub mod cardinal_stake_pool {
         stake_pool_fill_zeros::handler(ctx)
     }
 
-    pub fn reasssign_stake_entry(ctx: Context<ReassignStakeEntryCtx>, ix: ReassignStakeEntryIx) -> Result<()> {
+    pub fn reassign_stake_entry(ctx: Context<ReassignStakeEntryCtx>, ix: ReassignStakeEntryIx) -> Result<()> {
         reassign_stake_entry::handler(ctx, ix)
+    }
+
+    pub fn double_or_reset_total_stake_seconds(ctx: Context<DoubleOrResetTotalStakeSecondsCtx>) -> Result<()> {
+        double_or_reset_total_stake_seconds::handler(ctx)
     }
 
     //// stake_booster ////

@@ -24,7 +24,11 @@ import type {
   PublicKey,
   TransactionInstruction,
 } from "@solana/web3.js";
-import { SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
+import {
+  SystemProgram,
+  SYSVAR_RENT_PUBKEY,
+  SYSVAR_SLOT_HASHES_PUBKEY,
+} from "@solana/web3.js";
 
 import type { STAKE_POOL_PROGRAM } from ".";
 import { STAKE_POOL_ADDRESS, STAKE_POOL_IDL } from ".";
@@ -70,6 +74,7 @@ export const initStakePool = (
     cooldownSeconds?: number;
     minStakeSeconds?: number;
     endDate?: BN;
+    doubleOrResetEnabled?: boolean;
   }
 ): TransactionInstruction => {
   const provider = new AnchorProvider(connection, wallet, {});
@@ -90,6 +95,7 @@ export const initStakePool = (
       cooldownSeconds: params.cooldownSeconds ?? null,
       minStakeSeconds: params.minStakeSeconds ?? null,
       endDate: params.endDate ?? null,
+      doubleOrResetEnabled: params.doubleOrResetEnabled ?? false,
     },
     {
       accounts: {
@@ -381,6 +387,7 @@ export const updateStakePool = (
     cooldownSeconds?: number;
     minStakeSeconds?: number;
     endDate?: BN;
+    doubleOrResetEnabled?: boolean;
   }
 ): TransactionInstruction => {
   const provider = new AnchorProvider(connection, wallet, {});
@@ -401,6 +408,7 @@ export const updateStakePool = (
       cooldownSeconds: params.cooldownSeconds ?? null,
       minStakeSeconds: params.minStakeSeconds ?? null,
       endDate: params.endDate ?? null,
+      doubleOrResetEnabled: params.doubleOrResetEnabled ?? false,
     },
     {
       accounts: {
@@ -554,7 +562,7 @@ export const reassignStakeEntry = (
     STAKE_POOL_ADDRESS,
     provider
   );
-  return stakePoolProgram.instruction.reasssignStakeEntry(
+  return stakePoolProgram.instruction.reassignStakeEntry(
     {
       target: params.target,
     },
@@ -566,6 +574,30 @@ export const reassignStakeEntry = (
       },
     }
   );
+};
+
+export const doubleOrResetTotalStakeSeconds = (
+  connection: Connection,
+  wallet: Wallet,
+  params: {
+    stakePoolId: PublicKey;
+    stakeEntryId: PublicKey;
+  }
+) => {
+  const provider = new AnchorProvider(connection, wallet, {});
+  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
+    STAKE_POOL_IDL,
+    STAKE_POOL_ADDRESS,
+    provider
+  );
+  return stakePoolProgram.instruction.doubleOrResetTotalStakeSeconds({
+    accounts: {
+      stakePool: params.stakePoolId,
+      stakeEntry: params.stakeEntryId,
+      lastStaker: provider.wallet.publicKey,
+      recentSlothashes: SYSVAR_SLOT_HASHES_PUBKEY,
+    },
+  });
 };
 
 export const initStakeBooster = async (

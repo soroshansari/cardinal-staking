@@ -54,6 +54,7 @@ export const createStakePool = async (
     cooldownSeconds?: number;
     minStakeSeconds?: number;
     endDate?: BN;
+    doubleOrResetEnabled?: boolean;
     rewardDistributor?: {
       rewardMintId: PublicKey;
       rewardAmount?: BN;

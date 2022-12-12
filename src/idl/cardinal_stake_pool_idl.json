@@ -576,7 +576,7 @@
       "args": []
     },
     {
-      "name": "reasssignStakeEntry",
+      "name": "reassignStakeEntry",
       "accounts": [
         {
           "name": "stakePool",
@@ -602,6 +602,32 @@
           }
         }
       ]
+    },
+    {
+      "name": "doubleOrResetTotalStakeSeconds",
+      "accounts": [
+        {
+          "name": "stakeEntry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "stakePool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "lastStaker",
+          "isMut": false,
+          "isSigner": true
+        },
+        {
+          "name": "recentSlothashes",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     },
     {
       "name": "initStakeBooster",
@@ -897,6 +923,12 @@
             "type": {
               "option": "i64"
             }
+          },
+          {
+            "name": "doubleOrResetEnabled",
+            "type": {
+              "option": "bool"
+            }
           }
         ]
       }
@@ -1036,6 +1068,12 @@
             "name": "endDate",
             "type": {
               "option": "i64"
+            }
+          },
+          {
+            "name": "doubleOrResetEnabled",
+            "type": {
+              "option": "bool"
             }
           }
         ]
@@ -1200,6 +1238,12 @@
             "name": "endDate",
             "type": {
               "option": "i64"
+            }
+          },
+          {
+            "name": "doubleOrResetEnabled",
+            "type": {
+              "option": "bool"
             }
           }
         ]

@@ -35,6 +35,7 @@ import {
   closeStakeEntry,
   closeStakePool,
   deauthorizeStakeEntry,
+  doubleOrResetTotalStakeSeconds,
   initPoolIdentifier,
   initStakeBooster,
   initStakeEntry,
@@ -89,6 +90,7 @@ export const withInitStakePool = async (
     cooldownSeconds?: number;
     minStakeSeconds?: number;
     endDate?: BN;
+    doubleOrResetEnabled?: boolean;
   }
 ): Promise<[web3.Transaction, web3.PublicKey]> => {
   const [identifierId] = await findIdentifierId();
@@ -120,6 +122,7 @@ export const withInitStakePool = async (
       cooldownSeconds: params.cooldownSeconds,
       minStakeSeconds: params.minStakeSeconds,
       endDate: params.endDate,
+      doubleOrResetEnabled: params.doubleOrResetEnabled,
     })
   );
   return [transaction, stakePoolId];
@@ -495,6 +498,7 @@ export const withUpdateStakePool = (
     cooldownSeconds?: number;
     minStakeSeconds?: number;
     endDate?: BN;
+    doubleOrResetEnabled?: boolean;
   }
 ): [web3.Transaction, web3.PublicKey] => {
   transaction.add(
@@ -510,6 +514,7 @@ export const withUpdateStakePool = (
       cooldownSeconds: params.cooldownSeconds,
       minStakeSeconds: params.minStakeSeconds,
       endDate: params.endDate,
+      doubleOrResetEnabled: params.doubleOrResetEnabled,
     })
   );
   return [transaction, params.stakePoolId];
@@ -643,6 +648,24 @@ export const withReassignStakeEntry = (
       stakePoolId: params.stakePoolId,
       stakeEntryId: params.stakeEntryId,
       target: params.target,
+    })
+  );
+  return transaction;
+};
+
+export const withDoubleOrResetTotalStakeSeconds = (
+  transaction: web3.Transaction,
+  connection: web3.Connection,
+  wallet: Wallet,
+  params: {
+    stakePoolId: web3.PublicKey;
+    stakeEntryId: web3.PublicKey;
+  }
+): web3.Transaction => {
+  transaction.add(
+    doubleOrResetTotalStakeSeconds(connection, wallet, {
+      stakePoolId: params.stakePoolId,
+      stakeEntryId: params.stakeEntryId,
     })
   );
   return transaction;
