@@ -788,9 +788,159 @@
         }
       ],
       "args": []
+    },
+    {
+      "name": "initGroupEntry",
+      "accounts": [
+        {
+          "name": "groupEntry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "ix",
+          "type": {
+            "defined": "InitGroupEntryIx"
+          }
+        }
+      ]
+    },
+    {
+      "name": "addToGroupEntry",
+      "accounts": [
+        {
+          "name": "groupEntry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "stakeEntry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "removeFromGroupEntry",
+      "accounts": [
+        {
+          "name": "groupEntry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "stakeEntry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "closeGroupEntry",
+      "accounts": [
+        {
+          "name": "groupEntry",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
+    {
+      "name": "GroupStakeEntry",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "groupId",
+            "type": "publicKey"
+          },
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "stakeEntries",
+            "type": {
+              "vec": "publicKey"
+            }
+          },
+          {
+            "name": "changedAt",
+            "type": "i64"
+          },
+          {
+            "name": "groupCooldownSeconds",
+            "type": "u32"
+          },
+          {
+            "name": "groupStakeSeconds",
+            "type": "u32"
+          },
+          {
+            "name": "groupCooldownStartSeconds",
+            "type": {
+              "option": "i64"
+            }
+          }
+        ]
+      }
+    },
     {
       "name": "StakeEntry",
       "type": {
@@ -852,6 +1002,12 @@
             "name": "lastUpdatedAt",
             "type": {
               "option": "i64"
+            }
+          },
+          {
+            "name": "grouped",
+            "type": {
+              "option": "bool"
             }
           }
         ]
@@ -1015,6 +1171,30 @@
     }
   ],
   "types": [
+    {
+      "name": "InitGroupEntryIx",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "groupId",
+            "type": "publicKey"
+          },
+          {
+            "name": "groupCooldownSeconds",
+            "type": {
+              "option": "u32"
+            }
+          },
+          {
+            "name": "groupStakeSeconds",
+            "type": {
+              "option": "u32"
+            }
+          }
+        ]
+      }
+    },
     {
       "name": "InitPoolIx",
       "type": {
@@ -1411,34 +1591,59 @@
       "msg": "Cannot update unstaked entry"
     },
     {
-      "code": 6029,
+      "code": 6100,
       "name": "CannotBoostUnstakedToken",
       "msg": "Cannot boost unstaked token"
     },
     {
-      "code": 6030,
+      "code": 6101,
       "name": "CannotBoostMoreThanCurrentTime",
       "msg": "Cannot boost past current time less than start time"
     },
     {
-      "code": 6031,
+      "code": 6102,
       "name": "InvalidBoostPayerTokenAccount",
       "msg": "Invalid boost payer token account"
     },
     {
-      "code": 6032,
+      "code": 6103,
       "name": "InvalidBoostPaymentRecipientTokenAccount",
       "msg": "Invalid boost payment recipient token account"
     },
     {
-      "code": 6033,
+      "code": 6104,
       "name": "InvalidPaymentManager",
       "msg": "Invalid payment manager"
     },
     {
-      "code": 6034,
+      "code": 6105,
       "name": "CannotBoostFungibleToken",
       "msg": "Cannot boost a fungible token stake entry"
+    },
+    {
+      "code": 6120,
+      "name": "GroupedStakeEntry",
+      "msg": "Grouped stake entry"
+    },
+    {
+      "code": 6121,
+      "name": "UngroupedStakeEntry",
+      "msg": "Ungrouped stake entry"
+    },
+    {
+      "code": 6122,
+      "name": "MinGroupSecondsNotSatisfied",
+      "msg": "Minimum group seconds not satisfied"
+    },
+    {
+      "code": 6123,
+      "name": "ActiveGroupEntry",
+      "msg": "Active group entry"
+    },
+    {
+      "code": 6124,
+      "name": "StakeEntryNotFoundInGroup",
+      "msg": "Stake entry not found in group"
     }
   ]
 }

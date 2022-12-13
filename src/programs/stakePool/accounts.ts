@@ -12,12 +12,18 @@ import { Keypair, PublicKey } from "@solana/web3.js";
 import type { STAKE_POOL_PROGRAM, StakePoolData } from ".";
 import { STAKE_POOL_ADDRESS, STAKE_POOL_IDL } from ".";
 import type {
+  GroupStakeEntryData,
   IdentifierData,
   StakeAuthorizationData,
   StakeBoosterData,
   StakeEntryData,
 } from "./constants";
-import { AUTHORITY_OFFSET, POOL_OFFSET, STAKER_OFFSET } from "./constants";
+import {
+  AUTHORITY_OFFSET,
+  GROUP_STAKER_OFFSET,
+  POOL_OFFSET,
+  STAKER_OFFSET,
+} from "./constants";
 import { findIdentifierId } from "./pda";
 
 const getProgram = (connection: Connection) => {
@@ -482,4 +488,122 @@ export const getStakeBooster = async (
     parsed,
     pubkey: stakeBoosterId,
   };
+};
+
+export const getGroupStakeEntriesForUser = async (
+  connection: Connection,
+  user: PublicKey
+): Promise<AccountData<GroupStakeEntryData>[]> => {
+  const programAccounts = await connection.getProgramAccounts(
+    STAKE_POOL_ADDRESS,
+    {
+      filters: [
+        {
+          memcmp: {
+            offset: 0,
+            bytes: utils.bytes.bs58.encode(
+              BorshAccountsCoder.accountDiscriminator("groupStakeEntry")
+            ),
+          },
+        },
+        { memcmp: { offset: GROUP_STAKER_OFFSET, bytes: user.toBase58() } },
+      ],
+    }
+  );
+
+  const groupStakeEntryDatas: AccountData<GroupStakeEntryData>[] = [];
+  const coder = new BorshAccountsCoder(STAKE_POOL_IDL);
+  programAccounts.forEach((account) => {
+    try {
+      const groupStakeEntryData: GroupStakeEntryData = coder.decode(
+        "groupStakeEntry",
+        account.account.data
+      );
+      if (groupStakeEntryData) {
+        groupStakeEntryDatas.push({
+          ...account,
+          parsed: groupStakeEntryData,
+        });
+      }
+    } catch (e) {
+      console.log(`Failed to decode token manager data`);
+    }
+  });
+
+  return groupStakeEntryDatas.sort((a, b) =>
+    a.pubkey.toBase58().localeCompare(b.pubkey.toBase58())
+  );
+};
+
+export const getAllGroupStakeEntries = async (
+  connection: Connection
+): Promise<AccountData<GroupStakeEntryData>[]> => {
+  const programAccounts = await connection.getProgramAccounts(
+    STAKE_POOL_ADDRESS,
+    {
+      filters: [
+        {
+          memcmp: {
+            offset: 0,
+            bytes: utils.bytes.bs58.encode(
+              BorshAccountsCoder.accountDiscriminator("groupStakeEntry")
+            ),
+          },
+        },
+      ],
+    }
+  );
+  const groupStakeEntryDatas: AccountData<GroupStakeEntryData>[] = [];
+  const coder = new BorshAccountsCoder(STAKE_POOL_IDL);
+  programAccounts.forEach((account) => {
+    try {
+      const groupStakeEntryData: GroupStakeEntryData = coder.decode(
+        "groupStakeEntry",
+        account.account.data
+      );
+      if (groupStakeEntryData) {
+        groupStakeEntryDatas.push({
+          ...account,
+          parsed: groupStakeEntryData,
+        });
+      }
+    } catch (e) {
+      console.log(`Failed to decode group stake entry data`);
+    }
+  });
+
+  return groupStakeEntryDatas.sort((a, b) =>
+    a.pubkey.toBase58().localeCompare(b.pubkey.toBase58())
+  );
+};
+
+export const getGroupStakeEntry = async (
+  connection: Connection,
+  groupStakeEntryId: PublicKey
+): Promise<AccountData<GroupStakeEntryData>> => {
+  const stakePoolProgram = getProgram(connection);
+
+  const parsed = await stakePoolProgram.account.groupStakeEntry.fetch(
+    groupStakeEntryId
+  );
+  return {
+    parsed,
+    pubkey: groupStakeEntryId,
+  };
+};
+
+export const getGroupStakeEntries = async (
+  connection: Connection,
+  groupStakeEntryIds: PublicKey[]
+): Promise<AccountData<GroupStakeEntryData>[]> => {
+  const stakePoolProgram = getProgram(connection);
+
+  const groupStakeEntries =
+    (await stakePoolProgram.account.groupStakeEntry.fetchMultiple(
+      groupStakeEntryIds
+    )) as StakePoolData[];
+  return groupStakeEntries.map((tm, i) => ({
+    parsed: tm,
+    pubkey: groupStakeEntryIds[i]!,
+  }));
 };

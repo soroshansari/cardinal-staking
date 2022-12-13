@@ -28,20 +28,24 @@ import {
 } from "./accounts";
 import { ReceiptType } from "./constants";
 import {
+  addToGroupEntry,
   authorizeStakeEntry,
   boostStakeEntry,
   claimReceiptMint,
+  closeGroupEntry,
   closeStakeBooster,
   closeStakeEntry,
   closeStakePool,
   deauthorizeStakeEntry,
   doubleOrResetTotalStakeSeconds,
+  initGroupStakeEntry,
   initPoolIdentifier,
   initStakeBooster,
   initStakeEntry,
   initStakeMint,
   initStakePool,
   reassignStakeEntry,
+  removeFromGroupEntry,
   returnReceiptMint,
   stake,
   unstake,
@@ -780,4 +784,105 @@ export const withBoostStakeEntry = async (
     })
   );
   return transaction;
+};
+
+/**
+ * Add init group stake entry instructions to a transaction
+ * @param transaction
+ * @param connection
+ * @param wallet
+ * @param params
+ * @returns Transaction, public key for the created group stake entry
+ */
+export const withInitGroupStakeEntry = async (
+  transaction: web3.Transaction,
+  connection: web3.Connection,
+  wallet: Wallet,
+  params: {
+    groupCooldownSeconds?: number;
+    groupStakeSeconds?: number;
+  }
+): Promise<[web3.Transaction, web3.PublicKey]> => {
+  const [tx, groupEntryId] = await initGroupStakeEntry(connection, wallet, {
+    groupCooldownSeconds: params.groupCooldownSeconds,
+    groupStakeSeconds: params.groupStakeSeconds,
+  });
+  transaction.add(tx);
+  return [transaction, groupEntryId];
+};
+
+/**
+ * Add a stake entry to the group entry instructions to a transaction
+ * @param transaction
+ * @param connection
+ * @param wallet
+ * @param params
+ * @returns Transaction, public key for the created group stake entry
+ */
+export const withAddToGroupEntry = async (
+  transaction: web3.Transaction,
+  connection: web3.Connection,
+  wallet: Wallet,
+  params: {
+    groupEntryId: web3.PublicKey;
+    stakeEntryId: web3.PublicKey;
+  }
+): Promise<[web3.Transaction]> => {
+  transaction.add(
+    await addToGroupEntry(connection, wallet, {
+      groupEntry: params.groupEntryId,
+      stakeEntry: params.stakeEntryId,
+    })
+  );
+  return [transaction];
+};
+
+/**
+ * Remove stake entry from the group entry instructions to a transaction
+ * @param transaction
+ * @param connection
+ * @param wallet
+ * @param params
+ * @returns Transaction, public key for the created group stake entry
+ */
+export const withRemoveFromGroupEntry = async (
+  transaction: web3.Transaction,
+  connection: web3.Connection,
+  wallet: Wallet,
+  params: {
+    groupEntryId: web3.PublicKey;
+    stakeEntryId: web3.PublicKey;
+  }
+): Promise<[web3.Transaction]> => {
+  transaction.add(
+    await removeFromGroupEntry(connection, wallet, {
+      groupEntry: params.groupEntryId,
+      stakeEntry: params.stakeEntryId,
+    })
+  );
+  return [transaction];
+};
+
+/**
+ * Add close group stake entry instructions to a transaction
+ * @param transaction
+ * @param connection
+ * @param wallet
+ * @param params
+ * @returns Transaction, public key for the created group stake entry
+ */
+export const withCloseGroupEntry = async (
+  transaction: web3.Transaction,
+  connection: web3.Connection,
+  wallet: Wallet,
+  params: {
+    groupEntryId: web3.PublicKey;
+  }
+): Promise<[web3.Transaction]> => {
+  transaction.add(
+    await closeGroupEntry(connection, wallet, {
+      groupEntry: params.groupEntryId,
+    })
+  );
+  return [transaction];
 };

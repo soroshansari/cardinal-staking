@@ -3,6 +3,7 @@ import * as web3 from "@solana/web3.js";
 
 import { STAKE_ENTRY_SEED, STAKE_POOL_ADDRESS, STAKE_POOL_SEED } from ".";
 import {
+  GROUP_ENTRY_SEED,
   IDENTIFIER_SEED,
   STAKE_AUTHORIZATION_SEED,
   STAKE_BOOSTER_SEED,
@@ -88,6 +89,19 @@ export const findStakeBoosterId = async (
       stakePoolId.toBuffer(),
       (identifier ?? new BN(0)).toArrayLike(Buffer, "le", 8),
     ],
+    STAKE_POOL_ADDRESS
+  );
+};
+
+/**
+ * Convenience method to find the stake entry id.
+ * @returns
+ */
+export const findGroupEntryId = async (
+  id: web3.PublicKey
+): Promise<[web3.PublicKey, number]> => {
+  return web3.PublicKey.findProgramAddress(
+    [utils.bytes.utf8.encode(GROUP_ENTRY_SEED), id.toBuffer()],
     STAKE_POOL_ADDRESS
   );
 };

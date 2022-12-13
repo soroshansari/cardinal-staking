@@ -14,6 +14,8 @@ export const STAKE_POOL_SEED = "stake-pool";
 
 export const STAKE_ENTRY_SEED = "stake-entry";
 
+export const GROUP_ENTRY_SEED = "group-entry";
+
 export const IDENTIFIER_SEED = "identifier";
 
 export const STAKE_AUTHORIZATION_SEED = "stake-authorization";
@@ -22,6 +24,7 @@ export const STAKE_BOOSTER_SEED = "stake-booster";
 
 export const AUTHORITY_OFFSET = 25;
 export const STAKER_OFFSET = 82;
+export const GROUP_STAKER_OFFSET = 8 + 1 + 32;
 export const POOL_OFFSET = 9;
 
 export type STAKE_POOL_PROGRAM = STAKE_POOL_TYPES.CardinalStakePool;
@@ -33,6 +36,7 @@ export type StakePoolTypes = AnchorTypes<STAKE_POOL_PROGRAM>;
 type Accounts = StakePoolTypes["Accounts"];
 export type StakePoolData = Accounts["stakePool"];
 export type StakeEntryData = Accounts["stakeEntry"];
+export type GroupStakeEntryData = Accounts["groupStakeEntry"];
 export type IdentifierData = Accounts["identifier"];
 export type StakeAuthorizationData = Accounts["stakeAuthorizationRecord"];
 export type StakeBoosterData = Accounts["stakeBooster"];
