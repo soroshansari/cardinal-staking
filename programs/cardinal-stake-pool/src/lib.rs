@@ -87,22 +87,6 @@ pub mod cardinal_stake_pool {
         double_or_reset_total_stake_seconds::handler(ctx)
     }
 
-    pub fn init_group_entry(ctx: Context<InitGroupEntryCtx>, ix: InitGroupEntryIx) -> Result<()> {
-        init_group_entry::handler(ctx, ix)
-    }
-
-    pub fn add_to_group_entry(ctx: Context<AddToGroupEntryCtx>) -> Result<()> {
-        add_to_group_entry::handler(ctx)
-    }
-
-    pub fn remove_from_group_entry(ctx: Context<RemoveFromGroupEntryCtx>) -> Result<()> {
-        remove_from_group_entry::handler(ctx)
-    }
-
-    pub fn close_group_entry(ctx: Context<CloseGroupEntryCtx>) -> Result<()> {
-        close_group_entry::handler(ctx)
-    }
-
     //// stake_booster ////
     pub fn init_stake_booster(ctx: Context<InitStakeBoosterCtx>, ix: InitStakeBoosterIx) -> Result<()> {
         stake_booster::init_stake_booster::handler(ctx, ix)
