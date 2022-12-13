@@ -1,5 +1,5 @@
 {
-  "version": "1.10.4",
+  "version": "1.10.8",
   "name": "cardinal_group_reward_distributor",
   "instructions": [
     {
@@ -8,11 +8,6 @@
         {
           "name": "groupRewardDistributor",
           "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "id",
-          "isMut": false,
           "isSigner": false
         },
         {
@@ -408,15 +403,21 @@
           },
           {
             "name": "rewardKind",
-            "type": "u8"
+            "type": {
+              "defined": "GroupRewardDistributorKind"
+            }
           },
           {
             "name": "metadataKind",
-            "type": "u8"
+            "type": {
+              "defined": "GroupRewardDistributorMetadataKind"
+            }
           },
           {
             "name": "poolKind",
-            "type": "u8"
+            "type": {
+              "defined": "GroupRewardDistributorPoolKind"
+            }
           },
           {
             "name": "authority",
@@ -439,32 +440,38 @@
             "type": "u128"
           },
           {
-            "name": "maxSupply",
-            "type": {
-              "option": "u64"
-            }
+            "name": "baseAdder",
+            "type": "u64"
           },
           {
-            "name": "defaultMultiplier",
+            "name": "baseAdderDecimals",
+            "type": "u8"
+          },
+          {
+            "name": "baseMultiplier",
             "type": "u64"
+          },
+          {
+            "name": "baseMultiplierDecimals",
+            "type": "u8"
           },
           {
             "name": "multiplierDecimals",
             "type": "u8"
           },
           {
-            "name": "maxRewardSecondsReceived",
+            "name": "minCooldownSeconds",
+            "type": "u32"
+          },
+          {
+            "name": "minStakeSeconds",
+            "type": "u32"
+          },
+          {
+            "name": "maxSupply",
             "type": {
-              "option": "u128"
+              "option": "u64"
             }
-          },
-          {
-            "name": "groupDaysMultiplier",
-            "type": "u64"
-          },
-          {
-            "name": "groupDaysMultiplierDecimals",
-            "type": "u8"
           },
           {
             "name": "groupCountMultiplier",
@@ -483,6 +490,12 @@
             "type": {
               "option": "u8"
             }
+          },
+          {
+            "name": "maxRewardSecondsReceived",
+            "type": {
+              "option": "u128"
+            }
           }
         ]
       }
@@ -494,6 +507,10 @@
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "id",
+            "type": "publicKey"
+          },
           {
             "name": "rewardAmount",
             "type": "u64"
@@ -527,15 +544,27 @@
             }
           },
           {
-            "name": "maxSupply",
+            "name": "baseAdder",
             "type": {
               "option": "u64"
             }
           },
           {
-            "name": "defaultMultiplier",
+            "name": "baseAdderDecimals",
+            "type": {
+              "option": "u8"
+            }
+          },
+          {
+            "name": "baseMultiplier",
             "type": {
               "option": "u64"
+            }
+          },
+          {
+            "name": "baseMultiplierDecimals",
+            "type": {
+              "option": "u8"
             }
           },
           {
@@ -545,21 +574,21 @@
             }
           },
           {
-            "name": "maxRewardSecondsReceived",
-            "type": {
-              "option": "u128"
-            }
-          },
-          {
-            "name": "groupDaysMultiplier",
+            "name": "maxSupply",
             "type": {
               "option": "u64"
             }
           },
           {
-            "name": "groupDaysMultiplierDecimals",
+            "name": "minCooldownSeconds",
             "type": {
-              "option": "u8"
+              "option": "u32"
+            }
+          },
+          {
+            "name": "minStakeSeconds",
+            "type": {
+              "option": "u32"
             }
           },
           {
@@ -578,6 +607,12 @@
             "name": "minGroupSize",
             "type": {
               "option": "u8"
+            }
+          },
+          {
+            "name": "maxRewardSecondsReceived",
+            "type": {
+              "option": "u128"
             }
           }
         ]
@@ -611,15 +646,27 @@
             }
           },
           {
-            "name": "maxSupply",
+            "name": "baseAdder",
             "type": {
               "option": "u64"
             }
           },
           {
-            "name": "defaultMultiplier",
+            "name": "baseAdderDecimals",
+            "type": {
+              "option": "u8"
+            }
+          },
+          {
+            "name": "baseMultiplier",
             "type": {
               "option": "u64"
+            }
+          },
+          {
+            "name": "baseMultiplierDecimals",
+            "type": {
+              "option": "u8"
             }
           },
           {
@@ -629,21 +676,21 @@
             }
           },
           {
-            "name": "maxRewardSecondsReceived",
-            "type": {
-              "option": "u128"
-            }
-          },
-          {
-            "name": "groupDaysMultiplier",
+            "name": "maxSupply",
             "type": {
               "option": "u64"
             }
           },
           {
-            "name": "groupDaysMultiplierDecimals",
+            "name": "minCooldownSeconds",
             "type": {
-              "option": "u8"
+              "option": "u32"
+            }
+          },
+          {
+            "name": "minStakeSeconds",
+            "type": {
+              "option": "u32"
             }
           },
           {
@@ -662,6 +709,12 @@
             "name": "minGroupSize",
             "type": {
               "option": "u8"
+            }
+          },
+          {
+            "name": "maxRewardSecondsReceived",
+            "type": {
+              "option": "u128"
             }
           }
         ]
@@ -798,6 +851,21 @@
       "code": 6013,
       "name": "InvalidMintMetadataOwner",
       "msg": "Mint metadata is owned by the incorrect program"
+    },
+    {
+      "code": 6014,
+      "name": "InvalidRewardEntry",
+      "msg": "Invalid reward entry"
+    },
+    {
+      "code": 6015,
+      "name": "InvalidGroupSeconds",
+      "msg": "Invalid group seconds"
+    },
+    {
+      "code": 6016,
+      "name": "InvalidCooldownSeconds",
+      "msg": "Invalid cooldown seconds"
     }
   ]
 }

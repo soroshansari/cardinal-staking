@@ -604,7 +604,6 @@ export type CardinalStakePool = {
       ];
     },
     {
-<<<<<<< HEAD
       name: "doubleOrResetTotalStakeSeconds";
       accounts: [
         {
@@ -632,9 +631,112 @@ export type CardinalStakePool = {
     },
     {
       name: "initGroupEntry";
-=======
+      accounts: [
+        {
+          name: "groupEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [
+        {
+          name: "ix";
+          type: {
+            defined: "InitGroupEntryIx";
+          };
+        }
+      ];
+    },
+    {
+      name: "addToGroupEntry";
+      accounts: [
+        {
+          name: "groupEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "stakeEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "payer";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [];
+    },
+    {
+      name: "removeFromGroupEntry";
+      accounts: [
+        {
+          name: "groupEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "stakeEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "payer";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "systemProgram";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [];
+    },
+    {
+      name: "closeGroupEntry";
+      accounts: [
+        {
+          name: "groupEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        }
+      ];
+      args: [];
+    },
+    {
       name: "initStakeBooster";
->>>>>>> c5db778 (Rearrange code)
       accounts: [
         {
           name: "stakeBooster";
@@ -1635,28 +1737,9 @@ export type CardinalStakePool = {
       msg: "Ungrouped stake entry";
     },
     {
-<<<<<<< HEAD
-      code: 6037;
-<<<<<<< HEAD
-<<<<<<< HEAD
-      name: "MinGroupDaysNotSatisfied";
-      msg: "Minimum group days not satisfied";
-=======
-      name: "MinGroupSecondsNotSatisfied";
-      msg: "Minimum group seconds not satisfied";
->>>>>>> ea576c6 (bug fixes and adding test for group rewarding)
-=======
-=======
       code: 6122;
-<<<<<<< HEAD
->>>>>>> 7db98b6 (Resize group entries)
-      name: "MinGroupDaysNotSatisfied";
-      msg: "Minimum group days not satisfied";
->>>>>>> f135341 (Rebase, update tests)
-=======
       name: "MinGroupSecondsNotSatisfied";
       msg: "Minimum group seconds not satisfied";
->>>>>>> 8267383 (feat(group-staking): reward calculation system modified)
     },
     {
       code: 6123;
@@ -2277,7 +2360,6 @@ export const IDL: CardinalStakePool = {
       ],
     },
     {
-<<<<<<< HEAD
       name: "doubleOrResetTotalStakeSeconds",
       accounts: [
         {
@@ -2305,9 +2387,112 @@ export const IDL: CardinalStakePool = {
     },
     {
       name: "initGroupEntry",
-=======
+      accounts: [
+        {
+          name: "groupEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [
+        {
+          name: "ix",
+          type: {
+            defined: "InitGroupEntryIx",
+          },
+        },
+      ],
+    },
+    {
+      name: "addToGroupEntry",
+      accounts: [
+        {
+          name: "groupEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "stakeEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "payer",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "removeFromGroupEntry",
+      accounts: [
+        {
+          name: "groupEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "stakeEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "payer",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "systemProgram",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "closeGroupEntry",
+      accounts: [
+        {
+          name: "groupEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+      ],
+      args: [],
+    },
+    {
       name: "initStakeBooster",
->>>>>>> c5db778 (Rearrange code)
       accounts: [
         {
           name: "stakeBooster",
@@ -3308,28 +3493,9 @@ export const IDL: CardinalStakePool = {
       msg: "Ungrouped stake entry",
     },
     {
-<<<<<<< HEAD
-      code: 6037,
-<<<<<<< HEAD
-<<<<<<< HEAD
-      name: "MinGroupDaysNotSatisfied",
-      msg: "Minimum group days not satisfied",
-=======
-      name: "MinGroupSecondsNotSatisfied",
-      msg: "Minimum group seconds not satisfied",
->>>>>>> ea576c6 (bug fixes and adding test for group rewarding)
-=======
-=======
       code: 6122,
-<<<<<<< HEAD
->>>>>>> 7db98b6 (Resize group entries)
-      name: "MinGroupDaysNotSatisfied",
-      msg: "Minimum group days not satisfied",
->>>>>>> f135341 (Rebase, update tests)
-=======
       name: "MinGroupSecondsNotSatisfied",
       msg: "Minimum group seconds not satisfied",
->>>>>>> 8267383 (feat(group-staking): reward calculation system modified)
     },
     {
       code: 6123,
