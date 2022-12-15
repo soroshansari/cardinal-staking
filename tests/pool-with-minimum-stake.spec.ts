@@ -92,14 +92,12 @@ describe("Create stake pool", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
 
     expect(stakeEntryData.parsed.originalMint.toString()).to.eq(
@@ -128,14 +126,12 @@ describe("Create stake pool", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
 
     const userOriginalMintTokenAccountId = await findAta(
@@ -161,14 +157,12 @@ describe("Create stake pool", () => {
 
     const oldStakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
 
     expect(oldStakeEntryData.parsed.cooldownStartSeconds).to.be.null;
@@ -204,14 +198,12 @@ describe("Create stake pool", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
     expect(stakeEntryData.parsed.lastStaker.toString()).to.eq(
       PublicKey.default.toString()

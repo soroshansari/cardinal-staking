@@ -131,7 +131,7 @@ describe("Stake and claim permissionless rewards", () => {
       formatLogs: true,
     }).to.be.fulfilled;
 
-    const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
+    const rewardDistributorId = findRewardDistributorId(stakePoolId);
     const rewardDistributorData = await getRewardDistributor(
       provider.connection,
       rewardDistributorId
@@ -149,8 +149,8 @@ describe("Stake and claim permissionless rewards", () => {
   it("Create Reward Entry", async () => {
     const provider = getProvider();
 
-    const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
-    const [stakeEntryId] = await findStakeEntryIdFromMint(
+    const rewardDistributorId = findRewardDistributorId(stakePoolId);
+    const stakeEntryId = await findStakeEntryIdFromMint(
       provider.connection,
       provider.wallet.publicKey,
       stakePoolId,
@@ -175,10 +175,7 @@ describe("Stake and claim permissionless rewards", () => {
       formatLogs: true,
     }).to.be.fulfilled;
 
-    const [rewardEntryId] = await findRewardEntryId(
-      rewardDistributorId,
-      stakeEntryId
-    );
+    const rewardEntryId = findRewardEntryId(rewardDistributorId, stakeEntryId);
 
     const rewardEntryData = await getRewardEntry(
       provider.connection,
@@ -213,14 +210,12 @@ describe("Stake and claim permissionless rewards", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
 
     const userOriginalMintTokenAccountId = await findAta(
@@ -244,7 +239,7 @@ describe("Stake and claim permissionless rewards", () => {
   it("Claim Rewards fail", async () => {
     await delay(2000);
     const provider = getProvider();
-    const [stakeEntryId] = await findStakeEntryIdFromMint(
+    const stakeEntryId = await findStakeEntryIdFromMint(
       provider.connection,
       provider.wallet.publicKey,
       stakePoolId,
@@ -272,7 +267,7 @@ describe("Stake and claim permissionless rewards", () => {
   it("Claim Rewards", async () => {
     await delay(2000);
     const provider = getProvider();
-    const [stakeEntryId] = await findStakeEntryIdFromMint(
+    const stakeEntryId = await findStakeEntryIdFromMint(
       provider.connection,
       provider.wallet.publicKey,
       stakePoolId,
@@ -365,14 +360,12 @@ describe("Stake and claim permissionless rewards", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
     expect(stakeEntryData.parsed.lastStaker.toString()).to.eq(
       PublicKey.default.toString()

@@ -211,7 +211,7 @@ const updateMultipliersOnRules = async (
 
         // Update multiplier of primary mints
         for (const primaryMint of primaryMints) {
-          const [stakeEntryId] = await findStakeEntryId(
+          const stakeEntryId = findStakeEntryId(
             wallet.publicKey,
             stakePoolId,
             primaryMint,
@@ -244,7 +244,7 @@ const updateMultipliers = async (
 ): Promise<void> => {
   const transaction = new Transaction();
   // update multipliers
-  const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
+  const rewardDistributorId = findRewardDistributorId(stakePoolId);
   const rewardDistributorData = await tryGetAccount(() =>
     getRewardDistributor(connection, rewardDistributorId)
   );

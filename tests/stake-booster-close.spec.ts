@@ -96,25 +96,23 @@ describe("Create stake pool", () => {
     await expectTXTable(
       new TransactionEnvelope(
         SolanaProvider.init(provider),
-        (
-          await withInitStakeBooster(
-            new Transaction(),
-            provider.connection,
-            provider.wallet,
-            {
-              stakePoolId: stakePoolId,
-              paymentAmount: STAKE_BOOSTER_PAYMENT_AMOUNT,
-              paymentMint: paymentMint.publicKey,
-              boostSeconds: BOOST_SECONDS,
-              startTimeSeconds: Date.now() / 1000,
-            }
-          )
+        withInitStakeBooster(
+          new Transaction(),
+          provider.connection,
+          provider.wallet,
+          {
+            stakePoolId: stakePoolId,
+            paymentAmount: STAKE_BOOSTER_PAYMENT_AMOUNT,
+            paymentMint: paymentMint.publicKey,
+            boostSeconds: BOOST_SECONDS,
+            startTimeSeconds: Date.now() / 1000,
+          }
         ).instructions
       ),
       "Create booster"
     ).to.be.fulfilled;
 
-    const [stakeBoosterId] = await findStakeBoosterId(stakePoolId);
+    const stakeBoosterId = findStakeBoosterId(stakePoolId);
     const stakeBooster = await getStakeBooster(
       provider.connection,
       stakeBoosterId
@@ -141,25 +139,23 @@ describe("Create stake pool", () => {
     await expectTXTable(
       new TransactionEnvelope(
         SolanaProvider.init(provider),
-        (
-          await withUpdateStakeBooster(
-            new Transaction(),
-            provider.connection,
-            provider.wallet,
-            {
-              stakePoolId: stakePoolId,
-              paymentAmount: STAKE_BOOSTER_PAYMENT_AMOUNT,
-              paymentMint: paymentMint.publicKey,
-              boostSeconds: UPDATE_BOOST_SECONDS,
-              startTimeSeconds: Date.now() / 1000,
-            }
-          )
+        withUpdateStakeBooster(
+          new Transaction(),
+          provider.connection,
+          provider.wallet,
+          {
+            stakePoolId: stakePoolId,
+            paymentAmount: STAKE_BOOSTER_PAYMENT_AMOUNT,
+            paymentMint: paymentMint.publicKey,
+            boostSeconds: UPDATE_BOOST_SECONDS,
+            startTimeSeconds: Date.now() / 1000,
+          }
         ).instructions
       ),
       "Create booster"
     ).to.be.fulfilled;
 
-    const [stakeBoosterId] = await findStakeBoosterId(stakePoolId);
+    const stakeBoosterId = findStakeBoosterId(stakePoolId);
     const stakeBooster = await getStakeBooster(
       provider.connection,
       stakeBoosterId
@@ -188,7 +184,7 @@ describe("Create stake pool", () => {
       STAKE_POOL_ADDRESS,
       provider
     );
-    const [stakeBoosterId] = await findStakeBoosterId(stakePoolId);
+    const stakeBoosterId = findStakeBoosterId(stakePoolId);
     await expectTXTable(
       new TransactionEnvelope(SolanaProvider.init(provider), [
         stakePoolProgram.instruction.updateStakeBooster(
@@ -214,19 +210,17 @@ describe("Create stake pool", () => {
 
   it("Close booster", async () => {
     const provider = getProvider();
-    const [stakeBoosterId] = await findStakeBoosterId(stakePoolId);
+    const stakeBoosterId = findStakeBoosterId(stakePoolId);
     await expectTXTable(
       new TransactionEnvelope(
         SolanaProvider.init(provider),
-        (
-          await withCloseStakeBooster(
-            new Transaction(),
-            provider.connection,
-            provider.wallet,
-            {
-              stakePoolId: stakePoolId,
-            }
-          )
+        withCloseStakeBooster(
+          new Transaction(),
+          provider.connection,
+          provider.wallet,
+          {
+            stakePoolId: stakePoolId,
+          }
         ).instructions
       ),
       "Create booster"

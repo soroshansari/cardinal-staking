@@ -177,24 +177,19 @@ describe("Receipt manager claim reward receipt", () => {
     ).to.be.fulfilled;
   });
 
-  it("Fail To Create Reward Receipt Manager", async () => {
+  it("Fail To Create Reward Receipt Manager", () => {
     const provider = getProvider();
     const transaction = new Transaction();
-    await withInitReceiptManager(
-      transaction,
-      provider.connection,
-      provider.wallet,
-      {
-        name: receiptManagerName,
-        stakePoolId: stakePoolId,
-        authority: provider.wallet.publicKey,
-        requiredStakeSeconds: requiredStakeSeconds,
-        stakeSecondsToUse: stakeSecondsToUse,
-        paymentMint: Keypair.generate().publicKey,
-        paymentRecipientId: paymentRecipient.publicKey,
-        requiresAuthorization: requiresAuthorization,
-      }
-    );
+    withInitReceiptManager(transaction, provider.connection, provider.wallet, {
+      name: receiptManagerName,
+      stakePoolId: stakePoolId,
+      authority: provider.wallet.publicKey,
+      requiredStakeSeconds: requiredStakeSeconds,
+      stakeSecondsToUse: stakeSecondsToUse,
+      paymentMint: Keypair.generate().publicKey,
+      paymentRecipientId: paymentRecipient.publicKey,
+      requiresAuthorization: requiresAuthorization,
+    });
 
     expect(async () => {
       await expectTXTable(
@@ -209,7 +204,7 @@ describe("Receipt manager claim reward receipt", () => {
   it("Create Reward Receipt Manager", async () => {
     const provider = getProvider();
     const transaction = new Transaction();
-    const [, receiptManagerId] = await withInitReceiptManager(
+    const [, receiptManagerId] = withInitReceiptManager(
       transaction,
       provider.connection,
       provider.wallet,
@@ -290,14 +285,12 @@ describe("Receipt manager claim reward receipt", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
 
     expect(stakeEntryData.parsed.originalMint.toString()).to.eq(
@@ -326,14 +319,12 @@ describe("Receipt manager claim reward receipt", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
 
     const userOriginalMintTokenAccountId = await findAta(
@@ -358,18 +349,18 @@ describe("Receipt manager claim reward receipt", () => {
     const provider = getProvider();
     const transaction = new Transaction();
 
-    const [receiptManagerId] = await findReceiptManagerId(
+    const receiptManagerId = findReceiptManagerId(
       stakePoolId,
       receiptManagerName
     );
-    const [stakeEntryId] = await findStakeEntryId(
+    const stakeEntryId = findStakeEntryId(
       provider.wallet.publicKey,
       stakePoolId,
       originalMint.publicKey,
       false
     );
 
-    const [, receiptEntryId] = await withInitReceiptEntry(
+    const [, receiptEntryId] = withInitReceiptEntry(
       transaction,
       provider.connection,
       provider.wallet,
@@ -377,7 +368,7 @@ describe("Receipt manager claim reward receipt", () => {
         stakeEntryId: stakeEntryId,
       }
     );
-    const [, rewardReceiptId] = await withInitRewardReceipt(
+    const [, rewardReceiptId] = withInitRewardReceipt(
       transaction,
       provider.connection,
       provider.wallet,
@@ -423,7 +414,7 @@ describe("Receipt manager claim reward receipt", () => {
 
   it("Fail Create Reward Receipt, duration not satisfied", async () => {
     const provider = getProvider();
-    const [stakeEntryId] = await findStakeEntryId(
+    const stakeEntryId = findStakeEntryId(
       provider.wallet.publicKey,
       stakePoolId,
       originalMint.publicKey,
@@ -456,13 +447,13 @@ describe("Receipt manager claim reward receipt", () => {
   it("Claim Reward Receipt", async () => {
     await delay(6000);
     const provider = getProvider();
-    const [stakeEntryId] = await findStakeEntryId(
+    const stakeEntryId = findStakeEntryId(
       provider.wallet.publicKey,
       stakePoolId,
       originalMint.publicKey,
       false
     );
-    const [receiptEntryId] = await findReceiptEntryId(stakeEntryId);
+    const receiptEntryId = findReceiptEntryId(stakeEntryId);
     const checkMint = new splToken.Token(
       provider.connection,
       paymentMint,
@@ -503,7 +494,7 @@ describe("Receipt manager claim reward receipt", () => {
       "Claim Reward Receipt"
     ).to.be.fulfilled;
 
-    const [receiptManagerId] = await findReceiptManagerId(
+    const receiptManagerId = findReceiptManagerId(
       stakePoolId,
       receiptManagerName
     );
@@ -540,7 +531,7 @@ describe("Receipt manager claim reward receipt", () => {
 
   it("Claim reward receipt fail already claimed", async () => {
     const provider = getProvider();
-    const [stakeEntryId] = await findStakeEntryId(
+    const stakeEntryId = findStakeEntryId(
       provider.wallet.publicKey,
       stakePoolId,
       originalMint.publicKey,

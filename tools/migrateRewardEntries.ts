@@ -44,7 +44,7 @@ const migrateRewardEntries = async (cluster: string) => {
 
       // MINT used to be on the rewardEntry
       const stakeEntryId = rewardEntryData.parsed.stakeEntry;
-      // const [stakeEntryId] = await findStakeEntryIdFromMint(
+      // const stakeEntryId = await findStakeEntryIdFromMint(
       //   connection,
       //   wallet.publicKey,
       //   rewardDistributorData.parsed.stakePool,
@@ -71,7 +71,7 @@ const migrateRewardEntries = async (cluster: string) => {
         `Succesfully migrated entry ${rewardEntryData.pubkey.toString()} with transaction ${txid} (https://explorer.solana.com/tx/${txid}?cluster=${cluster})`
       );
 
-      const [rewardEntryId] = await findRewardEntryId(
+      const rewardEntryId = findRewardEntryId(
         rewardDistributorData.pubkey,
         stakeEntryId
       );

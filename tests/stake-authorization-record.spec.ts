@@ -93,7 +93,7 @@ describe("Requires authorization success", () => {
   it("Authorize mint for stake", async () => {
     const provider = getProvider();
 
-    const transaction = await authorizeStakeEntry(
+    const transaction = authorizeStakeEntry(
       provider.connection,
       provider.wallet,
       {
@@ -111,9 +111,7 @@ describe("Requires authorization success", () => {
 
     const stakeAuthorizationData = await getStakeAuthorization(
       provider.connection,
-      (
-        await findStakeAuthorizationId(stakePoolId, originalMint.publicKey)
-      )[0]
+      findStakeAuthorizationId(stakePoolId, originalMint.publicKey)
     );
 
     expect(stakeAuthorizationData).to.not.eq(null);
@@ -149,14 +147,12 @@ describe("Requires authorization success", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
 
     expect(stakeEntryData.parsed.originalMint.toString()).to.eq(
@@ -185,14 +181,12 @@ describe("Requires authorization success", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
 
     const userOriginalMintTokenAccountId = await findAta(

@@ -124,7 +124,7 @@ describe("Stake and claim rewards", () => {
       formatLogs: true,
     }).to.be.fulfilled;
 
-    const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
+    const rewardDistributorId = findRewardDistributorId(stakePoolId);
     const rewardDistributorData = await getRewardDistributor(
       provider.connection,
       rewardDistributorId
@@ -140,7 +140,7 @@ describe("Stake and claim rewards", () => {
   it("Create Stake And Reward Entry", async () => {
     const provider = getProvider();
 
-    const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
+    const rewardDistributorId = findRewardDistributorId(stakePoolId);
     const [transaction, stakeEntryId] = await createStakeEntry(
       provider.connection,
       provider.wallet,
@@ -149,7 +149,7 @@ describe("Stake and claim rewards", () => {
         originalMintId: originalMint.publicKey,
       }
     );
-    await rewardDistributor.transaction.withInitRewardEntry(
+    rewardDistributor.transaction.withInitRewardEntry(
       transaction,
       provider.connection,
       provider.wallet,
@@ -198,7 +198,7 @@ describe("Stake and claim rewards", () => {
 
   it("Close entry then pool", async () => {
     const provider = getProvider();
-    const [stakeEntryId] = await findStakeEntryIdFromMint(
+    const stakeEntryId = await findStakeEntryIdFromMint(
       provider.connection,
       provider.wallet.publicKey,
       stakePoolId,

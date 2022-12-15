@@ -90,14 +90,12 @@ describe("Create stake pool", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
 
     const userOriginalMintTokenAccountId = await findAta(
@@ -120,14 +118,12 @@ describe("Create stake pool", () => {
 
   it("Resize", async () => {
     const provider = getProvider();
-    const stakeEntryId = (
-      await findStakeEntryIdFromMint(
-        provider.connection,
-        provider.wallet.publicKey,
-        stakePoolId,
-        originalMint.publicKey
-      )
-    )[0];
+    const stakeEntryId = await findStakeEntryIdFromMint(
+      provider.connection,
+      provider.wallet.publicKey,
+      stakePoolId,
+      originalMint.publicKey
+    );
     await expectTXTable(
       new TransactionEnvelope(SolanaProvider.init(provider), [
         await stakePoolProgram(provider.connection, provider.wallet)

@@ -114,7 +114,7 @@ describe("Stake and claim rewards", () => {
       formatLogs: true,
     }).to.be.fulfilled;
 
-    const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
+    const rewardDistributorId = findRewardDistributorId(stakePoolId);
     const rewardDistributorData = await getRewardDistributor(
       provider.connection,
       rewardDistributorId

@@ -12,47 +12,45 @@ import {
  * Finds the group reward entry id.
  * @returns
  */
-export const findGroupRewardEntryId = async (
+export const findGroupRewardEntryId = (
   groupRewardDistributorId: PublicKey,
   groupEntryId: PublicKey
-): Promise<[PublicKey, number]> => {
-  return PublicKey.findProgramAddress(
+) => {
+  return PublicKey.findProgramAddressSync(
     [
       utils.bytes.utf8.encode(GROUP_REWARD_ENTRY_SEED),
       groupRewardDistributorId.toBuffer(),
       groupEntryId.toBuffer(),
     ],
     GROUP_REWARD_DISTRIBUTOR_ADDRESS
-  );
+  )[0];
 };
 
 /**
  * Finds the group reward entry id.
  * @returns
  */
-export const findGroupRewardCounterId = async (
+export const findGroupRewardCounterId = (
   groupRewardDistributorId: PublicKey,
   authority: PublicKey
-): Promise<[PublicKey, number]> => {
-  return PublicKey.findProgramAddress(
+) => {
+  return PublicKey.findProgramAddressSync(
     [
       utils.bytes.utf8.encode(GROUP_REWARD_COUNTER_SEED),
       groupRewardDistributorId.toBuffer(),
       authority.toBuffer(),
     ],
     GROUP_REWARD_DISTRIBUTOR_ADDRESS
-  );
+  )[0];
 };
 
 /**
  * Finds the group reward distributor id.
  * @returns
  */
-export const findGroupRewardDistributorId = async (
-  id: PublicKey
-): Promise<[PublicKey, number]> => {
-  return PublicKey.findProgramAddress(
+export const findGroupRewardDistributorId = (id: PublicKey) => {
+  return PublicKey.findProgramAddressSync(
     [utils.bytes.utf8.encode(GROUP_REWARD_DISTRIBUTOR_SEED), id.toBuffer()],
     GROUP_REWARD_DISTRIBUTOR_ADDRESS
-  );
+  )[0];
 };

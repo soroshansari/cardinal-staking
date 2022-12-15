@@ -128,9 +128,7 @@ const main = async (poolIds: PublicKey[], cluster = "devnet") => {
       }
     }
 
-    const [rewardDistributorId] = await findRewardDistributorId(
-      stakePool.pubkey
-    );
+    const rewardDistributorId = findRewardDistributorId(stakePool.pubkey);
     const rewardDistributor = await tryGetAccount(() =>
       getRewardDistributor(connection, rewardDistributorId)
     );

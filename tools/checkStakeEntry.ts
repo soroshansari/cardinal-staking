@@ -15,7 +15,7 @@ const checkStakeEntry = async (
   mintId: PublicKey
 ) => {
   const connection = connectionFor(cluster);
-  const [stakeEntryId] = await findStakeEntryIdFromMint(
+  const stakeEntryId = await findStakeEntryIdFromMint(
     connection,
     Keypair.generate().publicKey,
     stakePoolId,
@@ -25,12 +25,9 @@ const checkStakeEntry = async (
 
   const stakeEntry = await getStakeEntry(connection, stakeEntryId);
   console.log(stakeEntry);
-  const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
+  const rewardDistributorId = findRewardDistributorId(stakePoolId);
 
-  const [rewardEntryId] = await findRewardEntryId(
-    rewardDistributorId,
-    stakeEntryId
-  );
+  const rewardEntryId = findRewardEntryId(rewardDistributorId, stakeEntryId);
 
   const rewardEntry = await getRewardEntry(connection, rewardEntryId);
   console.log(rewardEntry);

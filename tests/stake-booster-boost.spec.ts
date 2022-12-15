@@ -135,19 +135,17 @@ describe("Stake booster boost", () => {
     await expectTXTable(
       new TransactionEnvelope(
         SolanaProvider.init(provider),
-        (
-          await withInitStakeBooster(
-            new Transaction(),
-            provider.connection,
-            provider.wallet,
-            {
-              stakePoolId: stakePoolId,
-              paymentAmount: STAKE_BOOSTER_PAYMENT_AMOUNT,
-              paymentMint: paymentMint.publicKey,
-              boostSeconds: BOOST_SECONDS,
-              startTimeSeconds: Date.now() / 1000,
-            }
-          )
+        withInitStakeBooster(
+          new Transaction(),
+          provider.connection,
+          provider.wallet,
+          {
+            stakePoolId: stakePoolId,
+            paymentAmount: STAKE_BOOSTER_PAYMENT_AMOUNT,
+            paymentMint: paymentMint.publicKey,
+            boostSeconds: BOOST_SECONDS,
+            startTimeSeconds: Date.now() / 1000,
+          }
         ).instructions
       ),
       "Create booster"
@@ -173,14 +171,12 @@ describe("Stake booster boost", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
 
     const userOriginalMintTokenAccountId = await findAta(
@@ -204,14 +200,12 @@ describe("Stake booster boost", () => {
   it("Update", async () => {
     await delay(1000);
     const provider = getProvider();
-    const stakeEntryId = (
-      await findStakeEntryIdFromMint(
-        provider.connection,
-        provider.wallet.publicKey,
-        stakePoolId,
-        originalMint.publicKey
-      )
-    )[0];
+    const stakeEntryId = await findStakeEntryIdFromMint(
+      provider.connection,
+      provider.wallet.publicKey,
+      stakePoolId,
+      originalMint.publicKey
+    );
     const oldStakeEntryData = await getStakeEntry(
       provider.connection,
       stakeEntryId
@@ -257,14 +251,12 @@ describe("Stake booster boost", () => {
   it("Boost", async () => {
     await delay(5000);
     const provider = getProvider();
-    const stakeEntryId = (
-      await findStakeEntryIdFromMint(
-        provider.connection,
-        provider.wallet.publicKey,
-        stakePoolId,
-        originalMint.publicKey
-      )
-    )[0];
+    const stakeEntryId = await findStakeEntryIdFromMint(
+      provider.connection,
+      provider.wallet.publicKey,
+      stakePoolId,
+      originalMint.publicKey
+    );
     const oldStakeEntryData = await getStakeEntry(
       provider.connection,
       stakeEntryId
@@ -292,14 +284,12 @@ describe("Stake booster boost", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
     expect(stakeEntryData.parsed.lastStaker.toString()).to.eq(
       provider.wallet.publicKey.toString()
@@ -336,14 +326,12 @@ describe("Stake booster boost", () => {
   it("Unstake", async () => {
     await delay(2000);
     const provider = getProvider();
-    const stakeEntryId = (
-      await findStakeEntryIdFromMint(
-        provider.connection,
-        provider.wallet.publicKey,
-        stakePoolId,
-        originalMint.publicKey
-      )
-    )[0];
+    const stakeEntryId = await findStakeEntryIdFromMint(
+      provider.connection,
+      provider.wallet.publicKey,
+      stakePoolId,
+      originalMint.publicKey
+    );
     const oldStakeEntryData = await getStakeEntry(
       provider.connection,
       stakeEntryId
@@ -363,14 +351,12 @@ describe("Stake booster boost", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
     expect(stakeEntryData.parsed.lastStaker.toString()).to.eq(
       PublicKey.default.toString()
@@ -393,14 +379,12 @@ describe("Stake booster boost", () => {
 
   it("Fail boost while unstaked", async () => {
     const provider = getProvider();
-    const stakeEntryId = (
-      await findStakeEntryIdFromMint(
-        provider.connection,
-        provider.wallet.publicKey,
-        stakePoolId,
-        originalMint.publicKey
-      )
-    )[0];
+    const stakeEntryId = await findStakeEntryIdFromMint(
+      provider.connection,
+      provider.wallet.publicKey,
+      stakePoolId,
+      originalMint.publicKey
+    );
     await expectTXTable(
       new TransactionEnvelope(
         SolanaProvider.init(provider),
@@ -425,14 +409,12 @@ describe("Stake booster boost", () => {
 
   it("Fail boost too far", async () => {
     const provider = getProvider();
-    const stakeEntryId = (
-      await findStakeEntryIdFromMint(
-        provider.connection,
-        provider.wallet.publicKey,
-        stakePoolId,
-        originalMint.publicKey
-      )
-    )[0];
+    const stakeEntryId = await findStakeEntryIdFromMint(
+      provider.connection,
+      provider.wallet.publicKey,
+      stakePoolId,
+      originalMint.publicKey
+    );
     await expectTXTable(
       new TransactionEnvelope(
         SolanaProvider.init(provider),

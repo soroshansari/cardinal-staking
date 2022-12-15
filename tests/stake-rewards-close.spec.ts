@@ -125,7 +125,7 @@ describe("Stake claim rewards and close", () => {
       }
     ).to.be.fulfilled;
 
-    const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
+    const rewardDistributorId = findRewardDistributorId(stakePoolId);
     const rewardDistributorData = await getRewardDistributor(
       provider.connection,
       rewardDistributorId
@@ -143,8 +143,8 @@ describe("Stake claim rewards and close", () => {
   it("Create Reward Entry", async () => {
     const provider = getProvider();
 
-    const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
-    const [stakeEntryId] = await findStakeEntryIdFromMint(
+    const rewardDistributorId = findRewardDistributorId(stakePoolId);
+    const stakeEntryId = await findStakeEntryIdFromMint(
       provider.connection,
       provider.wallet.publicKey,
       stakePoolId,
@@ -173,10 +173,7 @@ describe("Stake claim rewards and close", () => {
       }
     ).to.be.fulfilled;
 
-    const [rewardEntryId] = await findRewardEntryId(
-      rewardDistributorId,
-      stakeEntryId
-    );
+    const rewardEntryId = findRewardEntryId(rewardDistributorId, stakeEntryId);
 
     const rewardEntryData = await getRewardEntry(
       provider.connection,
@@ -193,14 +190,12 @@ describe("Stake claim rewards and close", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
 
     expect(stakeEntryData.parsed.originalMint.toString()).to.eq(
@@ -229,14 +224,12 @@ describe("Stake claim rewards and close", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
 
     const userOriginalMintTokenAccountId = await findAta(
@@ -274,14 +267,12 @@ describe("Stake claim rewards and close", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
     expect(stakeEntryData.parsed.lastStaker.toString()).to.eq(
       PublicKey.default.toString()
@@ -325,21 +316,16 @@ describe("Stake claim rewards and close", () => {
     const provider = getProvider();
     const transaction = new Transaction();
 
-    const [stakeEntryId] = await findStakeEntryIdFromMint(
+    const stakeEntryId = await findStakeEntryIdFromMint(
       provider.connection,
       provider.wallet.publicKey,
       stakePoolId,
       originalMint.publicKey
     );
-    await withCloseRewardEntry(
-      transaction,
-      provider.connection,
-      provider.wallet,
-      {
-        stakePoolId: stakePoolId,
-        stakeEntryId: stakeEntryId,
-      }
-    );
+    withCloseRewardEntry(transaction, provider.connection, provider.wallet, {
+      stakePoolId: stakePoolId,
+      stakeEntryId: stakeEntryId,
+    });
     await expectTXTable(
       new TransactionEnvelope(SolanaProvider.init(provider), [
         ...transaction.instructions,
@@ -347,8 +333,8 @@ describe("Stake claim rewards and close", () => {
       "Close reward entry"
     ).to.be.fulfilled;
 
-    const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
-    const [rewardEntryId] = await findRewardEntryId(
+    const rewardDistributorId = findRewardDistributorId(stakePoolId);
+    const rewardEntryId = findRewardEntryId(
       rewardDistributorId,
       originalMint.publicKey
     );
@@ -379,7 +365,7 @@ describe("Stake claim rewards and close", () => {
       "Close reward distributor"
     ).to.be.fulfilled;
 
-    const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
+    const rewardDistributorId = findRewardDistributorId(stakePoolId);
     const rewardDistributorData = await tryGetAccount(() =>
       getRewardDistributor(provider.connection, rewardDistributorId)
     );

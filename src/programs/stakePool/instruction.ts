@@ -114,14 +114,14 @@ export const initStakePool = (
   );
 };
 
-export const authorizeStakeEntry = async (
+export const authorizeStakeEntry = (
   connection: Connection,
   wallet: Wallet,
   params: {
     stakePoolId: PublicKey;
     originalMintId: PublicKey;
   }
-): Promise<TransactionInstruction> => {
+) => {
   const provider = new AnchorProvider(connection, wallet, {});
   const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
     STAKE_POOL_IDL,
@@ -129,7 +129,7 @@ export const authorizeStakeEntry = async (
     provider
   );
 
-  const [stakeAuthorizationId] = await findStakeAuthorizationId(
+  const stakeAuthorizationId = findStakeAuthorizationId(
     params.stakePoolId,
     params.originalMintId
   );
@@ -143,14 +143,14 @@ export const authorizeStakeEntry = async (
   });
 };
 
-export const deauthorizeStakeEntry = async (
+export const deauthorizeStakeEntry = (
   connection: Connection,
   wallet: Wallet,
   params: {
     stakePoolId: PublicKey;
     originalMintId: PublicKey;
   }
-): Promise<TransactionInstruction> => {
+): TransactionInstruction => {
   const provider = new AnchorProvider(connection, wallet, {});
   const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
     STAKE_POOL_IDL,
@@ -158,7 +158,7 @@ export const deauthorizeStakeEntry = async (
     provider
   );
 
-  const [stakeAuthorizationId] = await findStakeAuthorizationId(
+  const stakeAuthorizationId = findStakeAuthorizationId(
     params.stakePoolId,
     params.originalMintId
   );
@@ -171,7 +171,7 @@ export const deauthorizeStakeEntry = async (
   });
 };
 
-export const initStakeEntry = async (
+export const initStakeEntry = (
   connection: Connection,
   wallet: Wallet,
   params: {
@@ -180,14 +180,14 @@ export const initStakeEntry = async (
     originalMintId: PublicKey;
     originalMintMetadatId: PublicKey;
   }
-): Promise<TransactionInstruction> => {
+) => {
   const provider = new AnchorProvider(connection, wallet, {});
   const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
     STAKE_POOL_IDL,
     STAKE_POOL_ADDRESS,
     provider
   );
-  const remainingAccounts = await remainingAccountsForInitStakeEntry(
+  const remainingAccounts = remainingAccountsForInitStakeEntry(
     params.stakePoolId,
     params.originalMintId
   );
@@ -606,7 +606,7 @@ export const doubleOrResetTotalStakeSeconds = (
   });
 };
 
-export const initStakeBooster = async (
+export const initStakeBooster = (
   connection: Connection,
   wallet: Wallet,
   params: {
@@ -627,7 +627,7 @@ export const initStakeBooster = async (
     provider
   );
 
-  const [stakeBoosterId] = await findStakeBoosterId(
+  const stakeBoosterId = findStakeBoosterId(
     params.stakePoolId,
     params.stakeBoosterIdentifier
   );
@@ -653,7 +653,7 @@ export const initStakeBooster = async (
   );
 };
 
-export const updateStakeBooster = async (
+export const updateStakeBooster = (
   connection: Connection,
   wallet: Wallet,
   params: {
@@ -671,7 +671,7 @@ export const updateStakeBooster = async (
     STAKE_POOL_ADDRESS,
     provider
   );
-  const [stakeBoosterId] = await findStakeBoosterId(
+  const stakeBoosterId = findStakeBoosterId(
     params.stakePoolId,
     params.stakeBoosterIdentifier
   );
@@ -693,7 +693,7 @@ export const updateStakeBooster = async (
   );
 };
 
-export const closeStakeBooster = async (
+export const closeStakeBooster = (
   connection: Connection,
   wallet: Wallet,
   params: {
@@ -707,7 +707,7 @@ export const closeStakeBooster = async (
     STAKE_POOL_ADDRESS,
     provider
   );
-  const [stakeBoosterId] = await findStakeBoosterId(
+  const stakeBoosterId = findStakeBoosterId(
     params.stakePoolId,
     params.stakeBoosterIdentifier
   );
@@ -720,7 +720,7 @@ export const closeStakeBooster = async (
   });
 };
 
-export const boostStakeEntry = async (
+export const boostStakeEntry = (
   connection: Connection,
   wallet: Wallet,
   params: {
@@ -742,7 +742,7 @@ export const boostStakeEntry = async (
     STAKE_POOL_ADDRESS,
     provider
   );
-  const [stakeBoosterId] = await findStakeBoosterId(
+  const stakeBoosterId = findStakeBoosterId(
     params.stakePoolId,
     params.stakeBoosterIdentifier
   );
@@ -783,7 +783,7 @@ export const initGroupStakeEntry = async (
   );
 
   const id = Keypair.generate();
-  const [groupEntry] = await findGroupEntryId(id.publicKey);
+  const groupEntry = findGroupEntryId(id.publicKey);
 
   const instruction = await stakePoolProgram.methods
     .initGroupEntry({

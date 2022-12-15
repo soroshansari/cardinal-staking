@@ -185,7 +185,7 @@ describe("Receipt manages multiple with disallowlist", () => {
   it("Create Reward Receipt Manager", async () => {
     const provider = getProvider();
     const transaction = new Transaction();
-    const [, receiptManagerId] = await withInitReceiptManager(
+    const [, receiptManagerId] = withInitReceiptManager(
       transaction,
       provider.connection,
       provider.wallet,
@@ -251,7 +251,7 @@ describe("Receipt manages multiple with disallowlist", () => {
   it("Create Reward Receipt Manager", async () => {
     const provider = getProvider();
     const transaction = new Transaction();
-    const [, receiptManagerId] = await withInitReceiptManager(
+    const [, receiptManagerId] = withInitReceiptManager(
       transaction,
       provider.connection,
       provider.wallet,
@@ -335,14 +335,12 @@ describe("Receipt manages multiple with disallowlist", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
 
     expect(stakeEntryData.parsed.originalMint.toString()).to.eq(
@@ -371,14 +369,12 @@ describe("Receipt manages multiple with disallowlist", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
 
     const userOriginalMintTokenAccountId = await findAta(
@@ -403,13 +399,13 @@ describe("Receipt manages multiple with disallowlist", () => {
     const provider = getProvider();
     const transaction = new Transaction();
 
-    const [stakeEntryId] = await findStakeEntryId(
+    const stakeEntryId = findStakeEntryId(
       provider.wallet.publicKey,
       stakePoolId,
       originalMint.publicKey,
       false
     );
-    const [, receiptEntryId] = await withInitReceiptEntry(
+    const [, receiptEntryId] = withInitReceiptEntry(
       transaction,
       provider.connection,
       provider.wallet,
@@ -438,19 +434,19 @@ describe("Receipt manages multiple with disallowlist", () => {
     const provider = getProvider();
     const transaction = new Transaction();
 
-    const [receiptManagerId] = await findReceiptManagerId(
+    const receiptManagerId = findReceiptManagerId(
       stakePoolId,
       receiptManagerName1
     );
-    const [stakeEntryId] = await findStakeEntryId(
+    const stakeEntryId = findStakeEntryId(
       provider.wallet.publicKey,
       stakePoolId,
       originalMint.publicKey,
       false
     );
 
-    const [receiptEntryId] = await findReceiptEntryId(stakeEntryId);
-    const [, rewardReceiptId] = await withInitRewardReceipt(
+    const receiptEntryId = findReceiptEntryId(stakeEntryId);
+    const [, rewardReceiptId] = withInitRewardReceipt(
       transaction,
       provider.connection,
       provider.wallet,
@@ -489,19 +485,19 @@ describe("Receipt manages multiple with disallowlist", () => {
     const provider = getProvider();
     const transaction = new Transaction();
 
-    const [receiptManagerId] = await findReceiptManagerId(
+    const receiptManagerId = findReceiptManagerId(
       stakePoolId,
       receiptManagerName2
     );
-    const [stakeEntryId] = await findStakeEntryId(
+    const stakeEntryId = findStakeEntryId(
       provider.wallet.publicKey,
       stakePoolId,
       originalMint.publicKey,
       false
     );
 
-    const [receiptEntryId] = await findReceiptEntryId(stakeEntryId);
-    const [, rewardReceiptId] = await withInitRewardReceipt(
+    const receiptEntryId = findReceiptEntryId(stakeEntryId);
+    const [, rewardReceiptId] = withInitRewardReceipt(
       transaction,
       provider.connection,
       provider.wallet,
@@ -540,7 +536,7 @@ describe("Receipt manages multiple with disallowlist", () => {
     const provider = getProvider();
     const transaction = new Transaction();
 
-    const [receiptManagerId] = await findReceiptManagerId(
+    const receiptManagerId = findReceiptManagerId(
       stakePoolId,
       receiptManagerName2
     );
@@ -550,7 +546,7 @@ describe("Receipt manages multiple with disallowlist", () => {
     );
     expect(beforeReceiptManagerData.parsed.requiresAuthorization).to.be.false;
 
-    await withUpdateReceiptManager(
+    withUpdateReceiptManager(
       transaction,
       provider.connection,
       provider.wallet,
@@ -585,22 +581,19 @@ describe("Receipt manages multiple with disallowlist", () => {
     const provider = getProvider();
     const transaction = new Transaction();
 
-    const [stakeEntryId] = await findStakeEntryId(
+    const stakeEntryId = findStakeEntryId(
       provider.wallet.publicKey,
       stakePoolId,
       originalMint.publicKey,
       false
     );
-    const [receiptManagerId] = await findReceiptManagerId(
+    const receiptManagerId = findReceiptManagerId(
       stakePoolId,
       receiptManagerName2
     );
 
-    const [receiptEntryId] = await findReceiptEntryId(stakeEntryId);
-    const [receiptId] = await findRewardReceiptId(
-      receiptManagerId,
-      receiptEntryId
-    );
+    const receiptEntryId = findReceiptEntryId(stakeEntryId);
+    const receiptId = findRewardReceiptId(receiptManagerId, receiptEntryId);
     const beforeReceiptData = await getRewardReceipt(
       provider.connection,
       receiptId
@@ -634,13 +627,13 @@ describe("Receipt manages multiple with disallowlist", () => {
 
   it("Claim Reward Receipt, first receipt manager", async () => {
     const provider = getProvider();
-    const [stakeEntryId] = await findStakeEntryId(
+    const stakeEntryId = findStakeEntryId(
       provider.wallet.publicKey,
       stakePoolId,
       originalMint.publicKey,
       false
     );
-    const [receiptEntryId] = await findReceiptEntryId(stakeEntryId);
+    const receiptEntryId = findReceiptEntryId(stakeEntryId);
     const checkMint = new splToken.Token(
       provider.connection,
       paymentMint,
@@ -683,7 +676,7 @@ describe("Receipt manages multiple with disallowlist", () => {
       "Claim Reward Receipt"
     ).to.be.fulfilled;
 
-    const [receiptManagerId] = await findReceiptManagerId(
+    const receiptManagerId = findReceiptManagerId(
       stakePoolId,
       receiptManagerName1
     );
@@ -720,7 +713,7 @@ describe("Receipt manages multiple with disallowlist", () => {
 
   it("Fail to Claim Reward Receipt, second receipt manager", async () => {
     const provider = getProvider();
-    const [stakeEntryId] = await findStakeEntryId(
+    const stakeEntryId = findStakeEntryId(
       provider.wallet.publicKey,
       stakePoolId,
       originalMint.publicKey,

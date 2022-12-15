@@ -72,7 +72,7 @@ const migrateRewardEntries = async (cluster: string) => {
 
         // MINT used to be on the rewardEntry
         // const stakeEntryId = rewardEntryData.parsed.stakeEntry;
-        // const [stakeEntryId] = await findStakeEntryIdFromMint(
+        // const stakeEntryId = await findStakeEntryIdFromMint(
         //   connection,
         //   wallet.publicKey,
         //   rewardDistributorData.parsed.stakePool,

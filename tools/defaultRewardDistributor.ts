@@ -17,7 +17,7 @@ const main = async (cluster = "mainnet") => {
   const allStakePools = await getAllStakePools(connection);
 
   for (const pool of allStakePools) {
-    const [rewardDistributorId] = await findRewardDistributorId(pool.pubkey);
+    const rewardDistributorId = findRewardDistributorId(pool.pubkey);
     const rewardDistrubutorData = await tryGetAccount(() =>
       getRewardDistributor(connection, rewardDistributorId)
     );

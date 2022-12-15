@@ -12,47 +12,42 @@ import {
  * Finds the reward receipt manager id.
  * @returns
  */
-export const findReceiptManagerId = async (
-  stakePoolId: PublicKey,
-  name: string
-): Promise<[PublicKey, number]> => {
-  return PublicKey.findProgramAddress(
+export const findReceiptManagerId = (stakePoolId: PublicKey, name: string) => {
+  return PublicKey.findProgramAddressSync(
     [
       utils.bytes.utf8.encode(RECEIPT_MANAGER_SEED),
       stakePoolId.toBuffer(),
       utils.bytes.utf8.encode(name),
     ],
     RECEIPT_MANAGER_ADDRESS
-  );
+  )[0];
 };
 
 /**
  * Finds the reward receipt manager id.
  * @returns
  */
-export const findReceiptEntryId = async (
-  stakeEntry: PublicKey
-): Promise<[PublicKey, number]> => {
-  return PublicKey.findProgramAddress(
+export const findReceiptEntryId = (stakeEntry: PublicKey) => {
+  return PublicKey.findProgramAddressSync(
     [utils.bytes.utf8.encode(RECEIPT_ENTRY_SEED), stakeEntry.toBuffer()],
     RECEIPT_MANAGER_ADDRESS
-  );
+  )[0];
 };
 
 /**
  * Finds the reward receipt id.
  * @returns
  */
-export const findRewardReceiptId = async (
+export const findRewardReceiptId = (
   receiptManager: PublicKey,
   receiptEntry: PublicKey
-): Promise<[PublicKey, number]> => {
-  return PublicKey.findProgramAddress(
+) => {
+  return PublicKey.findProgramAddressSync(
     [
       utils.bytes.utf8.encode(REWARD_RECEIPT_SEED),
       receiptManager.toBuffer(),
       receiptEntry.toBuffer(),
     ],
     RECEIPT_MANAGER_ADDRESS
-  );
+  )[0];
 };

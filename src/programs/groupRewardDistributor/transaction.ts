@@ -104,14 +104,14 @@ export const withInitGroupRewardEntry = async (
     }[];
   }
 ): Promise<[Transaction, PublicKey]> => {
-  const [[groupRewardEntryId], [groupRewardCounterId]] = await Promise.all([
-    findGroupRewardEntryId(
-      params.groupRewardDistributorId,
-      params.groupEntryId
-    ),
-    findGroupRewardCounterId(params.groupRewardDistributorId, wallet.publicKey),
-  ]);
-
+  const groupRewardEntryId = findGroupRewardEntryId(
+    params.groupRewardDistributorId,
+    params.groupEntryId
+  );
+  const groupRewardCounterId = findGroupRewardCounterId(
+    params.groupRewardDistributorId,
+    wallet.publicKey
+  );
   const groupRewardCounter = await tryGetAccount(() =>
     getGroupRewardCounter(connection, groupRewardCounterId)
   );
@@ -128,10 +128,13 @@ export const withInitGroupRewardEntry = async (
   const stakeEntries = await Promise.all(
     params.stakeEntries.map(
       async ({ stakeEntryId, originalMint, rewardDistributorId }) => {
-        const [[rewardEntryId], originalMintMetadata] = await Promise.all([
-          findRewardEntryId(rewardDistributorId, stakeEntryId),
-          metaplex.Metadata.getPDA(originalMint),
-        ]);
+        const rewardEntryId = findRewardEntryId(
+          rewardDistributorId,
+          stakeEntryId
+        );
+        const originalMintMetadata = await metaplex.Metadata.getPDA(
+          originalMint
+        );
         return {
           stakeEntryId,
           originalMint,
@@ -194,17 +197,14 @@ export const withClaimGroupRewards = async (
       true
     );
 
-    const [[groupRewardEntryId], [groupRewardCounterId]] = await Promise.all([
-      findGroupRewardEntryId(
-        groupRewardDistributorData.pubkey,
-        params.groupEntryId
-      ),
-      findGroupRewardCounterId(
-        groupRewardDistributorData.pubkey,
-        wallet.publicKey
-      ),
-    ]);
-
+    const groupRewardEntryId = findGroupRewardEntryId(
+      groupRewardDistributorData.pubkey,
+      params.groupEntryId
+    );
+    const groupRewardCounterId = findGroupRewardCounterId(
+      groupRewardDistributorData.pubkey,
+      wallet.publicKey
+    );
     transaction.add(
       await claimGroupRewards(connection, wallet, {
         groupEntryId: params.groupEntryId,
@@ -283,14 +283,14 @@ export const withCloseGroupRewardEntry = async (
     groupEntryId: PublicKey;
   }
 ): Promise<Transaction> => {
-  const [[groupRewardEntryId], [groupRewardCounterId]] = await Promise.all([
-    findGroupRewardEntryId(
-      params.groupRewardDistributorId,
-      params.groupEntryId
-    ),
-    findGroupRewardCounterId(params.groupRewardDistributorId, wallet.publicKey),
-  ]);
-
+  const groupRewardEntryId = findGroupRewardEntryId(
+    params.groupRewardDistributorId,
+    params.groupEntryId
+  );
+  const groupRewardCounterId = findGroupRewardCounterId(
+    params.groupRewardDistributorId,
+    wallet.publicKey
+  );
   return transaction.add(
     await closeGroupRewardEntry(connection, wallet, {
       groupEntryId: params.groupEntryId,
@@ -406,7 +406,7 @@ export const withCloseGroupRewardCounter = async (
     }[];
   }
 ): Promise<[Transaction]> => {
-  const [groupRewardCounterId] = await findGroupRewardCounterId(
+  const groupRewardCounterId = findGroupRewardCounterId(
     params.groupRewardDistributorId,
     wallet.publicKey
   );

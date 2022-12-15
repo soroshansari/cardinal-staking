@@ -50,7 +50,7 @@ const initializeEntries = async (
   fungible = false
 ) => {
   const connection = connectionFor(cluster);
-  const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
+  const rewardDistributorId = findRewardDistributorId(stakePoolId);
   const rewardDistributorData = await getRewardDistributor(
     connection,
     rewardDistributorId
@@ -61,16 +61,8 @@ const initializeEntries = async (
     } entries for pool (${stakePoolId.toString()}) and reward distributor (${rewardDistributorId.toString()}) ---------`
   );
   const stakeEntryIds = await Promise.all(
-    initEntries.map(
-      async (e) =>
-        (
-          await findStakeEntryId(
-            wallet.publicKey,
-            stakePoolId,
-            e.mintId,
-            fungible
-          )
-        )[0]
+    initEntries.map(async (e) =>
+      findStakeEntryId(wallet.publicKey, stakePoolId, e.mintId, fungible)
     )
   );
   const stakeEntries = await getStakeEntries(connection, stakeEntryIds);
@@ -83,11 +75,8 @@ const initializeEntries = async (
   );
 
   const rewardEntryIds = await Promise.all(
-    stakeEntryIds.map(
-      async (stakeEntryId) =>
-        (
-          await findRewardEntryId(rewardDistributorId, stakeEntryId)
-        )[0]
+    stakeEntryIds.map(async (stakeEntryId) =>
+      findRewardEntryId(rewardDistributorId, stakeEntryId)
     )
   );
   const rewardEntries = await getRewardEntries(connection, rewardEntryIds);
@@ -131,7 +120,7 @@ const initializeEntries = async (
             }] (${mintId.toString()})`
           );
           try {
-            const [stakeEntryId] = await findStakeEntryId(
+            const stakeEntryId = findStakeEntryId(
               wallet.publicKey,
               stakePoolId,
               mintId,
@@ -164,7 +153,7 @@ const initializeEntries = async (
               );
             }
 
-            const [rewardEntryId] = await findRewardEntryId(
+            const rewardEntryId = findRewardEntryId(
               rewardDistributorId,
               stakeEntryId
             );

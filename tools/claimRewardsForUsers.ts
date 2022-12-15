@@ -27,7 +27,7 @@ const authorityWallet = Keypair.fromSecretKey(
 const main = async (stakePoolId: PublicKey, cluster = "devnet") => {
   const connection = connectionFor(cluster);
 
-  const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
+  const rewardDistributorId = findRewardDistributorId(stakePoolId);
   const checkRewardDistributorData = await tryGetAccount(() =>
     getRewardDistributor(connection, rewardDistributorId)
   );

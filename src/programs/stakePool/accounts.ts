@@ -304,7 +304,7 @@ export const getPoolIdentifier = async (
   connection: Connection
 ): Promise<AccountData<IdentifierData>> => {
   const stakePoolProgram = getProgram(connection);
-  const [identifierId] = await findIdentifierId();
+  const identifierId = findIdentifierId();
   const parsed = await stakePoolProgram.account.identifier.fetch(identifierId);
   return {
     parsed,

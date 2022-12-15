@@ -93,7 +93,7 @@ export const initRewardEntry = (
   });
 };
 
-export const claimRewards = async (
+export const claimRewards = (
   connection: Connection,
   wallet: Wallet,
   params: {
@@ -104,7 +104,7 @@ export const claimRewards = async (
     remainingAccountsForKind: AccountMeta[];
     payer?: PublicKey;
   }
-): Promise<TransactionInstruction> => {
+) => {
   const provider = new AnchorProvider(connection, wallet, {});
   const rewardDistributorProgram = new Program<REWARD_DISTRIBUTOR_PROGRAM>(
     REWARD_DISTRIBUTOR_IDL,
@@ -112,10 +112,8 @@ export const claimRewards = async (
     provider
   );
 
-  const [rewardDistributorId] = await findRewardDistributorId(
-    params.stakePoolId
-  );
-  const [rewardEntryId] = await findRewardEntryId(
+  const rewardDistributorId = findRewardDistributorId(params.stakePoolId);
+  const rewardEntryId = findRewardEntryId(
     rewardDistributorId,
     params.stakeEntryId
   );
@@ -137,7 +135,7 @@ export const claimRewards = async (
   });
 };
 
-export const closeRewardDistributor = async (
+export const closeRewardDistributor = (
   connection: Connection,
   wallet: Wallet,
   params: {
@@ -145,7 +143,7 @@ export const closeRewardDistributor = async (
     rewardMintId: PublicKey;
     remainingAccountsForKind: AccountMeta[];
   }
-): Promise<TransactionInstruction> => {
+) => {
   const provider = new AnchorProvider(connection, wallet, {});
   const rewardDistributorProgram = new Program<REWARD_DISTRIBUTOR_PROGRAM>(
     REWARD_DISTRIBUTOR_IDL,
@@ -153,9 +151,7 @@ export const closeRewardDistributor = async (
     provider
   );
 
-  const [rewardDistributorId] = await findRewardDistributorId(
-    params.stakePoolId
-  );
+  const rewardDistributorId = findRewardDistributorId(params.stakePoolId);
   return rewardDistributorProgram.instruction.closeRewardDistributor({
     accounts: {
       rewardDistributor: rewardDistributorId,
@@ -168,7 +164,7 @@ export const closeRewardDistributor = async (
   });
 };
 
-export const updateRewardEntry = async (
+export const updateRewardEntry = (
   connection: Connection,
   wallet: Wallet,
   params: {
@@ -176,7 +172,7 @@ export const updateRewardEntry = async (
     stakeEntryId: PublicKey;
     multiplier: BN;
   }
-): Promise<TransactionInstruction> => {
+) => {
   const provider = new AnchorProvider(connection, wallet, {});
   const rewardDistributorProgram = new Program<REWARD_DISTRIBUTOR_PROGRAM>(
     REWARD_DISTRIBUTOR_IDL,
@@ -184,11 +180,8 @@ export const updateRewardEntry = async (
     provider
   );
 
-  const [rewardDistributorId] = await findRewardDistributorId(
-    params.stakePoolId
-  );
-
-  const [rewardEntryId] = await findRewardEntryId(
+  const rewardDistributorId = findRewardDistributorId(params.stakePoolId);
+  const rewardEntryId = findRewardEntryId(
     rewardDistributorId,
     params.stakeEntryId
   );

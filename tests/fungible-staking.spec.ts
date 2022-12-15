@@ -104,7 +104,7 @@ describe("Create stake pool", () => {
       formatLogs: true,
     }).to.be.fulfilled;
 
-    const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
+    const rewardDistributorId = findRewardDistributorId(stakePoolId);
     const rewardDistributorData = await getRewardDistributor(
       provider.connection,
       rewardDistributorId
@@ -117,7 +117,7 @@ describe("Create stake pool", () => {
 
   it("Init Reward Entry", async () => {
     const provider = getProvider();
-    const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
+    const rewardDistributorId = findRewardDistributorId(stakePoolId);
     const transaction = await initializeRewardEntry(
       provider.connection,
       provider.wallet,
@@ -170,14 +170,12 @@ describe("Create stake pool", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
 
     expect(stakeEntryData.parsed.originalMint.toString()).to.eq(
@@ -222,14 +220,12 @@ describe("Create stake pool", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
 
     const userOriginalMintTokenAccountId = await findAta(
@@ -276,9 +272,7 @@ describe("Create stake pool", () => {
         provider.connection,
         stakeMintKeypair.publicKey,
         splToken.TOKEN_PROGRAM_ID,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        null
+        Keypair.generate()
       );
       const userReceiptTokenAccount = await checkReceiptMint.getAccountInfo(
         userReceiptTokenAccountId
@@ -318,19 +312,18 @@ describe("Create stake pool", () => {
           })
         ).instructions,
       ]),
-      "Unstake"
+      "Unstake",
+      { verbosity: "always" }
     ).to.be.fulfilled;
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
     expect(stakeEntryData.parsed.lastStaker.toString()).to.eq(
       PublicKey.default.toString()

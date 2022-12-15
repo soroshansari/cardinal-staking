@@ -96,7 +96,7 @@ describe("Reassign staker", () => {
   it("Stake", async () => {
     const provider = getProvider();
     let transaction = new Transaction();
-    const [stakeEntryId] = await findStakeEntryIdFromMint(
+    const stakeEntryId = await findStakeEntryIdFromMint(
       provider.connection,
       provider.wallet.publicKey,
       stakePoolId,
@@ -132,14 +132,12 @@ describe("Reassign staker", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
 
     const userOriginalMintTokenAccountId = await findAta(
@@ -164,7 +162,7 @@ describe("Reassign staker", () => {
     const provider = getProvider();
     const transaction = new Transaction();
 
-    const [stakeEntryId] = await findStakeEntryId(
+    const stakeEntryId = findStakeEntryId(
       provider.wallet.publicKey,
       stakePoolId,
       originalMint.publicKey,
@@ -196,7 +194,7 @@ describe("Reassign staker", () => {
     const provider = getProvider();
     const transaction = new Transaction();
 
-    const [stakeEntryId] = await findStakeEntryId(
+    const stakeEntryId = findStakeEntryId(
       provider.wallet.publicKey,
       stakePoolId,
       originalMint.publicKey,
@@ -268,14 +266,12 @@ describe("Reassign staker", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
     expect(stakeEntryData.parsed.lastStaker.toString()).to.eq(
       PublicKey.default.toString()

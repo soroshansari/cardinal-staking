@@ -183,7 +183,7 @@ export const initializeRewardEntry = async (
     multiplier?: BN;
   }
 ): Promise<Transaction> => {
-  const [stakeEntryId] = await findStakeEntryIdFromMint(
+  const stakeEntryId = await findStakeEntryIdFromMint(
     connection,
     wallet.publicKey,
     params.stakePoolId,
@@ -201,15 +201,13 @@ export const initializeRewardEntry = async (
     });
   }
 
-  const [rewardDistributorId] = await findRewardDistributorId(
-    params.stakePoolId
-  );
-  await withInitRewardEntry(transaction, connection, wallet, {
+  const rewardDistributorId = findRewardDistributorId(params.stakePoolId);
+  withInitRewardEntry(transaction, connection, wallet, {
     stakeEntryId: stakeEntryId,
     rewardDistributorId: rewardDistributorId,
   });
 
-  await withUpdateRewardEntry(transaction, connection, wallet, {
+  withUpdateRewardEntry(transaction, connection, wallet, {
     stakePoolId: params.stakePoolId,
     rewardDistributorId: rewardDistributorId,
     stakeEntryId: stakeEntryId,
@@ -226,14 +224,14 @@ export const initializeRewardEntry = async (
  * @param originalMintId - Original mint ID
  * @returns
  */
-export const authorizeStakeEntry = async (
+export const authorizeStakeEntry = (
   connection: Connection,
   wallet: Wallet,
   params: {
     stakePoolId: PublicKey;
     originalMintId: PublicKey;
   }
-): Promise<Transaction> => {
+) => {
   return withAuthorizeStakeEntry(new Transaction(), connection, wallet, {
     stakePoolId: params.stakePoolId,
     originalMintId: params.originalMintId,
@@ -259,7 +257,7 @@ export const createStakeEntryAndStakeMint = async (
   }
 ): Promise<[Transaction, PublicKey, Keypair | undefined]> => {
   let transaction = new Transaction();
-  const [stakeEntryId] = await findStakeEntryIdFromMint(
+  const stakeEntryId = await findStakeEntryIdFromMint(
     connection,
     wallet.publicKey,
     params.stakePoolId,
@@ -367,7 +365,7 @@ export const stake = async (
   }
 
   let transaction = new Transaction();
-  const [stakeEntryId] = await findStakeEntryIdFromMint(
+  const stakeEntryId = await findStakeEntryIdFromMint(
     connection,
     wallet.publicKey,
     params.stakePoolId,
@@ -618,7 +616,7 @@ export const claimGroupRewards = async (
 ): Promise<[Transaction]> => {
   const transaction = new Transaction();
 
-  const [groupRewardEntryId] = await findGroupRewardEntryId(
+  const groupRewardEntryId = findGroupRewardEntryId(
     params.groupRewardDistributorId,
     params.groupEntryId
   );
@@ -633,8 +631,8 @@ export const claimGroupRewards = async (
     );
 
     const stakeEntries = await Promise.all(
-      stakeEntriesData.map(async (stakeEntry) => {
-        const [rewardDistributorId] = await findRewardDistributorId(
+      stakeEntriesData.map((stakeEntry) => {
+        const rewardDistributorId = findRewardDistributorId(
           stakeEntry.parsed.pool
         );
         return {

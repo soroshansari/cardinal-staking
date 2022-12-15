@@ -72,7 +72,7 @@ describe("Stake and claim rewards from treasury", () => {
       formatLogs: true,
     }).to.be.fulfilled;
 
-    const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
+    const rewardDistributorId = findRewardDistributorId(stakePoolId);
     const rewardDistributorData = await getRewardDistributor(
       provider.connection,
       rewardDistributorId
@@ -91,7 +91,7 @@ describe("Stake and claim rewards from treasury", () => {
     const provider = getProvider();
     const transaction = new web3.Transaction();
 
-    await withUpdateRewardDistributor(
+    withUpdateRewardDistributor(
       transaction,
       provider.connection,
       provider.wallet,
@@ -111,7 +111,7 @@ describe("Stake and claim rewards from treasury", () => {
       formatLogs: true,
     }).to.be.fulfilled;
 
-    const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
+    const rewardDistributorId = findRewardDistributorId(stakePoolId);
     const rewardDistributorData = await getRewardDistributor(
       provider.connection,
       rewardDistributorId

@@ -3,7 +3,7 @@ import {
   withFindOrInitAssociatedTokenAccount,
 } from "@cardinal/common";
 import { getPaymentManager } from "@cardinal/payment-manager/dist/cjs/accounts";
-import type { BN, web3 } from "@project-serum/anchor";
+import type { BN } from "@project-serum/anchor";
 import type { Wallet } from "@saberhq/solana-contrib";
 import type { Connection, PublicKey, Transaction } from "@solana/web3.js";
 
@@ -26,7 +26,7 @@ import {
   findRewardReceiptId,
 } from "./pda";
 
-export const withInitReceiptManager = async (
+export const withInitReceiptManager = (
   transaction: Transaction,
   connection: Connection,
   wallet: Wallet,
@@ -42,8 +42,8 @@ export const withInitReceiptManager = async (
     requiresAuthorization: boolean;
     maxClaimedReceipts?: BN;
   }
-): Promise<[Transaction, web3.PublicKey]> => {
-  const [receiptManagerId] = await findReceiptManagerId(
+): [Transaction, PublicKey] => {
+  const receiptManagerId = findReceiptManagerId(
     params.stakePoolId,
     params.name
   );
@@ -65,15 +65,15 @@ export const withInitReceiptManager = async (
   return [transaction, receiptManagerId];
 };
 
-export const withInitReceiptEntry = async (
+export const withInitReceiptEntry = (
   transaction: Transaction,
   connection: Connection,
   wallet: Wallet,
   params: {
     stakeEntryId: PublicKey;
   }
-): Promise<[Transaction, web3.PublicKey]> => {
-  const [receiptEntryId] = await findReceiptEntryId(params.stakeEntryId);
+): [Transaction, PublicKey] => {
+  const receiptEntryId = findReceiptEntryId(params.stakeEntryId);
   transaction.add(
     initReceiptEntry(connection, wallet, {
       receiptEntry: receiptEntryId,
@@ -83,7 +83,7 @@ export const withInitReceiptEntry = async (
   return [transaction, receiptEntryId];
 };
 
-export const withInitRewardReceipt = async (
+export const withInitRewardReceipt = (
   transaction: Transaction,
   connection: Connection,
   wallet: Wallet,
@@ -93,8 +93,8 @@ export const withInitRewardReceipt = async (
     stakeEntryId: PublicKey;
     payer?: PublicKey;
   }
-): Promise<[Transaction, web3.PublicKey]> => {
-  const [rewardReceiptId] = await findRewardReceiptId(
+): [Transaction, PublicKey] => {
+  const rewardReceiptId = findRewardReceiptId(
     params.receiptManagerId,
     params.receiptEntryId
   );
@@ -110,7 +110,7 @@ export const withInitRewardReceipt = async (
   return [transaction, rewardReceiptId];
 };
 
-export const withUpdateReceiptManager = async (
+export const withUpdateReceiptManager = (
   transaction: Transaction,
   connection: Connection,
   wallet: Wallet,
@@ -126,8 +126,8 @@ export const withUpdateReceiptManager = async (
     requiresAuthorization: boolean;
     maxClaimedReceipts?: BN;
   }
-): Promise<[Transaction, web3.PublicKey]> => {
-  const [receiptManagerId] = await findReceiptManagerId(
+): [Transaction, PublicKey] => {
+  const receiptManagerId = findReceiptManagerId(
     params.stakePoolId,
     params.name
   );
@@ -159,8 +159,8 @@ export const withClaimRewardReceipt = async (
     claimer: PublicKey;
     payer: PublicKey;
   }
-): Promise<[Transaction, web3.PublicKey]> => {
-  const [receiptManagerId] = await findReceiptManagerId(
+): Promise<[Transaction, PublicKey]> => {
+  const receiptManagerId = findReceiptManagerId(
     params.stakePoolId,
     params.receiptManagerName
   );
@@ -172,12 +172,8 @@ export const withClaimRewardReceipt = async (
       params.receiptManagerName
     } for pool ${params.stakePoolId.toString()}`;
   }
-  const [receiptEntryId] = await findReceiptEntryId(params.stakeEntryId);
-
-  const [rewardReceiptId] = await findRewardReceiptId(
-    receiptManagerId,
-    receiptEntryId
-  );
+  const receiptEntryId = findReceiptEntryId(params.stakeEntryId);
+  const rewardReceiptId = findRewardReceiptId(receiptManagerId, receiptEntryId);
 
   const checkPaymentManager = await tryGetAccount(() =>
     getPaymentManager(connection, checkReceiptManager.parsed.paymentManager)

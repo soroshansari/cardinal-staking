@@ -61,9 +61,7 @@ export const initGroupRewardDistributor = async (
   const id = Keypair.generate();
   signers.push(id);
 
-  const [groupRewardDistributorId] = await findGroupRewardDistributorId(
-    id.publicKey
-  );
+  const groupRewardDistributorId = findGroupRewardDistributorId(id.publicKey);
 
   const transaction = new Transaction();
 

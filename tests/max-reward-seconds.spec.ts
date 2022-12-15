@@ -126,7 +126,7 @@ describe("Stake and claim rewards up to max reward seconds", () => {
       formatLogs: true,
     }).to.be.fulfilled;
 
-    const [rewardDistributorId] = await findRewardDistributorId(stakePoolId);
+    const rewardDistributorId = findRewardDistributorId(stakePoolId);
     const rewardDistributorData = await getRewardDistributor(
       provider.connection,
       rewardDistributorId
@@ -161,14 +161,12 @@ describe("Stake and claim rewards up to max reward seconds", () => {
 
     const stakeEntryData = await getStakeEntry(
       provider.connection,
-      (
-        await findStakeEntryIdFromMint(
-          provider.connection,
-          provider.wallet.publicKey,
-          stakePoolId,
-          originalMint.publicKey
-        )
-      )[0]
+      await findStakeEntryIdFromMint(
+        provider.connection,
+        provider.wallet.publicKey,
+        stakePoolId,
+        originalMint.publicKey
+      )
     );
 
     expect(stakeEntryData.parsed.lastStakedAt.toNumber()).to.be.greaterThan(0);
@@ -186,7 +184,7 @@ describe("Stake and claim rewards up to max reward seconds", () => {
   it("Claim Rewards", async () => {
     await delay(3000);
     const provider = getProvider();
-    const [stakeEntryId] = await findStakeEntryIdFromMint(
+    const stakeEntryId = await findStakeEntryIdFromMint(
       provider.connection,
       provider.wallet.publicKey,
       stakePoolId,
@@ -251,7 +249,7 @@ describe("Stake and claim rewards up to max reward seconds", () => {
   it("Claim Rewards again", async () => {
     await delay(2000);
     const provider = getProvider();
-    const [stakeEntryId] = await findStakeEntryIdFromMint(
+    const stakeEntryId = await findStakeEntryIdFromMint(
       provider.connection,
       provider.wallet.publicKey,
       stakePoolId,
@@ -316,7 +314,7 @@ describe("Stake and claim rewards up to max reward seconds", () => {
   it("Unstake", async () => {
     await delay(2000);
     const provider = getProvider();
-    const [stakeEntryId] = await findStakeEntryIdFromMint(
+    const stakeEntryId = await findStakeEntryIdFromMint(
       provider.connection,
       provider.wallet.publicKey,
       stakePoolId,
