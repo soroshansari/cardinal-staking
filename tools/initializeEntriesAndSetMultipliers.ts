@@ -34,7 +34,7 @@ const wallet = Keypair.fromSecretKey(utils.bytes.bs58.decode("SECRET_KEY"));
 const POOL_ID = new PublicKey("");
 const CLUSTER = "mainnet";
 const FUNGIBLE = false;
-const BATCH_SIZE = 4;
+const BATCH_SIZE = 3;
 const PARALLEL_BATCH_SIZE = 20;
 
 type EntryData = { mintId: PublicKey; multiplier?: number };
