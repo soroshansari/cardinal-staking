@@ -9,7 +9,7 @@ import { connectionFor } from "./connection";
 
 const wallet = Keypair.fromSecretKey(utils.bytes.bs58.decode("")); // your wallet's secret key
 const mint = new PublicKey("");
-const poolId = new PublicKey("");
+const rewardDistributorId = new PublicKey("");
 const amount = 0;
 const decimals = 0;
 
@@ -25,11 +25,12 @@ const main = async () => {
     wallet.publicKey,
     true
   );
-  const poolAtaId = await withFindOrInitAssociatedTokenAccount(
+
+  const rewardDistributorAtaId = await withFindOrInitAssociatedTokenAccount(
     transaction,
     connection,
     mint,
-    poolId,
+    rewardDistributorId,
     wallet.publicKey,
     true
   );
@@ -39,7 +40,7 @@ const main = async () => {
       splToken.TOKEN_PROGRAM_ID,
       ownerAtaId,
       mint,
-      poolAtaId,
+      rewardDistributorAtaId,
       wallet.publicKey,
       [],
       amount,
