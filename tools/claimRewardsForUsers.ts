@@ -13,12 +13,15 @@ import { getActiveStakeEntriesForPool } from "../src/programs/stakePool/accounts
 import { withUpdateTotalStakeSeconds } from "../src/programs/stakePool/transaction";
 import { connectionFor } from "./connection";
 import { chunkArray } from "./utils";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 const BATCH_SIZE = 4;
 const PARALLEL_BATCH_SIZE = 5;
 
 const authorityWallet = Keypair.fromSecretKey(
-  utils.bytes.bs58.decode("SECRET_KEY")
+  utils.bytes.bs58.decode(process.env.WALLET || "SECRET_KEY")
 ); // your wallet's secret key
 
 const main = async (stakePoolId: PublicKey, cluster = "devnet") => {
