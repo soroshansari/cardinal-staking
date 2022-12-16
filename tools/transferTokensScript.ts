@@ -1,6 +1,5 @@
 import { withFindOrInitAssociatedTokenAccount } from "@cardinal/common";
-import { utils } from "@project-serum/anchor";
-import { SignerWallet } from "@saberhq/solana-contrib";
+import { utils, Wallet } from "@project-serum/anchor";
 import * as splToken from "@solana/spl-token";
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 
@@ -48,12 +47,7 @@ const main = async () => {
     )
   );
 
-  await executeTransaction(
-    connection,
-    new SignerWallet(wallet),
-    transaction,
-    {}
-  );
+  await executeTransaction(connection, new Wallet(wallet), transaction, {});
 };
 
 main().catch((e) => console.log(e));

@@ -1,7 +1,6 @@
 import type { AccountData } from "@cardinal/common";
 import { withFindOrInitAssociatedTokenAccount } from "@cardinal/common";
-import { utils } from "@project-serum/anchor";
-import { SignerWallet } from "@saberhq/solana-contrib";
+import { utils, Wallet } from "@project-serum/anchor";
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import { BN } from "bn.js";
 
@@ -61,7 +60,7 @@ const initializeEntries = async (
     } entries for pool (${stakePoolId.toString()}) and reward distributor (${rewardDistributorId.toString()}) ---------`
   );
   const stakeEntryIds = await Promise.all(
-    initEntries.map(async (e) =>
+    initEntries.map((e) =>
       findStakeEntryId(wallet.publicKey, stakePoolId, e.mintId, fungible)
     )
   );
@@ -74,10 +73,8 @@ const initializeEntries = async (
     {} as { [id: string]: AccountData<StakeEntryData> }
   );
 
-  const rewardEntryIds = await Promise.all(
-    stakeEntryIds.map(async (stakeEntryId) =>
-      findRewardEntryId(rewardDistributorId, stakeEntryId)
-    )
+  const rewardEntryIds = stakeEntryIds.map((stakeEntryId) =>
+    findRewardEntryId(rewardDistributorId, stakeEntryId)
   );
   const rewardEntries = await getRewardEntries(connection, rewardEntryIds);
   const rewardEntriesById = rewardEntries.reduce(
@@ -88,11 +85,8 @@ const initializeEntries = async (
     {} as { [id: string]: AccountData<RewardEntryData> }
   );
 
-  const chunkedEntries = chunkArray(initEntries, BATCH_SIZE) as EntryData[][];
-  const batchedChunks = chunkArray(
-    chunkedEntries,
-    PARALLEL_BATCH_SIZE
-  ) as EntryData[][][];
+  const chunkedEntries = chunkArray(initEntries, BATCH_SIZE);
+  const batchedChunks = chunkArray(chunkedEntries, PARALLEL_BATCH_SIZE);
   for (let i = 0; i < batchedChunks.length; i++) {
     const chunk = batchedChunks[i]!;
     console.log(
@@ -140,7 +134,7 @@ const initializeEntries = async (
               await withInitStakeEntry(
                 transaction,
                 connection,
-                new SignerWallet(wallet),
+                new Wallet(wallet),
                 {
                   stakePoolId,
                   originalMintId: mintId,
@@ -164,15 +158,10 @@ const initializeEntries = async (
                   entries.length
                 }] 2. reward entry not found for reward distributor - adding reward entry instruction`
               );
-              await withInitRewardEntry(
-                transaction,
-                connection,
-                new SignerWallet(wallet),
-                {
-                  stakeEntryId,
-                  rewardDistributorId,
-                }
-              );
+              withInitRewardEntry(transaction, connection, new Wallet(wallet), {
+                stakeEntryId,
+                rewardDistributorId,
+              });
             }
 
             let multiplierToSet = multiplier;
@@ -203,10 +192,10 @@ const initializeEntries = async (
                   rewardEntry?.parsed.multiplier.toNumber() || 0
                 } => ${multiplierToSet}`
               );
-              await withUpdateRewardEntry(
+              withUpdateRewardEntry(
                 transaction,
                 connection,
-                new SignerWallet(wallet),
+                new Wallet(wallet),
                 {
                   stakePoolId,
                   stakeEntryId,
@@ -227,7 +216,7 @@ const initializeEntries = async (
           if (transaction.instructions.length > 0) {
             const txid = await executeTransaction(
               connection,
-              new SignerWallet(wallet),
+              new Wallet(wallet),
               transaction,
               {}
             );

@@ -1,6 +1,5 @@
 import { tryGetAccount } from "@cardinal/common";
-import { utils } from "@project-serum/anchor";
-import { SignerWallet } from "@saberhq/solana-contrib";
+import { utils, Wallet } from "@project-serum/anchor";
 import type { Connection } from "@solana/web3.js";
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import { BN } from "bn.js";
@@ -26,7 +25,7 @@ import { findStakeEntryId } from "../src/programs/stakePool/pda";
 import { connectionFor } from "./connection";
 import { fetchMetadata } from "./getMetadataForPoolTokens";
 
-const wallet = new SignerWallet(
+const wallet = new Wallet(
   Keypair.fromSecretKey(utils.bytes.bs58.decode("SECRET_KEY"))
 );
 
@@ -257,13 +256,9 @@ const updateMultipliers = async (
     (ml) => ml * 10 ** rewardDistributorData.parsed.multiplierDecimals
   );
 
-  const rewardEntryIds = (
-    await Promise.all(
-      stakeEntryIds.map((stakeEntryId) =>
-        findRewardEntryId(rewardDistributorId, stakeEntryId)
-      )
-    )
-  ).map((r) => r[0]);
+  const rewardEntryIds = stakeEntryIds.map((stakeEntryId) =>
+    findRewardEntryId(rewardDistributorId, stakeEntryId)
+  );
   const stakeEntryDatas = await getStakeEntries(connection, stakeEntryIds);
   const rewardEntryDatas = await getRewardEntries(connection, rewardEntryIds);
   // Add init reward entry instructions

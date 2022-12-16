@@ -1,5 +1,4 @@
-import { utils } from "@project-serum/anchor";
-import { SignerWallet } from "@saberhq/solana-contrib";
+import { utils, Wallet } from "@project-serum/anchor";
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import { BN } from "bn.js";
 
@@ -22,17 +21,12 @@ const main = async (
     `Reclaiming ${amount} tokens from reward distributor of stake pool ${stakePoolId.toString()}`
   );
 
-  await withReclaimFunds(transaction, connection, new SignerWallet(wallet), {
+  await withReclaimFunds(transaction, connection, new Wallet(wallet), {
     stakePoolId: stakePoolId,
     amount: new BN(amount),
   });
 
-  await executeTransaction(
-    connection,
-    new SignerWallet(wallet),
-    transaction,
-    {}
-  );
+  await executeTransaction(connection, new Wallet(wallet), transaction, {});
 
   console.log("Successfully reclaimed funds");
 };

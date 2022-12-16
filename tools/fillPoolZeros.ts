@@ -1,6 +1,5 @@
 import type { AccountData } from "@cardinal/common";
-import { AnchorProvider, Program, utils } from "@project-serum/anchor";
-import { SignerWallet } from "@saberhq/solana-contrib";
+import { AnchorProvider, Program, utils, Wallet } from "@project-serum/anchor";
 import { Keypair, Transaction } from "@solana/web3.js";
 
 import { executeTransaction } from "../src";
@@ -25,7 +24,7 @@ const ALLOWED_POOL_IDS = ["2s3qXuGyMNedXS61Vi9XsRx7HuryyyZUYGyMtCrKUXva"];
 const fillPoolZeros = async (cluster: string) => {
   console.log(wallet.publicKey.toString());
   const connection = connectionFor(cluster);
-  const provider = new AnchorProvider(connection, new SignerWallet(wallet), {});
+  const provider = new AnchorProvider(connection, new Wallet(wallet), {});
   const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
     STAKE_POOL_IDL,
     STAKE_POOL_ADDRESS,
@@ -41,10 +40,7 @@ const fillPoolZeros = async (cluster: string) => {
     transaction: Transaction;
     accountsInTx: AccountData<StakePoolData>[];
   }[] = [];
-  const chunkedPools = chunkArray(
-    allStakePools,
-    BATCH_SIZE
-  ) as AccountData<StakePoolData>[][];
+  const chunkedPools = chunkArray(allStakePools, BATCH_SIZE);
   for (let i = 0; i < chunkedPools.length; i++) {
     const stakePools = chunkedPools[i]!;
     console.log(
@@ -87,7 +83,7 @@ const fillPoolZeros = async (cluster: string) => {
           if (!DRY_RUN) {
             txid = await executeTransaction(
               connection,
-              new SignerWallet(wallet),
+              new Wallet(wallet),
               transaction,
               {}
             );

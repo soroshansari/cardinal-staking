@@ -1,20 +1,14 @@
-import * as dotenv from "dotenv";
-dotenv.config();
-
 import type { AccountData } from "@cardinal/common";
 import {
   AnchorProvider,
   BorshAccountsCoder,
   Program,
   utils,
+  Wallet,
 } from "@project-serum/anchor";
-import { SignerWallet } from "@saberhq/solana-contrib";
-import {
-  Connection,
-  Keypair,
-  SystemProgram,
-  Transaction,
-} from "@solana/web3.js";
+import type { Connection } from "@solana/web3.js";
+import { Keypair, SystemProgram, Transaction } from "@solana/web3.js";
+import * as dotenv from "dotenv";
 
 import { executeTransaction } from "../src";
 import type {
@@ -24,6 +18,8 @@ import type {
 import { STAKE_POOL_ADDRESS, STAKE_POOL_IDL } from "../src/programs/stakePool";
 import { connectionFor } from "./connection";
 import { chunkArray } from "./utils";
+
+dotenv.config();
 
 const wallet = Keypair.fromSecretKey(
   utils.bytes.bs58.decode(process.env.WALLET || "")
@@ -58,7 +54,7 @@ const fillEntryZeros = async (cluster: string) => {
   console.log(`wallet=${wallet.publicKey.toString()}`);
   // setup
   const connection = connectionFor(cluster);
-  const provider = new AnchorProvider(connection, new SignerWallet(wallet), {});
+  const provider = new AnchorProvider(connection, new Wallet(wallet), {});
   const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
     STAKE_POOL_IDL,
     STAKE_POOL_ADDRESS,
@@ -149,7 +145,7 @@ const fillEntryZeros = async (cluster: string) => {
             if (!DRY_RUN && transaction.instructions.length > 0) {
               txid = await executeTransaction(
                 connection,
-                new SignerWallet(wallet),
+                new Wallet(wallet),
                 transaction,
                 {}
               );

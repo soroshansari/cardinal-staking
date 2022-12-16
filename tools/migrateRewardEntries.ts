@@ -1,5 +1,4 @@
-import { utils } from "@project-serum/anchor";
-import { SignerWallet } from "@saberhq/solana-contrib";
+import { utils, Wallet } from "@project-serum/anchor";
 import { Keypair, Transaction } from "@solana/web3.js";
 
 import { executeTransaction } from "../src";
@@ -63,7 +62,7 @@ const migrateRewardEntries = async (cluster: string) => {
         ();
       const txid = await executeTransaction(
         connection,
-        new SignerWallet(wallet),
+        new Wallet(wallet),
         transaction,
         {}
       );

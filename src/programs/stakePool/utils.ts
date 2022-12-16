@@ -1,6 +1,6 @@
 import { withFindOrInitAssociatedTokenAccount } from "@cardinal/common";
 import { AnchorProvider, BN, Program } from "@project-serum/anchor";
-import type { Wallet } from "@saberhq/solana-contrib";
+import type { Wallet } from "@project-serum/anchor/dist/cjs/provider";
 import type {
   AccountMeta,
   Connection,

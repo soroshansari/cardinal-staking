@@ -13,7 +13,7 @@ import {
 } from "@cardinal/token-manager/dist/cjs/programs/tokenManager/pda";
 import * as metaplex from "@metaplex-foundation/mpl-token-metadata";
 import { BN } from "@project-serum/anchor";
-import type { Wallet } from "@saberhq/solana-contrib";
+import type { Wallet } from "@project-serum/anchor/dist/cjs/provider";
 import type {
   Connection,
   Keypair,

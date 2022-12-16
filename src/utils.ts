@@ -2,7 +2,7 @@ import type { AccountData } from "@cardinal/common";
 import { findAta } from "@cardinal/common";
 import type { web3 } from "@project-serum/anchor";
 import { BN } from "@project-serum/anchor";
-import type { Wallet } from "@saberhq/solana-contrib";
+import type { Wallet } from "@project-serum/anchor/dist/cjs/provider";
 import * as splToken from "@solana/spl-token";
 import type {
   ConfirmOptions,

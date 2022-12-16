@@ -1,7 +1,5 @@
-// eslint-disable-next-line import/first
 import type { AccountData } from "@cardinal/common";
-import { utils } from "@project-serum/anchor";
-import { SignerWallet } from "@saberhq/solana-contrib";
+import { utils, Wallet } from "@project-serum/anchor";
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import { BN } from "bn.js";
 import * as dotenv from "dotenv";
@@ -47,10 +45,7 @@ const checkMultipliers = async (
   });
   console.log(`Found ${missingMultipliers.length} entries with multipler=1`);
   console.log(missingMultipliers);
-  const chunks = chunkArray(
-    missingMultipliers,
-    BATCH_SIZE
-  ) as AccountData<RewardEntryData>[][];
+  const chunks = chunkArray(missingMultipliers, BATCH_SIZE);
 
   for (let i = 0; i < chunks.length; i++) {
     const chunk = chunks[i]!;
@@ -60,23 +55,18 @@ const checkMultipliers = async (
       const m = chunk[j]!;
       console.log(m);
       console.log(`\n\n${i}. Reward entry: ${m.pubkey.toString()}`);
-      await withUpdateRewardEntry(
-        transaction,
-        connection,
-        new SignerWallet(wallet),
-        {
-          stakePoolId: rewardDistributorData.parsed.stakePool,
-          rewardDistributorId: rewardDistributorId,
-          stakeEntryId: m.parsed.stakeEntry,
-          multiplier: new BN(MULTIPLIER),
-        }
-      );
+      withUpdateRewardEntry(transaction, connection, new Wallet(wallet), {
+        stakePoolId: rewardDistributorData.parsed.stakePool,
+        rewardDistributorId: rewardDistributorId,
+        stakeEntryId: m.parsed.stakeEntry,
+        multiplier: new BN(MULTIPLIER),
+      });
       entriesInTx.push(m);
     }
     try {
       const txid = await executeTransaction(
         connection,
-        new SignerWallet(wallet),
+        new Wallet(wallet),
         transaction,
         {}
       );

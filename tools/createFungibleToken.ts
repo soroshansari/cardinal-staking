@@ -3,8 +3,7 @@ import {
   DataV2,
   Metadata,
 } from "@metaplex-foundation/mpl-token-metadata";
-import { utils } from "@project-serum/anchor";
-import { SignerWallet } from "@saberhq/solana-contrib";
+import { utils, Wallet } from "@project-serum/anchor";
 import * as splToken from "@solana/spl-token";
 import {
   Keypair,
@@ -36,7 +35,7 @@ export const createFungibleToken = async (
     const [masterEditionTokenAccountId] = await createMintTransaction(
       masterEditionTransaction,
       connection,
-      new SignerWallet(wallet),
+      new Wallet(wallet),
       wallet.publicKey,
       mintKeypair.publicKey,
       SUPPLY,

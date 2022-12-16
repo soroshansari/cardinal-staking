@@ -4,8 +4,8 @@ import {
   BorshAccountsCoder,
   Program,
   utils,
+  Wallet,
 } from "@project-serum/anchor";
-import { SignerWallet } from "@saberhq/solana-contrib";
 import type { Connection, PublicKey } from "@solana/web3.js";
 import { Keypair } from "@solana/web3.js";
 
@@ -23,7 +23,7 @@ import type {
 const getProgram = (connection: Connection) => {
   const provider = new AnchorProvider(
     connection,
-    new SignerWallet(Keypair.generate()),
+    new Wallet(Keypair.generate()),
     {}
   );
   return new Program<GROUP_REWARD_DISTRIBUTOR_PROGRAM>(

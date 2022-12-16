@@ -5,7 +5,7 @@ import {
 import { tokenManager } from "@cardinal/token-manager/dist/cjs/programs";
 import { withRemainingAccountsForReturn } from "@cardinal/token-manager/dist/cjs/programs/tokenManager";
 import { tokenManagerAddressFromMint } from "@cardinal/token-manager/dist/cjs/programs/tokenManager/pda";
-import type { Wallet } from "@saberhq/solana-contrib";
+import type { Wallet } from "@project-serum/anchor/dist/cjs/provider";
 import type { Connection, PublicKey, Transaction } from "@solana/web3.js";
 
 export const withInvalidate = async (

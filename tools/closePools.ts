@@ -1,6 +1,5 @@
 import { tryGetAccount } from "@cardinal/common";
-import { utils } from "@project-serum/anchor";
-import { SignerWallet } from "@saberhq/solana-contrib";
+import { utils, Wallet } from "@project-serum/anchor";
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import { fail } from "assert";
 
@@ -67,20 +66,15 @@ const main = async (poolIds: PublicKey[], cluster = "devnet") => {
       console.log(`Closing ${i + 1} out of ${poolEntries.length} pool entries`);
 
       try {
-        withCloseStakeEntry(transaction, connection, new SignerWallet(wallet), {
+        withCloseStakeEntry(transaction, connection, new Wallet(wallet), {
           stakePoolId: stakePool.pubkey,
           stakeEntryId: entry.pubkey,
         });
-        await executeTransaction(
-          connection,
-          new SignerWallet(wallet),
-          transaction,
-          {
-            confirmOptions: {
-              maxRetries: 3,
-            },
-          }
-        );
+        await executeTransaction(connection, new Wallet(wallet), transaction, {
+          confirmOptions: {
+            maxRetries: 3,
+          },
+        });
       } catch (e) {
         console.log(e);
         fail;
@@ -103,25 +97,15 @@ const main = async (poolIds: PublicKey[], cluster = "devnet") => {
       );
 
       try {
-        await withCloseRewardEntry(
-          transaction,
-          connection,
-          new SignerWallet(wallet),
-          {
-            stakePoolId: stakePool.pubkey,
-            stakeEntryId: rewardEntry.parsed.stakeEntry,
-          }
-        );
-        await executeTransaction(
-          connection,
-          new SignerWallet(wallet),
-          transaction,
-          {
-            confirmOptions: {
-              maxRetries: 3,
-            },
-          }
-        );
+        withCloseRewardEntry(transaction, connection, new Wallet(wallet), {
+          stakePoolId: stakePool.pubkey,
+          stakeEntryId: rewardEntry.parsed.stakeEntry,
+        });
+        await executeTransaction(connection, new Wallet(wallet), transaction, {
+          confirmOptions: {
+            maxRetries: 3,
+          },
+        });
       } catch (e) {
         console.log(e);
         fail;
@@ -139,21 +123,16 @@ const main = async (poolIds: PublicKey[], cluster = "devnet") => {
         await withCloseRewardDistributor(
           transaction,
           connection,
-          new SignerWallet(wallet),
+          new Wallet(wallet),
           {
             stakePoolId: stakePool.pubkey,
           }
         );
-        await executeTransaction(
-          connection,
-          new SignerWallet(wallet),
-          transaction,
-          {
-            confirmOptions: {
-              maxRetries: 3,
-            },
-          }
-        );
+        await executeTransaction(connection, new Wallet(wallet), transaction, {
+          confirmOptions: {
+            maxRetries: 3,
+          },
+        });
         console.log("Successfully closed reward distributor");
       } catch (e) {
         console.log(e);
@@ -166,19 +145,14 @@ const main = async (poolIds: PublicKey[], cluster = "devnet") => {
     console.log("Closing pool");
     const transaction = new Transaction();
     try {
-      withCloseStakePool(transaction, connection, new SignerWallet(wallet), {
+      withCloseStakePool(transaction, connection, new Wallet(wallet), {
         stakePoolId: stakePool.pubkey,
       });
-      await executeTransaction(
-        connection,
-        new SignerWallet(wallet),
-        transaction,
-        {
-          confirmOptions: {
-            maxRetries: 3,
-          },
-        }
-      );
+      await executeTransaction(connection, new Wallet(wallet), transaction, {
+        confirmOptions: {
+          maxRetries: 3,
+        },
+      });
     } catch (e) {
       console.log(e);
       fail;

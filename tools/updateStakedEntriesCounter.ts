@@ -1,5 +1,4 @@
-import { utils } from "@project-serum/anchor";
-import { SignerWallet } from "@saberhq/solana-contrib";
+import { utils, Wallet } from "@project-serum/anchor";
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 
 import { executeTransaction } from "../src";
@@ -43,18 +42,13 @@ const main = async (cluster = "mainnet") => {
       // withUpdateStakedEntriesCounter(
       //   transaction,
       //   connection,
-      //   new SignerWallet(wallet),
+      //   new Wallet(wallet),
       //   {
       //     stakePoolId: new PublicKey(poolId),
       //     counter: poolsMap[poolId]!,
       //   }
       // );
-      await executeTransaction(
-        connection,
-        new SignerWallet(wallet),
-        transaction,
-        {}
-      );
+      await executeTransaction(connection, new Wallet(wallet), transaction, {});
       console.log(`Succesfully updated pool ${poolId}!`);
     } catch (e) {
       console.log(`Error with pool ${poolId}`);

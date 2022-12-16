@@ -1,6 +1,5 @@
 import type { AccountData } from "@cardinal/common";
-import { utils } from "@project-serum/anchor";
-import { SignerWallet } from "@saberhq/solana-contrib";
+import { utils, Wallet } from "@project-serum/anchor";
 import { Keypair, Transaction } from "@solana/web3.js";
 
 import { executeTransaction } from "../src";
@@ -43,10 +42,7 @@ const migrateRewardEntries = async (cluster: string) => {
   if (REVERSE) {
     filteredRewardEntries = filteredRewardEntries.reverse();
   }
-  const chunkedRewardEntries = chunkArray(
-    filteredRewardEntries,
-    BATCH_SIZE
-  ) as AccountData<RewardEntryData>[][];
+  const chunkedRewardEntries = chunkArray(filteredRewardEntries, BATCH_SIZE);
 
   for (let i = 0; i < chunkedRewardEntries.length; i++) {
     const rewardEntries = chunkedRewardEntries[i]!;
@@ -97,7 +93,7 @@ const migrateRewardEntries = async (cluster: string) => {
     try {
       const txid = await executeTransaction(
         connection,
-        new SignerWallet(wallet),
+        new Wallet(wallet),
         transaction,
         {}
       );

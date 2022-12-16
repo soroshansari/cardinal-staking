@@ -1,19 +1,16 @@
-import type { AccountData } from "@cardinal/common";
 import { tryGetAccount } from "@cardinal/common";
-import { utils } from "@project-serum/anchor";
-import { SignerWallet } from "@saberhq/solana-contrib";
+import { utils, Wallet } from "@project-serum/anchor";
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
+import * as dotenv from "dotenv";
 
 import { executeTransaction } from "../src";
 import { getRewardDistributor } from "../src/programs/rewardDistributor/accounts";
 import { findRewardDistributorId } from "../src/programs/rewardDistributor/pda";
 import { withClaimRewards } from "../src/programs/rewardDistributor/transaction";
-import type { StakeEntryData } from "../src/programs/stakePool";
 import { getActiveStakeEntriesForPool } from "../src/programs/stakePool/accounts";
 import { withUpdateTotalStakeSeconds } from "../src/programs/stakePool/transaction";
 import { connectionFor } from "./connection";
 import { chunkArray } from "./utils";
-import * as dotenv from "dotenv";
 
 dotenv.config();
 
@@ -45,14 +42,8 @@ const main = async (stakePoolId: PublicKey, cluster = "devnet") => {
     "SOL"
   );
 
-  const chunkedEntries = chunkArray(
-    activeStakeEntries,
-    BATCH_SIZE
-  ) as AccountData<StakeEntryData>[][];
-  const batchedChunks = chunkArray(
-    chunkedEntries,
-    PARALLEL_BATCH_SIZE
-  ) as AccountData<StakeEntryData>[][][];
+  const chunkedEntries = chunkArray(activeStakeEntries, BATCH_SIZE);
+  const batchedChunks = chunkArray(chunkedEntries, PARALLEL_BATCH_SIZE);
 
   for (let i = 0; i < batchedChunks.length; i++) {
     const chunk = batchedChunks[i]!;
@@ -69,7 +60,7 @@ const main = async (stakePoolId: PublicKey, cluster = "devnet") => {
           withUpdateTotalStakeSeconds(
             transaction,
             connection,
-            new SignerWallet(authorityWallet),
+            new Wallet(authorityWallet),
             {
               stakeEntryId: stakeEntryData.pubkey,
               lastStaker: authorityWallet.publicKey,
@@ -78,7 +69,7 @@ const main = async (stakePoolId: PublicKey, cluster = "devnet") => {
           await withClaimRewards(
             transaction,
             connection,
-            new SignerWallet(authorityWallet),
+            new Wallet(authorityWallet),
             {
               stakePoolId: stakePoolId,
               stakeEntryId: stakeEntryData.pubkey,
@@ -91,7 +82,7 @@ const main = async (stakePoolId: PublicKey, cluster = "devnet") => {
           if (transaction.instructions.length > 0) {
             const txid = await executeTransaction(
               connection,
-              new SignerWallet(authorityWallet),
+              new Wallet(authorityWallet),
               transaction,
               {}
             );

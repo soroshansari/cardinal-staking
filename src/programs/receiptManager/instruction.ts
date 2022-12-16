@@ -1,8 +1,8 @@
 import { PAYMENT_MANAGER_ADDRESS } from "@cardinal/payment-manager";
 import type { BN } from "@project-serum/anchor";
 import { AnchorProvider, Program } from "@project-serum/anchor";
-import type { Wallet } from "@saberhq/solana-contrib";
-import { TOKEN_PROGRAM_ID } from "@saberhq/token-utils";
+import type { Wallet } from "@project-serum/anchor/dist/cjs/provider";
+import { TOKEN_PROGRAM_ID } from "@project-serum/anchor/dist/cjs/utils/token";
 import type {
   Connection,
   PublicKey,

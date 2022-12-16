@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { withFindOrInitAssociatedTokenAccount } from "@cardinal/common";
-import type { Wallet } from "@saberhq/solana-contrib";
+import type { Wallet } from "@project-serum/anchor/dist/cjs/provider";
 import * as splToken from "@solana/spl-token";
 import * as web3 from "@solana/web3.js";
 import { BN } from "bn.js";

@@ -5,7 +5,7 @@ import {
 } from "@cardinal/common";
 import type { web3 } from "@project-serum/anchor";
 import { BN } from "@project-serum/anchor";
-import type { Wallet } from "@saberhq/solana-contrib";
+import type { Wallet } from "@project-serum/anchor/dist/cjs/provider";
 import type { Connection, PublicKey, Transaction } from "@solana/web3.js";
 
 import { getRewardDistributor, getRewardEntry } from "./accounts";

@@ -1,6 +1,5 @@
 import { tryGetAccount } from "@cardinal/common";
-import { utils } from "@project-serum/anchor";
-import { SignerWallet } from "@saberhq/solana-contrib";
+import { utils, Wallet } from "@project-serum/anchor";
 import { Keypair, Transaction } from "@solana/web3.js";
 
 import { getRewardDistributor } from "../src/programs/rewardDistributor/accounts";
@@ -30,7 +29,7 @@ const main = async (cluster = "mainnet") => {
         // await withDefaultRewardDistributor(
         //   transaction,
         //   connection,
-        //   new SignerWallet(wallet),
+        //   new Wallet(wallet),
         //   {
         //     stakePoolId: pool.pubkey,
         //   }
@@ -39,7 +38,7 @@ const main = async (cluster = "mainnet") => {
         try {
           await executeTransaction(
             connection,
-            new SignerWallet(wallet),
+            new Wallet(wallet),
             transaction,
             {}
           );
