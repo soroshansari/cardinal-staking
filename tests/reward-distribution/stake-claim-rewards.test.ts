@@ -1,18 +1,23 @@
 import { findAta } from "@cardinal/common";
-import { BN } from "@project-serum/anchor";
 import { getAccount } from "@solana/spl-token";
 import { PublicKey, Transaction } from "@solana/web3.js";
 
 import {
-  createStakeEntry,
+  claimRewards,
   createStakePool,
-  rewardDistributor,
+  initializeRewardEntry,
   stake,
   unstake,
 } from "../../src";
-import { RewardDistributorKind } from "../../src/programs/rewardDistributor";
-import { getRewardDistributor } from "../../src/programs/rewardDistributor/accounts";
-import { findRewardDistributorId } from "../../src/programs/rewardDistributor/pda";
+import {
+  getRewardDistributor,
+  getRewardEntry,
+} from "../../src/programs/rewardDistributor/accounts";
+import {
+  findRewardDistributorId,
+  findRewardEntryId,
+} from "../../src/programs/rewardDistributor/pda";
+import { withInitRewardDistributor } from "../../src/programs/rewardDistributor/transaction";
 import { ReceiptType } from "../../src/programs/stakePool";
 import { getStakeEntry } from "../../src/programs/stakePool/accounts";
 import { findStakeEntryIdFromMint } from "../../src/programs/stakePool/utils";
@@ -25,6 +30,8 @@ import {
 import type { CardinalProvider } from "../workspace";
 import { getProvider } from "../workspace";
 
+// reward distributor with mint youre are not authority
+
 describe("Stake and claim rewards", () => {
   let provider: CardinalProvider;
   let originalMintTokenAccountId: PublicKey;
@@ -32,10 +39,7 @@ describe("Stake and claim rewards", () => {
   let rewardMintId: PublicKey;
   let stakePoolId: PublicKey;
 
-  const maxSupply = 100;
-
   beforeAll(async () => {
-    provider = await getProvider();
     provider = await getProvider();
     // original mint
     [originalMintTokenAccountId, originalMintId] = await createMasterEdition(
@@ -43,9 +47,9 @@ describe("Stake and claim rewards", () => {
       provider.wallet
     );
 
-    // reward mint
+    // original mint
     [, rewardMintId] = await createMint(provider.connection, provider.wallet, {
-      amount: maxSupply,
+      amount: 0,
     });
   });
 
@@ -62,15 +66,14 @@ describe("Stake and claim rewards", () => {
 
   it("Create Reward Distributor", async () => {
     const transaction = new Transaction();
-    await rewardDistributor.transaction.withInitRewardDistributor(
+
+    await withInitRewardDistributor(
       transaction,
       provider.connection,
       provider.wallet,
       {
         stakePoolId: stakePoolId,
         rewardMintId: rewardMintId,
-        kind: RewardDistributorKind.Treasury,
-        maxSupply: new BN(maxSupply),
       }
     );
     await executeTransaction(provider.connection, transaction, provider.wallet);
@@ -84,10 +87,22 @@ describe("Stake and claim rewards", () => {
     expect(rewardDistributorData.parsed.rewardMint.toString()).toEqual(
       rewardMintId.toString()
     );
+
+    expect(rewardDistributorData.parsed.rewardMint.toString()).toEqual(
+      rewardMintId.toString()
+    );
   });
 
-  it("Init stake entry for pool", async () => {
-    const [transaction, _] = await createStakeEntry(
+  it("Create Reward Entry", async () => {
+    const rewardDistributorId = findRewardDistributorId(stakePoolId);
+    const stakeEntryId = await findStakeEntryIdFromMint(
+      provider.connection,
+      provider.wallet.publicKey,
+      stakePoolId,
+      originalMintId
+    );
+
+    const transaction = await initializeRewardEntry(
       provider.connection,
       provider.wallet,
       {
@@ -97,23 +112,20 @@ describe("Stake and claim rewards", () => {
     );
     await executeTransaction(provider.connection, transaction, provider.wallet);
 
-    const stakeEntryData = await getStakeEntry(
+    const rewardEntryId = findRewardEntryId(rewardDistributorId, stakeEntryId);
+
+    const rewardEntryData = await getRewardEntry(
       provider.connection,
-      await findStakeEntryIdFromMint(
-        provider.connection,
-        provider.wallet.publicKey,
-        stakePoolId,
-        originalMintId
-      )
+      rewardEntryId
     );
 
-    expect(stakeEntryData.parsed.originalMint.toString()).toEqual(
-      originalMintId.toString()
+    expect(rewardEntryData.parsed.rewardDistributor.toString()).toEqual(
+      rewardDistributorId.toString()
     );
-    expect(stakeEntryData.parsed.pool.toString()).toEqual(
-      stakePoolId.toString()
+
+    expect(rewardEntryData.parsed.stakeEntry.toString()).toEqual(
+      stakeEntryId.toString()
     );
-    expect(stakeEntryData.parsed.stakeMint).toEqual(null);
   });
 
   it("Stake", async () => {
@@ -154,8 +166,74 @@ describe("Stake and claim rewards", () => {
     expect(checkUserOriginalTokenAccount.isFrozen).toEqual(true);
   });
 
-  it("Unstake", async () => {
+  it("Claim Rewards", async () => {
     await delay(2000);
+    const stakeEntryId = await findStakeEntryIdFromMint(
+      provider.connection,
+      provider.wallet.publicKey,
+      stakePoolId,
+      originalMintId
+    );
+    const oldStakeEntryData = await getStakeEntry(
+      provider.connection,
+      stakeEntryId
+    );
+
+    const transaction = await claimRewards(
+      provider.connection,
+      provider.wallet,
+      {
+        stakePoolId: stakePoolId,
+        stakeEntryId: stakeEntryId,
+      }
+    );
+    await executeTransaction(provider.connection, transaction, provider.wallet);
+
+    const newStakeEntryData = await getStakeEntry(
+      provider.connection,
+      stakeEntryId
+    );
+    expect(newStakeEntryData.parsed.lastUpdatedAt).not.toEqual(null);
+    expect(oldStakeEntryData.parsed.lastUpdatedAt).not.toEqual(null);
+    expect(newStakeEntryData.parsed.lastUpdatedAt?.toNumber()).toBeGreaterThan(
+      oldStakeEntryData.parsed.lastUpdatedAt?.toNumber() ?? 0
+    );
+    expect(newStakeEntryData.parsed.lastStaker.toString()).toEqual(
+      provider.wallet.publicKey.toString()
+    );
+    expect(newStakeEntryData.parsed.lastStaker.toString()).toEqual(
+      provider.wallet.publicKey.toString()
+    );
+    expect(
+      newStakeEntryData.parsed.totalStakeSeconds.toNumber()
+    ).toBeGreaterThan(oldStakeEntryData.parsed.totalStakeSeconds.toNumber());
+
+    const userRewardMintTokenAccountId = await findAta(
+      rewardMintId,
+      provider.wallet.publicKey,
+      true
+    );
+
+    const checkUserRewardTokenAccount = await getAccount(
+      provider.connection,
+      userRewardMintTokenAccountId
+    );
+    expect(Number(checkUserRewardTokenAccount.amount)).toBeGreaterThan(1);
+
+    const userOriginalMintTokenAccountId = await findAta(
+      originalMintId,
+      provider.wallet.publicKey,
+      true
+    );
+    const checkUserOriginalTokenAccount = await getAccount(
+      provider.connection,
+      userOriginalMintTokenAccountId
+    );
+    expect(Number(checkUserOriginalTokenAccount.amount)).toEqual(1);
+    expect(checkUserOriginalTokenAccount.isFrozen).toEqual(true);
+  });
+
+  it("Unstake", async () => {
     const transaction = await unstake(provider.connection, provider.wallet, {
       stakePoolId: stakePoolId,
       originalMintId: originalMintId,

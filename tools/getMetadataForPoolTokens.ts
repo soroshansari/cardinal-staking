@@ -1,21 +1,13 @@
-import { getBatchedMultipleAccounts } from "@cardinal/common";
-import * as metaplex from "@metaplex-foundation/mpl-token-metadata";
+import {
+  findMintMetadataId,
+  getBatchedMultipleAccounts,
+} from "@cardinal/common";
 import type { Connection, PublicKey } from "@solana/web3.js";
+import { Metadata } from "mplx-v2";
 import fetch from "node-fetch";
 
 // import { getActiveStakeEntriesForPool } from "../src/programs/stakePool/accounts";
 // import { connectionFor } from "./connection";
-
-export type Metadata = {
-  name: string;
-  symbol: string;
-  description: string;
-  seller_fee_basis_points: number;
-  image: string;
-  external_url: string;
-  edition: number;
-  attributes: { trait_type: string; value: string }[];
-};
 
 // const getMetadataForPoolTokens = async (
 //   cluster: string,
@@ -72,14 +64,7 @@ export const fetchMetadata = async (
 > => {
   // lookup metaplex data
   console.log("Looking up metaplex data");
-  const metaplexIds = await Promise.all(
-    mintIds.map(
-      async (mint) =>
-        (
-          await metaplex.MetadataProgram.findMetadataAccount(mint)
-        )[0]
-    )
-  );
+  const metaplexIds = mintIds.map((mint) => findMintMetadataId(mint));
   const metaplexAccountInfos = await getBatchedMultipleAccounts(
     connection,
     metaplexIds
@@ -87,13 +72,13 @@ export const fetchMetadata = async (
   const metaplexData = metaplexAccountInfos.reduce(
     (acc, accountInfo, i) => {
       try {
-        const metaplexMintData = metaplex.MetadataData.deserialize(
-          accountInfo?.data as Buffer
-        ) as metaplex.MetadataData;
-        acc[mintIds[i]!.toString()] = {
-          pubkey: metaplexIds[i]!,
-          uri: metaplexMintData.data.uri,
-        };
+        if (accountInfo?.data) {
+          const metaplexMintData = Metadata.deserialize(accountInfo?.data)[0];
+          acc[mintIds[i]!.toString()] = {
+            pubkey: metaplexIds[i]!,
+            uri: metaplexMintData.data.uri,
+          };
+        }
       } catch (e) {
         console.log("Error desirializing metaplex data");
       }

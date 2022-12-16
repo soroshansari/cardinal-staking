@@ -1,9 +1,9 @@
 import {
   findAta,
+  findMintMetadataId,
   tryGetAccount,
   withFindOrInitAssociatedTokenAccount,
 } from "@cardinal/common";
-import * as metaplex from "@metaplex-foundation/mpl-token-metadata";
 import type { web3 } from "@project-serum/anchor";
 import { BN } from "@project-serum/anchor";
 import type { Wallet } from "@project-serum/anchor/dist/cjs/provider";
@@ -125,24 +125,20 @@ export const withInitGroupRewardEntry = async (
     );
   }
 
-  const stakeEntries = await Promise.all(
-    params.stakeEntries.map(
-      async ({ stakeEntryId, originalMint, rewardDistributorId }) => {
-        const rewardEntryId = findRewardEntryId(
-          rewardDistributorId,
-          stakeEntryId
-        );
-        const originalMintMetadata = await metaplex.Metadata.getPDA(
-          originalMint
-        );
-        return {
-          stakeEntryId,
-          originalMint,
-          originalMintMetadata,
-          rewardEntryId,
-        };
-      }
-    )
+  const stakeEntries = params.stakeEntries.map(
+    ({ stakeEntryId, originalMint, rewardDistributorId }) => {
+      const rewardEntryId = findRewardEntryId(
+        rewardDistributorId,
+        stakeEntryId
+      );
+      const originalMintMetadata = findMintMetadataId(originalMint);
+      return {
+        stakeEntryId,
+        originalMint,
+        originalMintMetadata,
+        rewardEntryId,
+      };
+    }
   );
 
   transaction.add(

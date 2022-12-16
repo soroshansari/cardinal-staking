@@ -1,18 +1,23 @@
+import { findMintMetadataId } from "@cardinal/common";
+import { utils } from "@project-serum/anchor";
 import {
-  CreateMetadataV2,
-  DataV2,
-  Metadata,
-} from "@metaplex-foundation/mpl-token-metadata";
-import { utils, Wallet } from "@project-serum/anchor";
-import * as splToken from "@solana/spl-token";
+  createAssociatedTokenAccountInstruction,
+  createInitializeMint2Instruction,
+  createMintToInstruction,
+  getAssociatedTokenAddressSync,
+  getMinimumBalanceForRentExemptMint,
+  MINT_SIZE,
+  TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
 import {
   Keypair,
   sendAndConfirmRawTransaction,
+  SystemProgram,
   Transaction,
 } from "@solana/web3.js";
+import { createCreateMetadataAccountV2Instruction } from "mplx-v2";
 
 import { connectionFor } from "./connection";
-import { createMintTransaction } from "./utils";
 
 const wallet = Keypair.fromSecretKey(
   utils.bytes.bs58.decode(process.env.AIRDROP_KEY || "")
@@ -22,7 +27,7 @@ const MINT_KEYPAIR = Keypair.fromSecretKey(
   utils.bytes.bs58.decode(process.env.AIRDROP_KEY || "")
 );
 
-const SUPPLY = new splToken.u64(60_000_000_0000000);
+const SUPPLY = 60_000_000_0000000;
 const DECIMALS = 7;
 
 export const createFungibleToken = async (
@@ -31,42 +36,64 @@ export const createFungibleToken = async (
 ) => {
   const connection = connectionFor(cluster);
   try {
-    const masterEditionTransaction = new Transaction();
-    const [masterEditionTokenAccountId] = await createMintTransaction(
-      masterEditionTransaction,
-      connection,
-      new Wallet(wallet),
-      wallet.publicKey,
+    const tokenAccountId = getAssociatedTokenAddressSync(
       mintKeypair.publicKey,
-      SUPPLY,
-      DECIMALS
+      wallet.publicKey
     );
+    const metadataId = findMintMetadataId(mintKeypair.publicKey);
 
-    const metadataId = await Metadata.getPDA(mintKeypair.publicKey);
-    const metadataTx = new CreateMetadataV2(
-      { feePayer: wallet.publicKey },
-      {
-        metadata: metadataId,
-        metadataData: new DataV2({
-          name: "",
-          symbol: "",
-          uri: "",
-          sellerFeeBasisPoints: 0,
-          creators: null,
-          collection: null,
-          uses: null,
-        }),
-        updateAuthority: wallet.publicKey,
-        mint: mintKeypair.publicKey,
-        mintAuthority: wallet.publicKey,
-      }
+    const transaction = new Transaction().add(
+      SystemProgram.createAccount({
+        fromPubkey: wallet.publicKey,
+        newAccountPubkey: mintKeypair.publicKey,
+        space: MINT_SIZE,
+        lamports: await getMinimumBalanceForRentExemptMint(connection),
+        programId: TOKEN_PROGRAM_ID,
+      }),
+      createInitializeMint2Instruction(
+        mintKeypair.publicKey,
+        DECIMALS,
+        wallet.publicKey,
+        wallet.publicKey
+      ),
+      createAssociatedTokenAccountInstruction(
+        wallet.publicKey,
+        tokenAccountId,
+        wallet.publicKey,
+        mintKeypair.publicKey
+      ),
+      createMintToInstruction(
+        mintKeypair.publicKey,
+        tokenAccountId,
+        wallet.publicKey,
+        SUPPLY
+      ),
+      createCreateMetadataAccountV2Instruction(
+        {
+          metadata: metadataId,
+          mint: mintKeypair.publicKey,
+          updateAuthority: wallet.publicKey,
+          mintAuthority: wallet.publicKey,
+          payer: wallet.publicKey,
+        },
+        {
+          createMetadataAccountArgsV2: {
+            data: {
+              name: `name-${Math.random()}`,
+              symbol: "SYMB",
+              uri: `uri-${Math.random()}`,
+              sellerFeeBasisPoints: 0,
+              creators: [
+                { address: wallet.publicKey, share: 100, verified: true },
+              ],
+              collection: null,
+              uses: null,
+            },
+            isMutable: true,
+          },
+        }
+      )
     );
-
-    const transaction = new Transaction();
-    transaction.instructions = [
-      ...masterEditionTransaction.instructions,
-      ...metadataTx.instructions,
-    ];
     transaction.feePayer = wallet.publicKey;
     transaction.recentBlockhash = (
       await connection.getRecentBlockhash("max")
@@ -80,7 +107,7 @@ export const createFungibleToken = async (
       }
     );
     console.log(
-      `Token created mintId=(${mintKeypair.publicKey.toString()}) metadataId=(${metadataId.toString()}) tokenAccount=(${masterEditionTokenAccountId.toString()}) with transaction https://explorer.solana.com/tx/${txid}?cluster=${cluster}`
+      `Token created mintId=(${mintKeypair.publicKey.toString()}) metadataId=(${metadataId.toString()}) tokenAccount=(${tokenAccountId.toString()}) with transaction https://explorer.solana.com/tx/${txid}?cluster=${cluster}`
     );
   } catch (e) {
     console.log("Failed", e);

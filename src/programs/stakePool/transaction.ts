@@ -1,5 +1,6 @@
 import {
   findAta,
+  findMintMetadataId,
   tryGetAccount,
   withFindOrInitAssociatedTokenAccount,
 } from "@cardinal/common";
@@ -11,7 +12,6 @@ import {
   findTokenManagerAddress,
   tokenManagerAddressFromMint,
 } from "@cardinal/token-manager/dist/cjs/programs/tokenManager/pda";
-import * as metaplex from "@metaplex-foundation/mpl-token-metadata";
 import { BN } from "@project-serum/anchor";
 import type { Wallet } from "@project-serum/anchor/dist/cjs/provider";
 import type {
@@ -154,15 +154,13 @@ export const withInitStakeEntry = async (
     originalMintId: PublicKey;
   }
 ): Promise<[Transaction, PublicKey]> => {
-  const [stakeEntryId, originalMintMetadatId] = await Promise.all([
-    findStakeEntryIdFromMint(
-      connection,
-      wallet.publicKey,
-      params.stakePoolId,
-      params.originalMintId
-    ),
-    metaplex.Metadata.getPDA(params.originalMintId),
-  ]);
+  const stakeEntryId = await findStakeEntryIdFromMint(
+    connection,
+    wallet.publicKey,
+    params.stakePoolId,
+    params.originalMintId
+  );
+  const originalMintMetadatId = findMintMetadataId(params.originalMintId);
 
   transaction.add(
     initStakeEntry(connection, wallet, {
@@ -248,13 +246,13 @@ export const withInitStakeMint = async (
     symbol: string;
   }
 ): Promise<[Transaction, Keypair]> => {
-  const [[mintManagerId], originalMintMetadataId, stakeMintMetadataId] =
-    await Promise.all([
-      findMintManagerId(params.stakeMintKeypair.publicKey),
-      metaplex.Metadata.getPDA(params.originalMintId),
-      metaplex.Metadata.getPDA(params.stakeMintKeypair.publicKey),
-    ]);
-
+  const [mintManagerId] = await findMintManagerId(
+    params.stakeMintKeypair.publicKey
+  );
+  const originalMintMetadataId = findMintMetadataId(params.originalMintId);
+  const stakeMintMetadataId = findMintMetadataId(
+    params.stakeMintKeypair.publicKey
+  );
   const stakeEntryStakeMintTokenAccountId = await findAta(
     params.stakeMintKeypair.publicKey,
     params.stakeEntryId,
@@ -318,8 +316,6 @@ export const withClaimReceiptMint = async (
       wallet.publicKey,
       true
     );
-
-  console.log("++", params.receiptMintId.toString());
 
   transaction.add(
     await claimReceiptMint(connection, wallet, {

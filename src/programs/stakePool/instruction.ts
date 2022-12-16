@@ -1,4 +1,4 @@
-import { findAta } from "@cardinal/common";
+import { findAta, METADATA_PROGRAM_ID } from "@cardinal/common";
 import { PAYMENT_MANAGER_ADDRESS } from "@cardinal/payment-manager";
 import {
   CRANK_KEY,
@@ -11,7 +11,6 @@ import {
   findMintCounterId,
   findTokenManagerAddress,
 } from "@cardinal/token-manager/dist/cjs/programs/tokenManager/pda";
-import { MetadataProgram } from "@metaplex-foundation/mpl-token-metadata";
 import { AnchorProvider, BN, Program } from "@project-serum/anchor";
 import type { Wallet } from "@project-serum/anchor/dist/cjs/provider";
 import {
@@ -245,7 +244,7 @@ export const initStakeMint = (
         tokenProgram: TOKEN_PROGRAM_ID,
         tokenManagerProgram: TOKEN_MANAGER_ADDRESS,
         associatedToken: ASSOCIATED_TOKEN_PROGRAM_ID,
-        tokenMetadataProgram: MetadataProgram.PUBKEY,
+        tokenMetadataProgram: METADATA_PROGRAM_ID,
         systemProgram: SystemProgram.programId,
       },
     }

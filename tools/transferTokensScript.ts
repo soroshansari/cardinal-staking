@@ -1,6 +1,6 @@
 import { withFindOrInitAssociatedTokenAccount } from "@cardinal/common";
 import { utils, Wallet } from "@project-serum/anchor";
-import * as splToken from "@solana/spl-token";
+import { createTransferCheckedInstruction } from "@solana/spl-token";
 import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 
 import { executeTransaction } from "../src";
@@ -35,13 +35,11 @@ const main = async () => {
   );
 
   transaction.add(
-    splToken.Token.createTransferCheckedInstruction(
-      splToken.TOKEN_PROGRAM_ID,
+    createTransferCheckedInstruction(
       ownerAtaId,
       mint,
       rewardDistributorAtaId,
       wallet.publicKey,
-      [],
       amount,
       decimals
     )
