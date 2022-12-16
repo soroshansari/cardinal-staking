@@ -1,12 +1,12 @@
 import { BorshAccountsCoder, utils } from "@project-serum/anchor";
 import type { Connection } from "@solana/web3.js";
 
-import type { RewardDistributorData } from "../src/programs/rewardDistributor";
+import type { RewardDistributorData } from "../../src/programs/rewardDistributor";
 import {
   REWARD_DISTRIBUTOR_ADDRESS,
   REWARD_DISTRIBUTOR_IDL,
-} from "../src/programs/rewardDistributor";
-import { connectionFor } from "./connection";
+} from "../../src/programs/rewardDistributor";
+import { connectionFor } from "../connection";
 
 const CLUSTER = "mainnet";
 // const MAX_SIZE = 400;

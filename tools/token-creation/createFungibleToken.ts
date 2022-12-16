@@ -17,7 +17,7 @@ import {
 } from "@solana/web3.js";
 import { createCreateMetadataAccountV2Instruction } from "mplx-v2";
 
-import { connectionFor } from "./connection";
+import { connectionFor } from "../connection";
 
 const wallet = Keypair.fromSecretKey(
   utils.bytes.bs58.decode(process.env.AIRDROP_KEY || "")

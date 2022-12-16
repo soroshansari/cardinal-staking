@@ -4,15 +4,15 @@ import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
 import { BN } from "bn.js";
 import * as dotenv from "dotenv";
 
-import { executeTransaction } from "../src";
-import type { RewardEntryData } from "../src/programs/rewardDistributor";
+import { executeTransaction } from "../../src";
+import type { RewardEntryData } from "../../src/programs/rewardDistributor";
 import {
   getRewardDistributor,
   getRewardEntriesForRewardDistributor,
-} from "../src/programs/rewardDistributor/accounts";
-import { withUpdateRewardEntry } from "../src/programs/rewardDistributor/transaction";
-import { connectionFor } from "./connection";
-import { chunkArray } from "./utils";
+} from "../../src/programs/rewardDistributor/accounts";
+import { withUpdateRewardEntry } from "../../src/programs/rewardDistributor/transaction";
+import { connectionFor } from "../connection";
+import { chunkArray } from "../utils";
 
 dotenv.config();
 

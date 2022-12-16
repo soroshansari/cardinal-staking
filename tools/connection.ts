@@ -14,7 +14,6 @@ const networkURLs: { [key: string]: string } = {
 };
 
 export const connectionFor = (cluster: string, defaultCluster = "mainnet") => {
-  console.log(cluster, networkURLs[cluster || defaultCluster]);
   return new Connection(
     process.env.RPC_URL || networkURLs[cluster || defaultCluster] || "",
     "recent"

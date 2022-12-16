@@ -1,54 +1,61 @@
 import type { AccountData } from "@cardinal/common";
 import { withFindOrInitAssociatedTokenAccount } from "@cardinal/common";
-import { utils, Wallet } from "@project-serum/anchor";
-import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
+import type { Wallet } from "@project-serum/anchor/dist/cjs/provider";
+import type { Connection } from "@solana/web3.js";
+import { PublicKey, Transaction } from "@solana/web3.js";
 import { BN } from "bn.js";
 
-import { executeTransaction } from "../src";
-import type { RewardEntryData } from "../src/programs/rewardDistributor";
+import { executeTransaction } from "../../src";
+import type { RewardEntryData } from "../../src/programs/rewardDistributor";
 import {
   getRewardDistributor,
   getRewardEntries,
-} from "../src/programs/rewardDistributor/accounts";
+} from "../../src/programs/rewardDistributor/accounts";
 import {
   findRewardDistributorId,
   findRewardEntryId,
-} from "../src/programs/rewardDistributor/pda";
+} from "../../src/programs/rewardDistributor/pda";
 import {
   withInitRewardEntry,
   withUpdateRewardEntry,
-} from "../src/programs/rewardDistributor/transaction";
-import type { StakeEntryData } from "../src/programs/stakePool";
-import { getStakeEntries } from "../src/programs/stakePool/accounts";
-import { findStakeEntryId } from "../src/programs/stakePool/pda";
-import { withInitStakeEntry } from "../src/programs/stakePool/transaction";
-import { connectionFor } from "./connection";
-import type { MetadataJSON } from "./getMetadataForPoolTokens";
-import { fetchMetadata } from "./getMetadataForPoolTokens";
+} from "../../src/programs/rewardDistributor/transaction";
+import type { StakeEntryData } from "../../src/programs/stakePool";
+import { getStakeEntries } from "../../src/programs/stakePool/accounts";
+import { findStakeEntryId } from "../../src/programs/stakePool/pda";
+import { withInitStakeEntry } from "../../src/programs/stakePool/transaction";
+import type { MetadataJSON } from "../metadata";
+import { fetchMetadata } from "../metadata";
+import { chunkArray } from "../utils";
 import type { UpdateRule } from "./updateMultipliersOnRules";
-import { chunkArray } from "./utils";
 
-const wallet = Keypair.fromSecretKey(utils.bytes.bs58.decode("SECRET_KEY"));
+export const commandName = "initializeEntriesAndSetMultipliers";
+export const description =
+  "Initialize all entries and optionally set multipliers for reward entries. Optionalls use metadataRules for complex multiplier rules";
 
-const POOL_ID = new PublicKey("");
-const CLUSTER = "mainnet";
-const FUNGIBLE = false;
-const BATCH_SIZE = 3;
-const PARALLEL_BATCH_SIZE = 20;
+export const getArgs = (_connection: Connection, _wallet: Wallet) => ({
+  // stake pool id
+  stakePoolId: new PublicKey("3BZCupFU6X3wYJwgTsKS2vTs4VeMrhSZgx4P2TfzExtP"),
+  // whether this pool deals with fungible tokens
+  fungible: false,
+  // array of mints and optionally multiplier to initialize
+  // REMINDER: Take into account rewardDistributor.multiplierDecimals!
+  initEntries: [] as EntryData[],
+  // optional update rules
+  metadataRules: undefined as UpdateRule["metadata"],
+  // number of entries per transaction
+  batchSize: 3,
+  // number of transactions in parallel
+  parallelBatchSize: 20,
+});
 
 type EntryData = { mintId: PublicKey; multiplier?: number };
 
-// REMINDER: Take into account rewardDistributor.multiplierDecimals!
-const MINT_LIST: EntryData[] = [];
-const metadataRules: UpdateRule = {};
-
-const initializeEntries = async (
-  stakePoolId: PublicKey,
-  initEntries: EntryData[],
-  cluster: string,
-  fungible = false
+export const handler = async (
+  connection: Connection,
+  wallet: Wallet,
+  args: ReturnType<typeof getArgs>
 ) => {
-  const connection = connectionFor(cluster);
+  const { stakePoolId, initEntries, fungible, metadataRules } = args;
   const rewardDistributorId = findRewardDistributorId(stakePoolId);
   const rewardDistributorData = await getRewardDistributor(
     connection,
@@ -85,27 +92,23 @@ const initializeEntries = async (
     {} as { [id: string]: AccountData<RewardEntryData> }
   );
 
-  const chunkedEntries = chunkArray(initEntries, BATCH_SIZE);
-  const batchedChunks = chunkArray(chunkedEntries, PARALLEL_BATCH_SIZE);
+  const chunkedEntries = chunkArray(initEntries, args.batchSize);
+  const batchedChunks = chunkArray(chunkedEntries, args.parallelBatchSize);
   for (let i = 0; i < batchedChunks.length; i++) {
     const chunk = batchedChunks[i]!;
-    console.log(
-      `\n\n\n---------------- Chunk ${i + 1} of ${
-        batchedChunks.length
-      } ----------------`
-    );
+    console.log(`\n\n\n ${i + 1}/${batchedChunks.length}`);
     await Promise.all(
       chunk.map(async (entries, c) => {
-        let metadata: MetadataJSON[] = [];
-        if (metadataRules.metadata) {
-          const temp = await fetchMetadata(
-            connection,
-            entries.map((entry) => entry.mintId)
-          );
-          metadata = temp[0];
-        }
         const transaction = new Transaction();
         const entriesInTx: EntryData[] = [];
+
+        let metadata: MetadataJSON[] = [];
+        if (metadataRules) {
+          [metadata] = await fetchMetadata(
+            connection,
+            entries.map((e) => e.mintId)
+          );
+        }
         for (let j = 0; j < entries.length; j++) {
           const { mintId, multiplier } = entries[j]!;
           console.log(
@@ -131,15 +134,10 @@ const initializeEntries = async (
             );
 
             if (!stakeEntriesById[stakeEntryId.toString()]) {
-              await withInitStakeEntry(
-                transaction,
-                connection,
-                new Wallet(wallet),
-                {
-                  stakePoolId,
-                  originalMintId: mintId,
-                }
-              );
+              await withInitStakeEntry(transaction, connection, wallet, {
+                stakePoolId,
+                originalMintId: mintId,
+              });
               console.log(
                 `>>[${c + 1}/${chunk.length}][${j + 1}/${
                   entries.length
@@ -156,19 +154,21 @@ const initializeEntries = async (
               console.log(
                 `>>[${c + 1}/${chunk.length}][${j + 1}/${
                   entries.length
-                }] 2. reward entry not found for reward distributor - adding reward entry instruction`
+                }] 2. Reward entry not found for reward distributor - adding reward entry instruction`
               );
-              withInitRewardEntry(transaction, connection, new Wallet(wallet), {
+              withInitRewardEntry(transaction, connection, wallet, {
                 stakeEntryId,
                 rewardDistributorId,
               });
             }
 
             let multiplierToSet = multiplier;
-            if (metadataRules.metadata) {
+            if (metadataRules) {
+              `>>[${c + 1}/${chunk.length}][${j + 1}/${
+                entries.length
+              }] 2.5 Metadata rules are set to override mint multiplier`;
               const md = metadata[j]!;
-              for (const rule of metadataRules.metadata) {
-                console.log(md.attributes);
+              for (const rule of metadataRules) {
                 if (
                   md.attributes.find(
                     (attr) =>
@@ -177,6 +177,13 @@ const initializeEntries = async (
                   )
                 ) {
                   multiplierToSet = rule.multiplier;
+                  console.log(
+                    `>>> [${c + 1}/${chunk.length}][${j + 1}/${
+                      entries.length
+                    }] Using metadataRule (${rule.traitType}:${rule.value}=${
+                      rule.multiplier
+                    })`
+                  );
                 }
               }
             }
@@ -192,23 +199,16 @@ const initializeEntries = async (
                   rewardEntry?.parsed.multiplier.toNumber() || 0
                 } => ${multiplierToSet}`
               );
-              withUpdateRewardEntry(
-                transaction,
-                connection,
-                new Wallet(wallet),
-                {
-                  stakePoolId,
-                  stakeEntryId,
-                  rewardDistributorId,
-                  multiplier: new BN(multiplierToSet),
-                }
-              );
+              withUpdateRewardEntry(transaction, connection, wallet, {
+                stakePoolId,
+                stakeEntryId,
+                rewardDistributorId,
+                multiplier: new BN(multiplierToSet),
+              });
             }
             entriesInTx.push({ mintId });
           } catch (e: unknown) {
-            console.log(
-              `Failed to add entry IXs for mint (${mintId.toString()})`
-            );
+            console.log(`[fail] (${mintId.toString()})`);
           }
         }
 
@@ -216,14 +216,14 @@ const initializeEntries = async (
           if (transaction.instructions.length > 0) {
             const txid = await executeTransaction(
               connection,
-              new Wallet(wallet),
+              wallet,
               transaction,
               {}
             );
             console.log(
-              `Succesfully created/updated entries [${entriesInTx
+              `[success] ${entriesInTx
                 .map((e) => e.mintId.toString())
-                .join()}] with transaction ${txid} (https://explorer.solana.com/tx/${txid}?cluster=${cluster})`
+                .join()} (https://explorer.solana.com/tx/${txid})`
             );
           }
         } catch (e) {
@@ -233,7 +233,3 @@ const initializeEntries = async (
     );
   }
 };
-
-initializeEntries(POOL_ID, MINT_LIST, CLUSTER, FUNGIBLE).catch((e) =>
-  console.log(e)
-);

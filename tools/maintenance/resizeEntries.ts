@@ -7,28 +7,31 @@ import {
   Wallet,
 } from "@project-serum/anchor";
 import type { Connection } from "@solana/web3.js";
-import { Keypair, Transaction } from "@solana/web3.js";
+import { Keypair, SystemProgram, Transaction } from "@solana/web3.js";
 import * as dotenv from "dotenv";
 
-import { executeTransaction } from "../src";
+import { executeTransaction } from "../../src";
 import type {
   STAKE_POOL_PROGRAM,
   StakeEntryData,
-} from "../src/programs/stakePool";
-import { STAKE_POOL_ADDRESS, STAKE_POOL_IDL } from "../src/programs/stakePool";
-import { connectionFor } from "./connection";
-import { chunkArray } from "./utils";
+} from "../../src/programs/stakePool";
+import {
+  STAKE_POOL_ADDRESS,
+  STAKE_POOL_IDL,
+} from "../../src/programs/stakePool";
+import { connectionFor } from "../connection";
+import { chunkArray } from "../utils";
 
 dotenv.config();
 
 const wallet = Keypair.fromSecretKey(
   utils.bytes.bs58.decode(process.env.WALLET || "")
 );
-const CLUSTER = "devnet";
+const CLUSTER = "mainnet-beta";
 const BATCH_SIZE = 20;
 const PARALLEL_TRANSACTIONS = 100;
 const MAX_RETRIES = 3;
-const DRY_RUN = false;
+const DRY_RUN = true;
 const ALLOWED_ENTRY_IDS: string[] = [];
 
 export const getAllStakeEntries = async (connection: Connection) => {
@@ -64,6 +67,7 @@ const fillEntryZeros = async (cluster: string) => {
   const allStakeEntries = await getAllStakeEntries(connection);
 
   //// parsed
+  const minPadding = 216;
   const parsedStakeEntries: AccountData<StakeEntryData>[] = [];
   const poolCounts: { [poolId: string]: number } = {};
   for (let i = 0; i < allStakeEntries.length; i++) {
@@ -71,11 +75,7 @@ const fillEntryZeros = async (cluster: string) => {
     try {
       const stakeEntryData: StakeEntryData =
         stakePoolProgram.coder.accounts.decode("stakeEntry", a.account.data);
-      const encoded = await stakePoolProgram.coder.accounts.encode(
-        "stakeEntry",
-        stakeEntryData
-      );
-      if (a.account.data.slice(encoded.length).some((b) => b !== 0)) {
+      if (a.account.data.length < minPadding) {
         const poolId = stakeEntryData.pool.toString();
         const c = poolCounts[poolId] ?? 0;
         poolCounts[poolId] = c + 1;
@@ -111,9 +111,11 @@ const fillEntryZeros = async (cluster: string) => {
       console.log(stakeEntryData);
       try {
         transaction.add(
-          stakePoolProgram.instruction.stakeEntryFillZeros({
+          stakePoolProgram.instruction.stakeEntryResize({
             accounts: {
               stakeEntry: stakeEntryData.pubkey,
+              payer: wallet.publicKey,
+              systemProgram: SystemProgram.programId,
             },
           })
         );

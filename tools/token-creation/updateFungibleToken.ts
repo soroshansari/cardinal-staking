@@ -12,7 +12,7 @@ import {
   Transaction,
 } from "@solana/web3.js";
 
-import { connectionFor } from "./connection";
+import { connectionFor } from "../connection";
 
 const wallet = Keypair.fromSecretKey(
   utils.bytes.bs58.decode(process.env.AIRDROP_KEY || "")

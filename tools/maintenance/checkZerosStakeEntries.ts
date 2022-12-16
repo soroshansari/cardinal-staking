@@ -1,15 +1,15 @@
-import * as dotenv from "dotenv";
-dotenv.config();
-
 import { BorshAccountsCoder, utils } from "@project-serum/anchor";
 import type { Connection } from "@solana/web3.js";
+import * as dotenv from "dotenv";
 
+import type { StakeEntryData } from "../../src/programs/stakePool";
 import {
-  StakeEntryData,
   STAKE_POOL_ADDRESS,
   STAKE_POOL_IDL,
-} from "../src/programs/stakePool";
-import { connectionFor } from "./connection";
+} from "../../src/programs/stakePool";
+import { connectionFor } from "../connection";
+
+dotenv.config();
 
 const CLUSTER = "devnet";
 // const MAX_SIZE = 400;

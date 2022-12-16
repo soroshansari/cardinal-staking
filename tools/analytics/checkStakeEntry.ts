@@ -1,13 +1,13 @@
 import { Keypair, PublicKey } from "@solana/web3.js";
 
-import { getRewardEntry } from "../src/programs/rewardDistributor/accounts";
+import { getRewardEntry } from "../../src/programs/rewardDistributor/accounts";
 import {
   findRewardDistributorId,
   findRewardEntryId,
-} from "../src/programs/rewardDistributor/pda";
-import { getStakeEntry } from "../src/programs/stakePool/accounts";
-import { findStakeEntryIdFromMint } from "../src/programs/stakePool/utils";
-import { connectionFor } from "./connection";
+} from "../../src/programs/rewardDistributor/pda";
+import { getStakeEntry } from "../../src/programs/stakePool/accounts";
+import { findStakeEntryIdFromMint } from "../../src/programs/stakePool/utils";
+import { connectionFor } from "../connection";
 
 const checkStakeEntry = async (
   cluster: string,

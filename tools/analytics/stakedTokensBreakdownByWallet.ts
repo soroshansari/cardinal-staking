@@ -1,18 +1,28 @@
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import type { Wallet } from "@project-serum/anchor";
+import type { Connection } from "@solana/web3.js";
 import { PublicKey } from "@solana/web3.js";
-import { getActiveStakeEntriesForPool } from "../src/programs/stakePool/accounts";
-import { connectionFor } from "./connection";
 import { BN } from "bn.js";
 
-const POOL_ID = new PublicKey("3BZCupFU6X3wYJwgTsKS2vTs4VeMrhSZgx4P2TfzExtP");
+import { getActiveStakeEntriesForPool } from "../../src/programs/stakePool/accounts";
 
-export const stakedTokensBreakdownByWallet = async (cluster = "devnet") => {
-  const connection = connectionFor(cluster);
+export const commandName = "stakedTokensBreakdownByWallet";
+export const description =
+  "Get a breakdown of all staked tokens in a pool by wallet";
+
+export const getArgs = (_connection: Connection, _wallet: Wallet) => ({
+  poolId: new PublicKey("3BZCupFU6X3wYJwgTsKS2vTs4VeMrhSZgx4P2TfzExtP"),
+});
+
+export const handler = async (
+  connection: Connection,
+  _wallet: Wallet,
+  args: ReturnType<typeof getArgs>
+) => {
   const UTCNow = Date.now() / 1000;
-  const stakeEntries = await getActiveStakeEntriesForPool(connection, POOL_ID);
-
+  const stakeEntries = await getActiveStakeEntriesForPool(
+    connection,
+    args.poolId
+  );
   const results = stakeEntries.reduce(
     (acc, stakeEntry) => {
       const wallet = stakeEntry.parsed.lastStaker.toString();
@@ -55,7 +65,3 @@ export const stakedTokensBreakdownByWallet = async (cluster = "devnet") => {
   );
   console.log(sortedResults);
 };
-
-stakedTokensBreakdownByWallet("mainnet").catch((e) => {
-  console.log(e);
-});

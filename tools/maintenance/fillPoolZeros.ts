@@ -2,15 +2,18 @@ import type { AccountData } from "@cardinal/common";
 import { AnchorProvider, Program, utils, Wallet } from "@project-serum/anchor";
 import { Keypair, Transaction } from "@solana/web3.js";
 
-import { executeTransaction } from "../src";
+import { executeTransaction } from "../../src";
 import type {
   STAKE_POOL_PROGRAM,
   StakePoolData,
-} from "../src/programs/stakePool";
-import { STAKE_POOL_ADDRESS, STAKE_POOL_IDL } from "../src/programs/stakePool";
-import { getAllStakePools } from "../src/programs/stakePool/accounts";
-import { connectionFor } from "./connection";
-import { chunkArray } from "./utils";
+} from "../../src/programs/stakePool";
+import {
+  STAKE_POOL_ADDRESS,
+  STAKE_POOL_IDL,
+} from "../../src/programs/stakePool";
+import { getAllStakePools } from "../../src/programs/stakePool/accounts";
+import { connectionFor } from "../connection";
+import { chunkArray } from "../utils";
 
 const wallet = Keypair.fromSecretKey(utils.bytes.bs58.decode(""));
 

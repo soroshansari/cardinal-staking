@@ -1,37 +1,57 @@
 import { tryGetAccount } from "@cardinal/common";
-import { utils, Wallet } from "@project-serum/anchor";
+import type { Wallet } from "@project-serum/anchor/dist/cjs/provider";
 import type { Connection } from "@solana/web3.js";
-import { Keypair, PublicKey, Transaction } from "@solana/web3.js";
+import { PublicKey, Transaction } from "@solana/web3.js";
 import { BN } from "bn.js";
 
-import { executeTransaction } from "../src";
+import { executeTransaction } from "../../src";
 import {
   getRewardDistributor,
   getRewardEntries,
-} from "../src/programs/rewardDistributor/accounts";
+} from "../../src/programs/rewardDistributor/accounts";
 import {
   findRewardDistributorId,
   findRewardEntryId,
-} from "../src/programs/rewardDistributor/pda";
+} from "../../src/programs/rewardDistributor/pda";
 import {
   withInitRewardEntry,
   withUpdateRewardEntry,
-} from "../src/programs/rewardDistributor/transaction";
+} from "../../src/programs/rewardDistributor/transaction";
 import {
   getActiveStakeEntriesForPool,
   getStakeEntries,
-} from "../src/programs/stakePool/accounts";
-import { findStakeEntryId } from "../src/programs/stakePool/pda";
-import { connectionFor } from "./connection";
-import { fetchMetadata } from "./getMetadataForPoolTokens";
+} from "../../src/programs/stakePool/accounts";
+import { findStakeEntryId } from "../../src/programs/stakePool/pda";
+import { fetchMetadata } from "../metadata";
 
-const wallet = new Wallet(
-  Keypair.fromSecretKey(utils.bytes.bs58.decode("SECRET_KEY"))
-);
+export const commandName = "updateMultipliersOnRules";
+export const description = `Update reward multipliers for mints based on traits or other rules. (must be pool authority)
+Rules options:
+  volume - (if user stakes 2+ token, set token multpliers to 'X', if user staked 5+ token, set token multiplier to 'Y')
+  metadata - (if token has metadata attribute equal to specify value, set 'X' multiplier)
+  combination - (if user has to stake A,B,C mints together, token get 'X' multiplier, else set to zero)`;
 
-const POOL_ID = new PublicKey("POOL_ID");
-const CLUSTER = "mainnet";
-const BATCH_SIZE = 5;
+export const getArgs = (_connection: Connection, _wallet: Wallet) => ({
+  stakePoolId: new PublicKey("3BZCupFU6X3wYJwgTsKS2vTs4VeMrhSZgx4P2TfzExtP"),
+  updateRules: [
+    // {
+    //   volume: [
+    //     { volumeUpperBound: 1, multiplier: 1 },
+    //     { volumeUpperBound: 4, multiplier: 3 },
+    //     { volumeUpperBound: 7, multiplier: 6 },
+    //     { volumeUpperBound: 9, multiplier: 7 },
+    //     { volumeUpperBound: 15, multiplier: 10 },
+    //     { volumeUpperBound: 29, multiplier: 20 },
+    //     { volumeUpperBound: 39, multiplier: 25 },
+    //     { volumeUpperBound: 40, multiplier: 30 },
+    //   ],
+    // },
+    // {
+    // metadata: [{ traitType: "some_trait", value: "value", multiplier: 2 }],
+    // },
+  ] as UpdateRule[],
+  batchSize: 5,
+});
 
 export type UpdateRule = {
   volume?: { volumeUpperBound: number; multiplier: number }[];
@@ -43,40 +63,21 @@ export type UpdateRule = {
   };
 };
 
-const UPDATE_RULES: UpdateRule[] = [
-  // {
-  //   volume: [
-  //     { volumeUpperBound: 1, multiplier: 1 },
-  //     { volumeUpperBound: 4, multiplier: 3 },
-  //     { volumeUpperBound: 7, multiplier: 6 },
-  //     { volumeUpperBound: 9, multiplier: 7 },
-  //     { volumeUpperBound: 15, multiplier: 10 },
-  //     { volumeUpperBound: 29, multiplier: 20 },
-  //     { volumeUpperBound: 39, multiplier: 25 },
-  //     { volumeUpperBound: 40, multiplier: 30 },
-  //   ],
-  // },
-  // {
-  // metadata: [{ traitType: "some_trait", value: "value", multiplier: 2 }],
-  // },
-];
-
-const updateMultipliersOnRules = async (
-  stakePoolId: PublicKey,
-  cluster: string
+export const handler = async (
+  connection: Connection,
+  wallet: Wallet,
+  args: ReturnType<typeof getArgs>
 ) => {
-  const connection = connectionFor(cluster);
-
-  // get all active stake entries
+  const { stakePoolId, updateRules, batchSize } = args;
   const activeStakeEntries = await getActiveStakeEntriesForPool(
     connection,
     stakePoolId
   );
 
-  for (const rule of UPDATE_RULES) {
+  for (const rule of updateRules) {
     let dataToSubmit: { mint: PublicKey; multiplier: number }[] = [];
 
-    // metadata
+    //////////////////////// metadata ////////////////////////
     if (rule.metadata) {
       console.log("Fetching metadata...");
       const [metadata] = await fetchMetadata(
@@ -118,11 +119,12 @@ const updateMultipliersOnRules = async (
               multiplier: Number(multiplierToSet),
             });
             if (
-              dataToSubmit.length > BATCH_SIZE ||
+              dataToSubmit.length > batchSize ||
               index === entries.length - 1
             ) {
               await updateMultipliers(
                 connection,
+                wallet,
                 stakePoolId,
                 dataToSubmit.map((entry) => entry.mint),
                 dataToSubmit.map((entry) => entry.multiplier)
@@ -133,7 +135,7 @@ const updateMultipliersOnRules = async (
         }
       }
     } else if (rule.volume) {
-      // volume
+      //////////////////////// volume ////////////////////////
       const volumeLogs: { [user: string]: PublicKey[] } = {};
       for (const entry of activeStakeEntries) {
         const user = entry.parsed.lastStaker.toString();
@@ -161,9 +163,10 @@ const updateMultipliersOnRules = async (
               mint: entry,
               multiplier: multiplierToSet,
             });
-            if (dataToSubmit.length > BATCH_SIZE) {
+            if (dataToSubmit.length > batchSize) {
               await updateMultipliers(
                 connection,
+                wallet,
                 stakePoolId,
                 dataToSubmit.map((entry) => entry.mint),
                 dataToSubmit.map((entry) => entry.multiplier)
@@ -174,7 +177,7 @@ const updateMultipliersOnRules = async (
         }
       }
     } else if (rule.combination) {
-      // combinations
+      //////////////////////// combinations ////////////////////////
       const primaryMints = rule.combination.primaryMint;
       const secondaryMints = rule.combination.secondaryMints;
       const combinationLogs: { [user: string]: string[] } = {};
@@ -220,9 +223,10 @@ const updateMultipliersOnRules = async (
             mint: stakeEntryId,
             multiplier: multiplierToSet,
           });
-          if (dataToSubmit.length > BATCH_SIZE) {
+          if (dataToSubmit.length > batchSize) {
             await updateMultipliers(
               connection,
+              wallet,
               stakePoolId,
               dataToSubmit.map((entry) => entry.mint),
               dataToSubmit.map((entry) => entry.multiplier)
@@ -237,6 +241,7 @@ const updateMultipliersOnRules = async (
 
 const updateMultipliers = async (
   connection: Connection,
+  wallet: Wallet,
   stakePoolId: PublicKey,
   stakeEntryIds: PublicKey[],
   multipliers: number[]
@@ -311,5 +316,3 @@ const updateMultipliers = async (
     console.log("No instructions provided\n");
   }
 };
-
-updateMultipliersOnRules(POOL_ID, CLUSTER).catch((e) => console.log(e));
