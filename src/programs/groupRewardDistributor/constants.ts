@@ -1,6 +1,13 @@
-import type { AnchorTypes } from "@saberhq/anchor-contrib";
-import { PublicKey } from "@solana/web3.js";
+import {
+  AnchorProvider,
+  Program,
+  Wallet as AWallet,
+} from "@project-serum/anchor";
+import type { Wallet } from "@project-serum/anchor/dist/cjs/provider";
+import type { ConfirmOptions, Connection } from "@solana/web3.js";
+import { Keypair, PublicKey } from "@solana/web3.js";
 
+import type { ParsedIdlAccountData } from "../../accounts";
 import * as GROUP_REWARD_DISTRIBUTOR_TYPES from "../../idl/cardinal_group_reward_distributor";
 
 export const GROUP_REWARD_DISTRIBUTOR_ADDRESS = new PublicKey(
@@ -21,13 +28,18 @@ export type GROUP_REWARD_DISTRIBUTOR_PROGRAM =
 
 export const GROUP_REWARD_DISTRIBUTOR_IDL = GROUP_REWARD_DISTRIBUTOR_TYPES.IDL;
 
-export type GroupRewardDistributorTypes =
-  AnchorTypes<GROUP_REWARD_DISTRIBUTOR_PROGRAM>;
-
-type Accounts = GroupRewardDistributorTypes["Accounts"];
-export type GroupRewardEntryData = Accounts["groupRewardEntry"];
-export type GroupRewardCounterData = Accounts["groupRewardCounter"];
-export type GroupRewardDistributorData = Accounts["groupRewardDistributor"];
+export type GroupRewardEntryData = ParsedIdlAccountData<
+  "groupRewardEntry",
+  GROUP_REWARD_DISTRIBUTOR_PROGRAM
+>;
+export type GroupRewardCounterData = ParsedIdlAccountData<
+  "groupRewardCounter",
+  GROUP_REWARD_DISTRIBUTOR_PROGRAM
+>;
+export type GroupRewardDistributorData = ParsedIdlAccountData<
+  "groupRewardDistributor",
+  GROUP_REWARD_DISTRIBUTOR_PROGRAM
+>;
 
 export enum GroupRewardDistributorKind {
   Mint = 1,
@@ -45,3 +57,19 @@ export enum GroupRewardDistributorPoolKind {
   AllFromSinglePool = 2,
   EachFromSeparatePool = 3,
 }
+
+export const groupRewardDistributorProgram = (
+  connection: Connection,
+  wallet?: Wallet,
+  confirmOptions?: ConfirmOptions
+) => {
+  return new Program<GROUP_REWARD_DISTRIBUTOR_PROGRAM>(
+    GROUP_REWARD_DISTRIBUTOR_IDL,
+    GROUP_REWARD_DISTRIBUTOR_ADDRESS,
+    new AnchorProvider(
+      connection,
+      wallet ?? new AWallet(Keypair.generate()),
+      confirmOptions ?? {}
+    )
+  );
+};

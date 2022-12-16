@@ -33,7 +33,11 @@ import {
 
 import type { STAKE_POOL_PROGRAM } from ".";
 import { STAKE_POOL_ADDRESS, STAKE_POOL_IDL } from ".";
-import { ReceiptType, STAKE_BOOSTER_PAYMENT_MANAGER } from "./constants";
+import {
+  ReceiptType,
+  STAKE_BOOSTER_PAYMENT_MANAGER,
+  stakePoolProgram,
+} from "./constants";
 import {
   findGroupEntryId,
   findStakeAuthorizationId,
@@ -48,13 +52,7 @@ export const initPoolIdentifier = (
     identifierId: PublicKey;
   }
 ): TransactionInstruction => {
-  const provider = new AnchorProvider(connection, wallet, {});
-  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
-    STAKE_POOL_IDL,
-    STAKE_POOL_ADDRESS,
-    provider
-  );
-  return stakePoolProgram.instruction.initIdentifier({
+  return stakePoolProgram(connection, wallet).instruction.initIdentifier({
     accounts: {
       identifier: params.identifierId,
       payer: wallet.publicKey,
@@ -82,13 +80,7 @@ export const initStakePool = (
     doubleOrResetEnabled?: boolean;
   }
 ): TransactionInstruction => {
-  const provider = new AnchorProvider(connection, wallet, {});
-  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
-    STAKE_POOL_IDL,
-    STAKE_POOL_ADDRESS,
-    provider
-  );
-  return stakePoolProgram.instruction.initPool(
+  return stakePoolProgram(connection, wallet).instruction.initPool(
     {
       overlayText: params.overlayText,
       imageUri: params.imageUri,
@@ -322,14 +314,7 @@ export const stake = (
     amount: BN;
   }
 ): TransactionInstruction => {
-  const provider = new AnchorProvider(connection, wallet, {});
-  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
-    STAKE_POOL_IDL,
-    STAKE_POOL_ADDRESS,
-    provider
-  );
-
-  return stakePoolProgram.instruction.stake(params.amount, {
+  return stakePoolProgram(connection, wallet).instruction.stake(params.amount, {
     accounts: {
       stakeEntry: params.stakeEntryId,
       stakePool: params.stakePoolId,
@@ -356,13 +341,7 @@ export const unstake = (
     remainingAccounts: AccountMeta[];
   }
 ): TransactionInstruction => {
-  const provider = new AnchorProvider(connection, wallet, {});
-  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
-    STAKE_POOL_IDL,
-    STAKE_POOL_ADDRESS,
-    provider
-  );
-  return stakePoolProgram.instruction.unstake({
+  return stakePoolProgram(connection, wallet).instruction.unstake({
     accounts: {
       stakePool: params.stakePoolId,
       stakeEntry: params.stakeEntryId,
@@ -395,13 +374,7 @@ export const updateStakePool = (
     doubleOrResetEnabled?: boolean;
   }
 ): TransactionInstruction => {
-  const provider = new AnchorProvider(connection, wallet, {});
-  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
-    STAKE_POOL_IDL,
-    STAKE_POOL_ADDRESS,
-    provider
-  );
-  return stakePoolProgram.instruction.updatePool(
+  return stakePoolProgram(connection, wallet).instruction.updatePool(
     {
       overlayText: params.overlayText,
       imageUri: params.imageUri,
@@ -432,13 +405,10 @@ export const updateTotalStakeSeconds = (
     lastStaker: PublicKey;
   }
 ) => {
-  const provider = new AnchorProvider(connection, wallet, {});
-  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
-    STAKE_POOL_IDL,
-    STAKE_POOL_ADDRESS,
-    provider
-  );
-  return stakePoolProgram.instruction.updateTotalStakeSeconds({
+  return stakePoolProgram(
+    connection,
+    wallet
+  ).instruction.updateTotalStakeSeconds({
     accounts: {
       stakeEntry: params.stakEntryId,
       lastStaker: params.lastStaker,
@@ -514,13 +484,7 @@ export const closeStakePool = (
     authority: PublicKey;
   }
 ) => {
-  const provider = new AnchorProvider(connection, wallet, {});
-  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
-    STAKE_POOL_IDL,
-    STAKE_POOL_ADDRESS,
-    provider
-  );
-  return stakePoolProgram.instruction.closeStakePool({
+  return stakePoolProgram(connection, wallet).instruction.closeStakePool({
     accounts: {
       stakePool: params.stakePoolId,
       authority: params.authority,
@@ -537,13 +501,7 @@ export const closeStakeEntry = (
     authority: PublicKey;
   }
 ) => {
-  const provider = new AnchorProvider(connection, wallet, {});
-  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
-    STAKE_POOL_IDL,
-    STAKE_POOL_ADDRESS,
-    provider
-  );
-  return stakePoolProgram.instruction.closeStakeEntry({
+  return stakePoolProgram(connection, wallet).instruction.closeStakeEntry({
     accounts: {
       stakePool: params.stakePoolId,
       stakeEntry: params.stakeEntryId,
@@ -561,13 +519,7 @@ export const reassignStakeEntry = (
     target: PublicKey;
   }
 ) => {
-  const provider = new AnchorProvider(connection, wallet, {});
-  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
-    STAKE_POOL_IDL,
-    STAKE_POOL_ADDRESS,
-    provider
-  );
-  return stakePoolProgram.instruction.reassignStakeEntry(
+  return stakePoolProgram(connection, wallet).instruction.reassignStakeEntry(
     {
       target: params.target,
     },
@@ -575,7 +527,7 @@ export const reassignStakeEntry = (
       accounts: {
         stakePool: params.stakePoolId,
         stakeEntry: params.stakeEntryId,
-        lastStaker: provider.wallet.publicKey,
+        lastStaker: wallet.publicKey,
       },
     }
   );
@@ -589,17 +541,14 @@ export const doubleOrResetTotalStakeSeconds = (
     stakeEntryId: PublicKey;
   }
 ) => {
-  const provider = new AnchorProvider(connection, wallet, {});
-  const stakePoolProgram = new Program<STAKE_POOL_PROGRAM>(
-    STAKE_POOL_IDL,
-    STAKE_POOL_ADDRESS,
-    provider
-  );
-  return stakePoolProgram.instruction.doubleOrResetTotalStakeSeconds({
+  return stakePoolProgram(
+    connection,
+    wallet
+  ).instruction.doubleOrResetTotalStakeSeconds({
     accounts: {
       stakePool: params.stakePoolId,
       stakeEntry: params.stakeEntryId,
-      lastStaker: provider.wallet.publicKey,
+      lastStaker: wallet.publicKey,
       recentSlothashes: SYSVAR_SLOT_HASHES_PUBKEY,
     },
   });

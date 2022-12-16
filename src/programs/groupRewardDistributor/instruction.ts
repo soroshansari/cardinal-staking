@@ -1,33 +1,20 @@
 import type { BN } from "@project-serum/anchor";
-import { AnchorProvider, Program } from "@project-serum/anchor";
 import type { Wallet } from "@project-serum/anchor/dist/cjs/provider";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import type { AccountMeta, Connection, PublicKey } from "@solana/web3.js";
 import { Keypair, SystemProgram, Transaction } from "@solana/web3.js";
 
-import type { GROUP_REWARD_DISTRIBUTOR_PROGRAM } from ".";
-import {
-  GROUP_REWARD_DISTRIBUTOR_ADDRESS,
-  GROUP_REWARD_DISTRIBUTOR_IDL,
-} from ".";
 import type {
   GroupRewardDistributorMetadataKind,
   GroupRewardDistributorPoolKind,
 } from "./constants";
-import { GROUP_REWARD_MANAGER, GroupRewardDistributorKind } from "./constants";
+import {
+  GROUP_REWARD_MANAGER,
+  GroupRewardDistributorKind,
+  groupRewardDistributorProgram,
+} from "./constants";
 import { findGroupRewardDistributorId } from "./pda";
 import { withRemainingAccountsForRewardKind } from "./utils";
-
-const getProgram = (connection: Connection, wallet: Wallet) => {
-  const provider = new AnchorProvider(connection, wallet, {});
-  const rewardDistributorProgram =
-    new Program<GROUP_REWARD_DISTRIBUTOR_PROGRAM>(
-      GROUP_REWARD_DISTRIBUTOR_IDL,
-      GROUP_REWARD_DISTRIBUTOR_ADDRESS,
-      provider
-    );
-  return rewardDistributorProgram;
-};
 
 export const initGroupRewardDistributor = async (
   connection: Connection,
@@ -56,7 +43,7 @@ export const initGroupRewardDistributor = async (
     rewardMintId: PublicKey;
   }
 ): Promise<[Transaction, PublicKey]> => {
-  const program = getProgram(connection, wallet);
+  const program = groupRewardDistributorProgram(connection, wallet);
   const signers: Keypair[] = [];
   const id = Keypair.generate();
   signers.push(id);
@@ -121,7 +108,7 @@ export const initGroupRewardCounter = async (
     authority?: PublicKey;
   }
 ): Promise<Transaction> => {
-  const program = getProgram(connection, wallet);
+  const program = groupRewardDistributorProgram(connection, wallet);
 
   return program.methods
     .initGroupRewardCounter()
@@ -151,7 +138,7 @@ export const initGroupRewardEntry = (
     }[];
   }
 ): Promise<Transaction> => {
-  const program = getProgram(connection, wallet);
+  const program = groupRewardDistributorProgram(connection, wallet);
   const remainingAccounts: AccountMeta[] = [];
   params.stakeEntries.forEach(
     ({ stakeEntryId, originalMint, originalMintMetadata, rewardEntryId }) => {
@@ -208,7 +195,7 @@ export const claimGroupRewards = (
     authority?: PublicKey;
   }
 ): Promise<Transaction> => {
-  const program = getProgram(connection, wallet);
+  const program = groupRewardDistributorProgram(connection, wallet);
 
   return program.methods
     .claimGroupRewards()
@@ -237,7 +224,7 @@ export const closeGroupRewardDistributor = async (
     remainingAccountsForKind: AccountMeta[];
   }
 ): Promise<Transaction> => {
-  const program = getProgram(connection, wallet);
+  const program = groupRewardDistributorProgram(connection, wallet);
 
   return program.methods
     .closeGroupRewardDistributor()
@@ -260,7 +247,7 @@ export const updateGroupRewardEntry = async (
     multiplier: BN;
   }
 ): Promise<Transaction> => {
-  const program = getProgram(connection, wallet);
+  const program = groupRewardDistributorProgram(connection, wallet);
 
   return program.methods
     .updateGroupRewardEntry({
@@ -284,7 +271,7 @@ export const closeGroupRewardEntry = async (
     groupRewardCounterId: PublicKey;
   }
 ): Promise<Transaction> => {
-  const program = getProgram(connection, wallet);
+  const program = groupRewardDistributorProgram(connection, wallet);
 
   return program.methods
     .closeGroupRewardEntry()
@@ -307,7 +294,7 @@ export const closeGroupRewardCounter = async (
     authority?: PublicKey;
   }
 ): Promise<Transaction> => {
-  const program = getProgram(connection, wallet);
+  const program = groupRewardDistributorProgram(connection, wallet);
 
   return program.methods
     .closeGroupRewardCounter()
@@ -343,7 +330,7 @@ export const updateGroupRewardDistributor = (
     maxRewardSecondsReceived?: BN;
   }
 ): Promise<Transaction> => {
-  const program = getProgram(connection, wallet);
+  const program = groupRewardDistributorProgram(connection, wallet);
 
   return program.methods
     .updateGroupRewardDistributor({
@@ -383,7 +370,7 @@ export const reclaimGroupFunds = (
     amount: BN;
   }
 ): Promise<Transaction> => {
-  const program = getProgram(connection, wallet);
+  const program = groupRewardDistributorProgram(connection, wallet);
 
   return program.methods
     .reclaimGroupFunds(params.amount)

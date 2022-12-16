@@ -23,7 +23,7 @@ import { getStakeEntries } from "../src/programs/stakePool/accounts";
 import { findStakeEntryId } from "../src/programs/stakePool/pda";
 import { withInitStakeEntry } from "../src/programs/stakePool/transaction";
 import { connectionFor } from "./connection";
-import type { Metadata } from "./getMetadataForPoolTokens";
+import type { MetadataJSON } from "./getMetadataForPoolTokens";
 import { fetchMetadata } from "./getMetadataForPoolTokens";
 import type { UpdateRule } from "./updateMultipliersOnRules";
 import { chunkArray } from "./utils";
@@ -96,7 +96,7 @@ const initializeEntries = async (
     );
     await Promise.all(
       chunk.map(async (entries, c) => {
-        let metadata: Metadata[] = [];
+        let metadata: MetadataJSON[] = [];
         if (metadataRules.metadata) {
           const temp = await fetchMetadata(
             connection,

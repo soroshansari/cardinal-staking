@@ -13,7 +13,7 @@ import { SystemProgram } from "@solana/web3.js";
 import type { REWARD_DISTRIBUTOR_PROGRAM } from ".";
 import { REWARD_DISTRIBUTOR_ADDRESS, REWARD_DISTRIBUTOR_IDL } from ".";
 import type { RewardDistributorKind } from "./constants";
-import { REWARD_MANAGER } from "./constants";
+import { REWARD_MANAGER, rewardDistributorProgram } from "./constants";
 import { findRewardDistributorId, findRewardEntryId } from "./pda";
 
 export const initRewardDistributor = (
@@ -34,13 +34,10 @@ export const initRewardDistributor = (
     maxRewardSecondsReceived?: BN;
   }
 ): TransactionInstruction => {
-  const provider = new AnchorProvider(connection, wallet, {});
-  const rewardDistributorProgram = new Program<REWARD_DISTRIBUTOR_PROGRAM>(
-    REWARD_DISTRIBUTOR_IDL,
-    REWARD_DISTRIBUTOR_ADDRESS,
-    provider
-  );
-  return rewardDistributorProgram.instruction.initRewardDistributor(
+  return rewardDistributorProgram(
+    connection,
+    wallet
+  ).instruction.initRewardDistributor(
     {
       rewardAmount: params.rewardAmount,
       rewardDurationSeconds: params.rewardDurationSeconds,
@@ -76,13 +73,10 @@ export const initRewardEntry = (
     payer?: PublicKey;
   }
 ): TransactionInstruction => {
-  const provider = new AnchorProvider(connection, wallet, {});
-  const rewardDistributorProgram = new Program<REWARD_DISTRIBUTOR_PROGRAM>(
-    REWARD_DISTRIBUTOR_IDL,
-    REWARD_DISTRIBUTOR_ADDRESS,
-    provider
-  );
-  return rewardDistributorProgram.instruction.initRewardEntry({
+  return rewardDistributorProgram(
+    connection,
+    wallet
+  ).instruction.initRewardEntry({
     accounts: {
       rewardEntry: params.rewardEntryId,
       stakeEntry: params.stakeEntryId,

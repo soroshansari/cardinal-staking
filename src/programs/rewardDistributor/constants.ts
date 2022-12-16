@@ -1,6 +1,13 @@
-import type { AnchorTypes } from "@saberhq/anchor-contrib";
-import { PublicKey } from "@solana/web3.js";
+import {
+  AnchorProvider,
+  Program,
+  Wallet as AWallet,
+} from "@project-serum/anchor";
+import type { Wallet } from "@project-serum/anchor/dist/cjs/provider";
+import type { ConfirmOptions, Connection } from "@solana/web3.js";
+import { Keypair, PublicKey } from "@solana/web3.js";
 
+import type { ParsedIdlAccountData } from "../../accounts";
 import * as REWARD_DISTRIBUTOR_TYPES from "../../idl/cardinal_reward_distributor";
 
 export const REWARD_DISTRIBUTOR_ADDRESS = new PublicKey(
@@ -19,13 +26,32 @@ export type REWARD_DISTRIBUTOR_PROGRAM =
 
 export const REWARD_DISTRIBUTOR_IDL = REWARD_DISTRIBUTOR_TYPES.IDL;
 
-export type RewardDistributorTypes = AnchorTypes<REWARD_DISTRIBUTOR_PROGRAM>;
-
-type Accounts = RewardDistributorTypes["Accounts"];
-export type RewardEntryData = Accounts["rewardEntry"];
-export type RewardDistributorData = Accounts["rewardDistributor"];
+export type RewardEntryData = ParsedIdlAccountData<
+  "rewardEntry",
+  REWARD_DISTRIBUTOR_PROGRAM
+>;
+export type RewardDistributorData = ParsedIdlAccountData<
+  "rewardDistributor",
+  REWARD_DISTRIBUTOR_PROGRAM
+>;
 
 export enum RewardDistributorKind {
   Mint = 1,
   Treasury = 2,
 }
+
+export const rewardDistributorProgram = (
+  connection: Connection,
+  wallet?: Wallet,
+  confirmOptions?: ConfirmOptions
+) => {
+  return new Program<REWARD_DISTRIBUTOR_PROGRAM>(
+    REWARD_DISTRIBUTOR_IDL,
+    REWARD_DISTRIBUTOR_ADDRESS,
+    new AnchorProvider(
+      connection,
+      wallet ?? new AWallet(Keypair.generate()),
+      confirmOptions ?? {}
+    )
+  );
+};

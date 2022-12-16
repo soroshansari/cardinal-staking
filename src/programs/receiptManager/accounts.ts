@@ -1,45 +1,27 @@
 import type { AccountData } from "@cardinal/common";
 import { tryGetAccount } from "@cardinal/common";
-import {
-  AnchorProvider,
-  BorshAccountsCoder,
-  Program,
-  utils,
-  Wallet,
-} from "@project-serum/anchor";
+import { BorshAccountsCoder, utils } from "@project-serum/anchor";
 import type { Connection } from "@solana/web3.js";
-import { Keypair, PublicKey } from "@solana/web3.js";
+import { PublicKey } from "@solana/web3.js";
 
 import { REWARD_DISTRIBUTOR_ADDRESS } from "../rewardDistributor";
 import type {
-  RECEIPT_MANAGER_PROGRAM,
   ReceiptEntryData,
   ReceiptManagerData,
   RewardReceiptData,
 } from "./constants";
-import { RECEIPT_MANAGER_ADDRESS, RECEIPT_MANAGER_IDL } from "./constants";
+import {
+  RECEIPT_MANAGER_ADDRESS,
+  RECEIPT_MANAGER_IDL,
+  receiptManagerProgram,
+} from "./constants";
 
-const getProgram = (connection: Connection) => {
-  const provider = new AnchorProvider(
-    connection,
-    new Wallet(Keypair.generate()),
-    {}
-  );
-  return new Program<RECEIPT_MANAGER_PROGRAM>(
-    RECEIPT_MANAGER_IDL,
-    REWARD_DISTRIBUTOR_ADDRESS,
-    provider
-  );
-};
-
-//////// REWARD RECEIPT MANAGER ////////
 export const getReceiptManager = async (
   connection: Connection,
   receiptManagerId: PublicKey
 ): Promise<AccountData<ReceiptManagerData>> => {
-  const receiptManagerProgram = getProgram(connection);
-
-  const parsed = (await receiptManagerProgram.account.receiptManager.fetch(
+  const program = receiptManagerProgram(connection);
+  const parsed = (await program.account.receiptManager.fetch(
     receiptManagerId
   )) as ReceiptManagerData;
   return {
@@ -105,9 +87,8 @@ export const getReceiptEntry = async (
   connection: Connection,
   receiptEntryId: PublicKey
 ): Promise<AccountData<ReceiptEntryData>> => {
-  const receiptManagerProgram = getProgram(connection);
-
-  const parsed = (await receiptManagerProgram.account.receiptEntry.fetch(
+  const program = receiptManagerProgram(connection);
+  const parsed = (await program.account.receiptEntry.fetch(
     receiptEntryId
   )) as ReceiptEntryData;
   return {
@@ -121,9 +102,8 @@ export const getRewardReceipt = async (
   connection: Connection,
   rewardReceiptId: PublicKey
 ): Promise<AccountData<RewardReceiptData>> => {
-  const receiptManagerProgram = getProgram(connection);
-
-  const parsed = (await receiptManagerProgram.account.rewardReceipt.fetch(
+  const program = receiptManagerProgram(connection);
+  const parsed = (await program.account.rewardReceipt.fetch(
     rewardReceiptId
   )) as RewardReceiptData;
   return {

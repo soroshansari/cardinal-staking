@@ -839,7 +839,7 @@
     bn.js "^5.1.2"
     buffer-layout "^1.2.0"
 
-"@saberhq/anchor-contrib@^1.12.44", "@saberhq/anchor-contrib@^1.14.9":
+"@saberhq/anchor-contrib@^1.14.9":
   version "1.14.11"
   resolved "https://registry.yarnpkg.com/@saberhq/anchor-contrib/-/anchor-contrib-1.14.11.tgz#cebaac040faea643ade8ecb6afeeb2dcdf5a33a2"
   integrity sha512-6fOMC9XjuMSpGin/5HGqDita/dYzndjMMUNjht7yQZzD9638cdjrAutwZjvYwMUepKLdJ5CQV4bE74bSeMF9HQ==

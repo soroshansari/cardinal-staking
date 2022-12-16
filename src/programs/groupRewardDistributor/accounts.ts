@@ -1,15 +1,7 @@
 import type { AccountData } from "@cardinal/common";
-import {
-  AnchorProvider,
-  BorshAccountsCoder,
-  Program,
-  utils,
-  Wallet,
-} from "@project-serum/anchor";
+import { BorshAccountsCoder, utils } from "@project-serum/anchor";
 import type { Connection, PublicKey } from "@solana/web3.js";
-import { Keypair } from "@solana/web3.js";
 
-import type { GROUP_REWARD_DISTRIBUTOR_PROGRAM } from ".";
 import {
   GROUP_REWARD_DISTRIBUTOR_ADDRESS,
   GROUP_REWARD_DISTRIBUTOR_IDL,
@@ -19,26 +11,13 @@ import type {
   GroupRewardDistributorData,
   GroupRewardEntryData,
 } from "./constants";
-
-const getProgram = (connection: Connection) => {
-  const provider = new AnchorProvider(
-    connection,
-    new Wallet(Keypair.generate()),
-    {}
-  );
-  return new Program<GROUP_REWARD_DISTRIBUTOR_PROGRAM>(
-    GROUP_REWARD_DISTRIBUTOR_IDL,
-    GROUP_REWARD_DISTRIBUTOR_ADDRESS,
-    provider
-  );
-};
+import { groupRewardDistributorProgram } from "./constants";
 
 export const getGroupRewardCounter = async (
   connection: Connection,
   groupRewardCounterId: PublicKey
 ): Promise<AccountData<GroupRewardCounterData>> => {
-  const program = getProgram(connection);
-
+  const program = groupRewardDistributorProgram(connection);
   const parsed = (await program.account.groupRewardCounter.fetch(
     groupRewardCounterId
   )) as GroupRewardCounterData;
@@ -52,8 +31,7 @@ export const getGroupRewardCounters = async (
   connection: Connection,
   groupRewardCounterIds: PublicKey[]
 ): Promise<AccountData<GroupRewardCounterData>[]> => {
-  const program = getProgram(connection);
-
+  const program = groupRewardDistributorProgram(connection);
   const groupRewardCounters =
     (await program.account.groupRewardCounter.fetchMultiple(
       groupRewardCounterIds
@@ -68,8 +46,7 @@ export const getGroupRewardEntry = async (
   connection: Connection,
   groupRewardEntryId: PublicKey
 ): Promise<AccountData<GroupRewardEntryData>> => {
-  const program = getProgram(connection);
-
+  const program = groupRewardDistributorProgram(connection);
   const parsed = (await program.account.groupRewardEntry.fetch(
     groupRewardEntryId
   )) as GroupRewardEntryData;
@@ -83,8 +60,7 @@ export const getGroupRewardEntries = async (
   connection: Connection,
   groupRewardEntryIds: PublicKey[]
 ): Promise<AccountData<GroupRewardEntryData>[]> => {
-  const program = getProgram(connection);
-
+  const program = groupRewardDistributorProgram(connection);
   const groupRewardEntries =
     (await program.account.groupRewardEntry.fetchMultiple(
       groupRewardEntryIds
@@ -99,8 +75,7 @@ export const getGroupRewardDistributor = async (
   connection: Connection,
   groupRewardDistributorId: PublicKey
 ): Promise<AccountData<GroupRewardDistributorData>> => {
-  const program = getProgram(connection);
-
+  const program = groupRewardDistributorProgram(connection);
   const parsed = (await program.account.groupRewardDistributor.fetch(
     groupRewardDistributorId
   )) as GroupRewardDistributorData;
@@ -114,8 +89,7 @@ export const getGroupRewardDistributors = async (
   connection: Connection,
   groupRewardDistributorIds: PublicKey[]
 ): Promise<AccountData<GroupRewardDistributorData>[]> => {
-  const program = getProgram(connection);
-
+  const program = groupRewardDistributorProgram(connection);
   const groupRewardDistributors =
     (await program.account.groupRewardDistributor.fetchMultiple(
       groupRewardDistributorIds

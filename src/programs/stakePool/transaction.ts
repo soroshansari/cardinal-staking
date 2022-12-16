@@ -647,7 +647,7 @@ export const withReassignStakeEntry = (
     stakeEntryId: PublicKey;
     target: PublicKey;
   }
-): Transaction => {
+) => {
   transaction.add(
     reassignStakeEntry(connection, wallet, {
       stakePoolId: params.stakePoolId,

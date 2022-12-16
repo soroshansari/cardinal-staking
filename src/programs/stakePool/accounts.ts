@@ -1,15 +1,9 @@
 import type { AccountData } from "@cardinal/common";
-import {
-  AnchorProvider,
-  BorshAccountsCoder,
-  Program,
-  utils,
-  Wallet,
-} from "@project-serum/anchor";
+import { BorshAccountsCoder, utils } from "@project-serum/anchor";
 import type { Connection } from "@solana/web3.js";
-import { Keypair, PublicKey } from "@solana/web3.js";
+import { PublicKey } from "@solana/web3.js";
 
-import type { STAKE_POOL_PROGRAM, StakePoolData } from ".";
+import type { StakePoolData } from ".";
 import { STAKE_POOL_ADDRESS, STAKE_POOL_IDL } from ".";
 import type {
   GroupStakeEntryData,
@@ -22,30 +16,17 @@ import {
   AUTHORITY_OFFSET,
   GROUP_STAKER_OFFSET,
   POOL_OFFSET,
+  stakePoolProgram,
   STAKER_OFFSET,
 } from "./constants";
 import { findIdentifierId } from "./pda";
-
-const getProgram = (connection: Connection) => {
-  const provider = new AnchorProvider(
-    connection,
-    new Wallet(Keypair.generate()),
-    {}
-  );
-  return new Program<STAKE_POOL_PROGRAM>(
-    STAKE_POOL_IDL,
-    STAKE_POOL_ADDRESS,
-    provider
-  );
-};
 
 export const getStakePool = async (
   connection: Connection,
   stakePoolId: PublicKey
 ): Promise<AccountData<StakePoolData>> => {
-  const stakePoolProgram = getProgram(connection);
-
-  const parsed = await stakePoolProgram.account.stakePool.fetch(stakePoolId);
+  const program = stakePoolProgram(connection);
+  const parsed = await program.account.stakePool.fetch(stakePoolId);
   return {
     parsed,
     pubkey: stakePoolId,
@@ -56,9 +37,8 @@ export const getStakePools = async (
   connection: Connection,
   stakePoolIds: PublicKey[]
 ): Promise<AccountData<StakePoolData>[]> => {
-  const stakePoolProgram = getProgram(connection);
-
-  const stakePools = (await stakePoolProgram.account.stakePool.fetchMultiple(
+  const program = stakePoolProgram(connection);
+  const stakePools = (await program.account.stakePool.fetchMultiple(
     stakePoolIds
   )) as StakePoolData[];
   return stakePools.map((tm, i) => ({
@@ -276,9 +256,8 @@ export const getStakeEntry = async (
   connection: Connection,
   stakeEntryId: PublicKey
 ): Promise<AccountData<StakeEntryData>> => {
-  const stakePoolProgram = getProgram(connection);
-
-  const parsed = await stakePoolProgram.account.stakeEntry.fetch(stakeEntryId);
+  const program = stakePoolProgram(connection);
+  const parsed = await program.account.stakeEntry.fetch(stakeEntryId);
   return {
     parsed,
     pubkey: stakeEntryId,
@@ -289,11 +268,10 @@ export const getStakeEntries = async (
   connection: Connection,
   stakeEntryIds: PublicKey[]
 ): Promise<AccountData<StakeEntryData>[]> => {
-  const stakePoolProgram = getProgram(connection);
-
-  const stakeEntries = (await stakePoolProgram.account.stakeEntry.fetchMultiple(
+  const program = stakePoolProgram(connection);
+  const stakeEntries = (await program.account.stakeEntry.fetchMultiple(
     stakeEntryIds
-  )) as StakePoolData[];
+  )) as StakeEntryData[];
   return stakeEntries.map((tm, i) => ({
     parsed: tm,
     pubkey: stakeEntryIds[i]!,
@@ -303,9 +281,9 @@ export const getStakeEntries = async (
 export const getPoolIdentifier = async (
   connection: Connection
 ): Promise<AccountData<IdentifierData>> => {
-  const stakePoolProgram = getProgram(connection);
+  const program = stakePoolProgram(connection);
   const identifierId = findIdentifierId();
-  const parsed = await stakePoolProgram.account.identifier.fetch(identifierId);
+  const parsed = await program.account.identifier.fetch(identifierId);
   return {
     parsed,
     pubkey: identifierId,
@@ -316,8 +294,8 @@ export const getStakeAuthorization = async (
   connection: Connection,
   stakeAuthorizationId: PublicKey
 ): Promise<AccountData<StakeAuthorizationData>> => {
-  const stakePoolProgram = getProgram(connection);
-  const parsed = await stakePoolProgram.account.stakeAuthorizationRecord.fetch(
+  const program = stakePoolProgram(connection);
+  const parsed = await program.account.stakeAuthorizationRecord.fetch(
     stakeAuthorizationId
   );
   return {
@@ -330,10 +308,9 @@ export const getStakeAuthorizations = async (
   connection: Connection,
   stakeAuthorizationIds: PublicKey[]
 ): Promise<AccountData<StakeAuthorizationData>[]> => {
-  const stakePoolProgram = getProgram(connection);
-
+  const program = stakePoolProgram(connection);
   const stakeAuthorizations =
-    (await stakePoolProgram.account.stakeAuthorizationRecord.fetchMultiple(
+    (await program.account.stakeAuthorizationRecord.fetchMultiple(
       stakeAuthorizationIds
     )) as StakeAuthorizationData[];
 
@@ -480,10 +457,8 @@ export const getStakeBooster = async (
   connection: Connection,
   stakeBoosterId: PublicKey
 ): Promise<AccountData<StakeBoosterData>> => {
-  const stakePoolProgram = getProgram(connection);
-  const parsed = await stakePoolProgram.account.stakeBooster.fetch(
-    stakeBoosterId
-  );
+  const program = stakePoolProgram(connection);
+  const parsed = await program.account.stakeBooster.fetch(stakeBoosterId);
   return {
     parsed,
     pubkey: stakeBoosterId,
@@ -581,11 +556,8 @@ export const getGroupStakeEntry = async (
   connection: Connection,
   groupStakeEntryId: PublicKey
 ): Promise<AccountData<GroupStakeEntryData>> => {
-  const stakePoolProgram = getProgram(connection);
-
-  const parsed = await stakePoolProgram.account.groupStakeEntry.fetch(
-    groupStakeEntryId
-  );
+  const program = stakePoolProgram(connection);
+  const parsed = await program.account.groupStakeEntry.fetch(groupStakeEntryId);
   return {
     parsed,
     pubkey: groupStakeEntryId,
@@ -596,12 +568,11 @@ export const getGroupStakeEntries = async (
   connection: Connection,
   groupStakeEntryIds: PublicKey[]
 ): Promise<AccountData<GroupStakeEntryData>[]> => {
-  const stakePoolProgram = getProgram(connection);
-
+  const program = stakePoolProgram(connection);
   const groupStakeEntries =
-    (await stakePoolProgram.account.groupStakeEntry.fetchMultiple(
+    (await program.account.groupStakeEntry.fetchMultiple(
       groupStakeEntryIds
-    )) as StakePoolData[];
+    )) as GroupStakeEntryData[];
   return groupStakeEntries.map((tm, i) => ({
     parsed: tm,
     pubkey: groupStakeEntryIds[i]!,

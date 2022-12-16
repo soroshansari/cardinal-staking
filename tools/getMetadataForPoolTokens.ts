@@ -6,6 +6,17 @@ import type { Connection, PublicKey } from "@solana/web3.js";
 import { Metadata } from "mplx-v2";
 import fetch from "node-fetch";
 
+export type MetadataJSON = {
+  name: string;
+  symbol: string;
+  description: string;
+  seller_fee_basis_points: number;
+  image: string;
+  external_url: string;
+  edition: number;
+  attributes: { trait_type: string; value: string }[];
+};
+
 // import { getActiveStakeEntriesForPool } from "../src/programs/stakePool/accounts";
 // import { connectionFor } from "./connection";
 
@@ -60,7 +71,7 @@ export const fetchMetadata = async (
   connection: Connection,
   mintIds: PublicKey[]
 ): Promise<
-  [Metadata[], { [mintId: string]: { pubkey: PublicKey; uri: string } }]
+  [MetadataJSON[], { [mintId: string]: { pubkey: PublicKey; uri: string } }]
 > => {
   // lookup metaplex data
   console.log("Looking up metaplex data");
@@ -95,7 +106,7 @@ export const fetchMetadata = async (
   console.log("Fetching off chain metadata");
   const metadata = await Promise.all(
     Object.values(metaplexData).map((data) =>
-      fetch(data.uri).then(async (res) => (await res.json()) as Metadata)
+      fetch(data.uri).then(async (res) => (await res.json()) as MetadataJSON)
     )
   );
   return [metadata, metaplexData];
