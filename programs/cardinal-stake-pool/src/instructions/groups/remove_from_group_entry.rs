@@ -62,13 +62,13 @@ pub fn handler(ctx: Context<RemoveFromGroupEntryCtx>) -> Result<()> {
         group_cooldown_start_seconds: group_entry.group_cooldown_start_seconds,
     };
     let new_space = new_group_entry.try_to_vec()?.len() + 8;
-    group_entry.set_inner(new_group_entry);
-
     resize_account(
         &group_entry.to_account_info(),
         new_space,
         &ctx.accounts.payer.to_account_info(),
         &ctx.accounts.system_program.to_account_info(),
     )?;
+
+    group_entry.set_inner(new_group_entry);
     Ok(())
 }
