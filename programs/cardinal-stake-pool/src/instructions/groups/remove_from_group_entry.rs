@@ -31,6 +31,16 @@ pub fn handler(ctx: Context<RemoveFromGroupEntryCtx>) -> Result<()> {
     if group_entry.group_cooldown_seconds > 0 {
         if group_entry.group_cooldown_start_seconds.is_none() {
             group_entry.group_cooldown_start_seconds = Some(Clock::get().unwrap().unix_timestamp);
+
+            let new_space = group_entry.try_to_vec()?.len() + 8;
+
+            resize_account(
+                &group_entry.to_account_info(),
+                new_space,
+                &ctx.accounts.payer.to_account_info(),
+                &ctx.accounts.system_program.to_account_info(),
+            )?;
+
             return Ok(());
         } else if group_entry.group_cooldown_start_seconds.is_some()
             && ((Clock::get().unwrap().unix_timestamp - group_entry.group_cooldown_start_seconds.unwrap()) as u32) < group_entry.group_cooldown_seconds
