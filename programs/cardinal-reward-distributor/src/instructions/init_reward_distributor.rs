@@ -28,6 +28,7 @@ pub struct InitRewardDistributorCtx<'info> {
         bump,
     )]
     reward_distributor: Box<Account<'info, RewardDistributor>>,
+    #[account(constraint = authority.key() == stake_pool.authority @ ErrorCode::InvalidAuthority)]
     stake_pool: Box<Account<'info, StakePool>>,
     #[account(mut)]
     reward_mint: Box<Account<'info, Mint>>,
@@ -73,6 +74,14 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
             let reward_distributor_token_account = Account::<TokenAccount>::try_from(reward_distributor_token_account_info)?;
             let authority_token_account_info = next_account_info(remaining_accs)?;
             let authority_token_account = Account::<TokenAccount>::try_from(authority_token_account_info)?;
+
+            if authority_token_account.mint != ctx.accounts.reward_mint.key() {
+                return Err(error!(ErrorCode::InvalidAuthorityTokenAccount));
+            }
+
+            if reward_distributor_token_account.mint != ctx.accounts.reward_mint.key() {
+                return Err(error!(ErrorCode::InvalidRewardDistributorTokenAccount));
+            }
 
             let cpi_accounts = token::Transfer {
                 from: authority_token_account.to_account_info(),

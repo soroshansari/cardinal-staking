@@ -1,6 +1,6 @@
 import { findAta } from "@cardinal/common";
 import { withWrapSol } from "@cardinal/token-manager/dist/cjs/wrappedSol";
-import { BN, Wallet } from "@project-serum/anchor";
+import { BN } from "@project-serum/anchor";
 import { getAccount } from "@solana/spl-token";
 import type { Keypair } from "@solana/web3.js";
 import { LAMPORTS_PER_SOL, PublicKey, Transaction } from "@solana/web3.js";
@@ -18,12 +18,7 @@ import { withInitRewardDistributor } from "../../src/programs/rewardDistributor/
 import { ReceiptType } from "../../src/programs/stakePool";
 import { getStakeEntry } from "../../src/programs/stakePool/accounts";
 import { findStakeEntryIdFromMint } from "../../src/programs/stakePool/utils";
-import {
-  createMint,
-  delay,
-  executeTransaction,
-  newAccountWithLamports,
-} from "../utils";
+import { createMint, delay, executeTransaction } from "../utils";
 import type { CardinalProvider } from "../workspace";
 import { getProvider } from "../workspace";
 
@@ -34,7 +29,6 @@ describe("Stake and claim rewards from treasury", () => {
   let stakePoolId: PublicKey;
   let stakeMintKeypair: Keypair | undefined;
   let originalMintId: PublicKey;
-  let creator: Keypair;
   const rewardMint = new PublicKey(
     "So11111111111111111111111111111111111111112"
   );
@@ -48,8 +42,6 @@ describe("Stake and claim rewards from treasury", () => {
       provider.wallet,
       { amount: 1 }
     );
-
-    creator = await newAccountWithLamports(provider.connection);
   });
 
   it("Create Pool", async () => {
@@ -70,14 +62,14 @@ describe("Stake and claim rewards from treasury", () => {
     await withWrapSol(
       transaction,
       provider.connection,
-      new Wallet(creator),
+      provider.wallet,
       maxSupply * LAMPORTS_PER_SOL
     );
 
     await withInitRewardDistributor(
       transaction,
       provider.connection,
-      new Wallet(creator),
+      provider.wallet,
       {
         stakePoolId: stakePoolId,
         rewardMintId: rewardMint,
@@ -87,11 +79,7 @@ describe("Stake and claim rewards from treasury", () => {
         maxSupply: new BN(maxSupply * LAMPORTS_PER_SOL),
       }
     );
-    await executeTransaction(
-      provider.connection,
-      transaction,
-      new Wallet(creator)
-    );
+    await executeTransaction(provider.connection, transaction, provider.wallet);
 
     const rewardDistributorId = findRewardDistributorId(stakePoolId);
 
