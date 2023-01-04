@@ -79,7 +79,7 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
                 return Err(error!(ErrorCode::InvalidAuthorityTokenAccount));
             }
 
-            if reward_distributor_token_account.mint != ctx.accounts.reward_mint.key() {
+            if reward_distributor_token_account.mint != ctx.accounts.reward_mint.key() || reward_distributor_token_account.owner.key() != reward_distributor.key() {
                 return Err(error!(ErrorCode::InvalidRewardDistributorTokenAccount));
             }
 

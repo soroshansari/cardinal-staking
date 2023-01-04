@@ -100,6 +100,14 @@ pub fn handler<'key, 'accounts, 'remaining, 'info>(ctx: Context<'key, 'accounts,
             let authority_token_account_info = next_account_info(remaining_accs)?;
             let authority_token_account = Account::<TokenAccount>::try_from(authority_token_account_info)?;
 
+            if authority_token_account.mint != ctx.accounts.reward_mint.key() {
+                return Err(error!(ErrorCode::InvalidAuthorityTokenAccount));
+            }
+
+            if group_reward_distributor_token_account.mint != ctx.accounts.reward_mint.key() || group_reward_distributor_token_account.owner.key() != group_reward_distributor.key() {
+                return Err(error!(ErrorCode::InvalidRewardDistributorTokenAccount));
+            }
+
             let cpi_accounts = token::Transfer {
                 from: authority_token_account.to_account_info(),
                 to: group_reward_distributor_token_account.to_account_info(),
