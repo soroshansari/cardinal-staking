@@ -1,5 +1,6 @@
 pub mod authorize_mint;
 pub mod claim_receipt_mint;
+pub mod claim_stake_entry_funds;
 pub mod close_stake_entry;
 pub mod close_stake_pool;
 pub mod deauthorize_mint;
@@ -20,6 +21,7 @@ pub mod update_total_stake_seconds;
 
 pub use authorize_mint::*;
 pub use claim_receipt_mint::*;
+pub use claim_stake_entry_funds::*;
 pub use close_stake_entry::*;
 pub use close_stake_pool::*;
 pub use deauthorize_mint::*;

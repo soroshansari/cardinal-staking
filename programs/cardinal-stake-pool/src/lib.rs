@@ -87,6 +87,10 @@ pub mod cardinal_stake_pool {
         double_or_reset_total_stake_seconds::handler(ctx)
     }
 
+    pub fn claim_stake_entry_funds(ctx: Context<ClaimStakeEntryFundsCtx>) -> Result<()> {
+        claim_stake_entry_funds::handler(ctx)
+    }
+
     //// stake_booster ////
     pub fn init_stake_booster(ctx: Context<InitStakeBoosterCtx>, ix: InitStakeBoosterIx) -> Result<()> {
         stake_booster::init_stake_booster::handler(ctx, ix)

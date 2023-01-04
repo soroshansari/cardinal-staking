@@ -1109,3 +1109,55 @@ export const withCloseGroupEntry = async (
   transaction.add(ix);
   return [transaction];
 };
+
+export const withClaimStakeEntryFunds = async (
+  transaction: Transaction,
+  connection: Connection,
+  wallet: Wallet,
+  stakeEntryId: PublicKey,
+  fundsMintId: PublicKey
+): Promise<[Transaction]> => {
+  const program = stakePoolProgram(connection, wallet);
+  const stakeEntryData = await tryGetAccount(() =>
+    getStakeEntry(connection, stakeEntryId)
+  );
+  if (!stakeEntryData) {
+    throw `No stake entry id with address ${stakeEntryId.toString()}`;
+  }
+
+  const stakeEntryFundsMintTokenAccountId =
+    await withFindOrInitAssociatedTokenAccount(
+      transaction,
+      connection,
+      fundsMintId,
+      stakeEntryId,
+      wallet.publicKey,
+      true
+    );
+
+  const userFundsMintTokenAccountId =
+    await withFindOrInitAssociatedTokenAccount(
+      transaction,
+      connection,
+      fundsMintId,
+      stakeEntryData.parsed.lastStaker,
+      wallet.publicKey,
+      true
+    );
+
+  const ix = await program.methods
+    .claimStakeEntryFunds()
+    .accounts({
+      fundsMint: fundsMintId,
+      stakeEntryFundsMintTokenAccount: stakeEntryFundsMintTokenAccountId,
+      userFundsMintTokenAccount: userFundsMintTokenAccountId,
+      stakePool: stakeEntryData.parsed.pool,
+      stakeEntry: stakeEntryId,
+      originalMint: stakeEntryData.parsed.originalMint,
+      authority: wallet.publicKey,
+      tokenProgram: TOKEN_PROGRAM_ID,
+    })
+    .instruction();
+  transaction.add(ix);
+  return [transaction];
+};

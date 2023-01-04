@@ -630,6 +630,52 @@ export type CardinalStakePool = {
       args: [];
     },
     {
+      name: "claimStakeEntryFunds";
+      accounts: [
+        {
+          name: "fundsMint";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "stakeEntryFundsMintTokenAccount";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "userFundsMintTokenAccount";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "stakePool";
+          isMut: false;
+          isSigner: false;
+        },
+        {
+          name: "stakeEntry";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "originalMint";
+          isMut: true;
+          isSigner: false;
+        },
+        {
+          name: "authority";
+          isMut: true;
+          isSigner: true;
+        },
+        {
+          name: "tokenProgram";
+          isMut: false;
+          isSigner: false;
+        }
+      ];
+      args: [];
+    },
+    {
       name: "initStakeBooster";
       accounts: [
         {
@@ -1591,6 +1637,21 @@ export type CardinalStakePool = {
       msg: "Cannot update unstaked entry";
     },
     {
+      code: 6029;
+      name: "InvalidFundsMint";
+      msg: "Invalid funds mint";
+    },
+    {
+      code: 6030;
+      name: "InvalidMintForTokenAccount";
+      msg: "Invalid mint for token account";
+    },
+    {
+      code: 6031;
+      name: "StakeEntryFundsTokenAccountEmpty";
+      msg: "Stake entry funds token account is empty";
+    },
+    {
       code: 6100;
       name: "CannotBoostUnstakedToken";
       msg: "Cannot boost unstaked token";
@@ -2273,6 +2334,52 @@ export const IDL: CardinalStakePool = {
         },
         {
           name: "recentSlothashes",
+          isMut: false,
+          isSigner: false,
+        },
+      ],
+      args: [],
+    },
+    {
+      name: "claimStakeEntryFunds",
+      accounts: [
+        {
+          name: "fundsMint",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "stakeEntryFundsMintTokenAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "userFundsMintTokenAccount",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "stakePool",
+          isMut: false,
+          isSigner: false,
+        },
+        {
+          name: "stakeEntry",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "originalMint",
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: "authority",
+          isMut: true,
+          isSigner: true,
+        },
+        {
+          name: "tokenProgram",
           isMut: false,
           isSigner: false,
         },
@@ -3239,6 +3346,21 @@ export const IDL: CardinalStakePool = {
       code: 6028,
       name: "CannotUpdateUnstakedEntry",
       msg: "Cannot update unstaked entry",
+    },
+    {
+      code: 6029,
+      name: "InvalidFundsMint",
+      msg: "Invalid funds mint",
+    },
+    {
+      code: 6030,
+      name: "InvalidMintForTokenAccount",
+      msg: "Invalid mint for token account",
+    },
+    {
+      code: 6031,
+      name: "StakeEntryFundsTokenAccountEmpty",
+      msg: "Stake entry funds token account is empty",
     },
     {
       code: 6100,

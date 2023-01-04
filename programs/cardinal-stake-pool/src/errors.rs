@@ -86,4 +86,12 @@ pub enum ErrorCode {
     ActiveGroupEntry,
     #[msg("Stake entry not found in group")]
     StakeEntryNotFoundInGroup,
+
+    // claim stake entry fundssl
+    #[msg("Invalid funds mint")]
+    InvalidFundsMint = 130,
+    #[msg("Invalid mint for token account")]
+    InvalidMintForTokenAccount,
+    #[msg("Stake entry funds token account is empty")]
+    StakeEntryFundsTokenAccountEmpty,
 }
