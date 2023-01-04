@@ -24,7 +24,10 @@ import {
 import { BN } from "@project-serum/anchor";
 import type { Wallet } from "@project-serum/anchor/dist/cjs/provider";
 import { ASSOCIATED_PROGRAM_ID } from "@project-serum/anchor/dist/cjs/utils/token";
-import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import {
+  getAssociatedTokenAddressSync,
+  TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
 import type { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import {
   Keypair,
@@ -1125,15 +1128,11 @@ export const withClaimStakeEntryFunds = async (
     throw `No stake entry id with address ${stakeEntryId.toString()}`;
   }
 
-  const stakeEntryFundsMintTokenAccountId =
-    await withFindOrInitAssociatedTokenAccount(
-      transaction,
-      connection,
-      fundsMintId,
-      stakeEntryId,
-      wallet.publicKey,
-      true
-    );
+  const stakeEntryFundsMintTokenAccountId = getAssociatedTokenAddressSync(
+    fundsMintId,
+    stakeEntryId,
+    true
+  );
 
   const userFundsMintTokenAccountId =
     await withFindOrInitAssociatedTokenAccount(
