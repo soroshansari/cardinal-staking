@@ -9,10 +9,12 @@ import { hideBin } from "yargs/helpers";
 import * as claimRewardsForUsers from "./admin-actions/claimRewardsForUsers";
 import * as initializeEntriesAndSetMultipliers from "./admin-actions/initializeEntriesAndSetMultipliers";
 import * as updateMultipliersOnRules from "./admin-actions/updateMultipliersOnRules";
+import * as getAllStakePools from "./analytics/getAllStakePools";
 import * as stakedTokensBreakdownByWallet from "./analytics/stakedTokensBreakdownByWallet";
 import { connectionFor } from "./connection";
 import * as reclaimFunds from "./reward-distributor/reclaimFunds";
 import * as transferTokens from "./reward-distributor/transferTokens";
+import * as checkStakeEntryFunds from "./stake-entries/checkStakeEntryFunds";
 import { keypairFrom } from "./utils";
 
 dotenv.config();
@@ -76,6 +78,7 @@ void yargs(hideBin(process.argv))
   })
   // analytics
   .command(commandBuilder(stakedTokensBreakdownByWallet))
+  .command(commandBuilder(getAllStakePools))
   // admin-actions
   .command(commandBuilder(updateMultipliersOnRules))
   .command(commandBuilder(initializeEntriesAndSetMultipliers))
@@ -83,6 +86,8 @@ void yargs(hideBin(process.argv))
   // reward-distributor
   .command(commandBuilder(reclaimFunds))
   .command(commandBuilder(transferTokens))
+  // stake-entries
+  .command(commandBuilder(checkStakeEntryFunds))
   .strict()
   .demandCommand()
   .alias({ h: "help" }).argv;
