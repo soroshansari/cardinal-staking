@@ -22,7 +22,10 @@ pub const GROUP_ENTRY_DEFAULT_SIZE: usize = 8 // Anchor discriminator/sighash
  + 32 // authority
  + 4 + 1 * 32 // stake_entries (1 pubkeys)
  + 8 // changed_at
- + 16; // min_group_seconds
+ + 4 // group_cooldown_seconds
+ + 4 // group_stake_seconds
+ + 8 // group_cooldown_start_seconds
+ + 8; // padding
 
 #[derive(Clone, Debug, PartialEq, Eq, AnchorSerialize, AnchorDeserialize)]
 #[repr(u8)]
