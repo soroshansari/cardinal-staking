@@ -1637,21 +1637,6 @@
       "msg": "Cannot update unstaked entry"
     },
     {
-      "code": 6029,
-      "name": "InvalidFundsMint",
-      "msg": "Invalid funds mint"
-    },
-    {
-      "code": 6030,
-      "name": "InvalidMintForTokenAccount",
-      "msg": "Invalid mint for token account"
-    },
-    {
-      "code": 6031,
-      "name": "StakeEntryFundsTokenAccountEmpty",
-      "msg": "Stake entry funds token account is empty"
-    },
-    {
       "code": 6100,
       "name": "CannotBoostUnstakedToken",
       "msg": "Cannot boost unstaked token"
@@ -1705,6 +1690,21 @@
       "code": 6124,
       "name": "StakeEntryNotFoundInGroup",
       "msg": "Stake entry not found in group"
+    },
+    {
+      "code": 6130,
+      "name": "InvalidFundsMint",
+      "msg": "Invalid funds mint"
+    },
+    {
+      "code": 6131,
+      "name": "InvalidMintForTokenAccount",
+      "msg": "Invalid mint for token account"
+    },
+    {
+      "code": 6132,
+      "name": "StakeEntryFundsTokenAccountEmpty",
+      "msg": "Stake entry funds token account is empty"
     }
   ]
 }

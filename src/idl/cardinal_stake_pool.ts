@@ -1637,21 +1637,6 @@ export type CardinalStakePool = {
       msg: "Cannot update unstaked entry";
     },
     {
-      code: 6029;
-      name: "InvalidFundsMint";
-      msg: "Invalid funds mint";
-    },
-    {
-      code: 6030;
-      name: "InvalidMintForTokenAccount";
-      msg: "Invalid mint for token account";
-    },
-    {
-      code: 6031;
-      name: "StakeEntryFundsTokenAccountEmpty";
-      msg: "Stake entry funds token account is empty";
-    },
-    {
       code: 6100;
       name: "CannotBoostUnstakedToken";
       msg: "Cannot boost unstaked token";
@@ -1705,6 +1690,21 @@ export type CardinalStakePool = {
       code: 6124;
       name: "StakeEntryNotFoundInGroup";
       msg: "Stake entry not found in group";
+    },
+    {
+      code: 6130;
+      name: "InvalidFundsMint";
+      msg: "Invalid funds mint";
+    },
+    {
+      code: 6131;
+      name: "InvalidMintForTokenAccount";
+      msg: "Invalid mint for token account";
+    },
+    {
+      code: 6132;
+      name: "StakeEntryFundsTokenAccountEmpty";
+      msg: "Stake entry funds token account is empty";
     }
   ];
 };
@@ -3348,21 +3348,6 @@ export const IDL: CardinalStakePool = {
       msg: "Cannot update unstaked entry",
     },
     {
-      code: 6029,
-      name: "InvalidFundsMint",
-      msg: "Invalid funds mint",
-    },
-    {
-      code: 6030,
-      name: "InvalidMintForTokenAccount",
-      msg: "Invalid mint for token account",
-    },
-    {
-      code: 6031,
-      name: "StakeEntryFundsTokenAccountEmpty",
-      msg: "Stake entry funds token account is empty",
-    },
-    {
       code: 6100,
       name: "CannotBoostUnstakedToken",
       msg: "Cannot boost unstaked token",
@@ -3416,6 +3401,21 @@ export const IDL: CardinalStakePool = {
       code: 6124,
       name: "StakeEntryNotFoundInGroup",
       msg: "Stake entry not found in group",
+    },
+    {
+      code: 6130,
+      name: "InvalidFundsMint",
+      msg: "Invalid funds mint",
+    },
+    {
+      code: 6131,
+      name: "InvalidMintForTokenAccount",
+      msg: "Invalid mint for token account",
+    },
+    {
+      code: 6132,
+      name: "StakeEntryFundsTokenAccountEmpty",
+      msg: "Stake entry funds token account is empty",
     },
   ],
 };
